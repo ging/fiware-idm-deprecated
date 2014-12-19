@@ -53,38 +53,41 @@ import ConfigParser
 #Install Horizon
 
 def install_horizon():
-	local('sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev')
-	local('git clone https://github.com/ging/horizon.git')
-	with lcd('horizon/'):
-		local('git checkout development')
-		local('git submodule init')
-		local('git submodule update')
-		local('sudo python tools/install_venv.py')
-		local('cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py')
+	local('mkdir IdM')
+	with lcd('IdM/'):
+		local('sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev')
+		local('git clone https://github.com/ging/horizon.git')
+		with lcd('horizon/'):
+			local('git checkout development')
+			local('git submodule init')
+			local('git submodule update')
+			local('sudo python tools/install_venv.py')
+			local('cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py')
 
 
 # Run horizon server
 def runserver(ip='127.0.0.1:8000'):
-	with lcd('horizon/'):
+	with lcd('IdM/horizon/'):
 		local('sudo tools/with_venv.sh python manage.py runserver {0}'.format(ip))
 
 
 # Install and configure Keystone
 # Change directory to default after tests
 def install_keystone():
-	local('git clone https://github.com/ging/keystone.git')
-	with lcd('keystone/'):
-		local('sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev')
-		local('python tools/install_venv.py')
-		local('cp etc/keystone.conf.sample etc/keystone.conf')
-		#Uncomment config file
-		with lcd('etc/'):
-			local("sed -i 's/#admin_token/admin_token/g' keystone.conf")
-			local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
+	with lcd('IdM/'):
+		local('git clone https://github.com/ging/keystone.git')
+		with lcd('keystone/'):
+			local('sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev')
+			local('python tools/install_venv.py')
+			local('cp etc/keystone.conf.sample etc/keystone.conf')
+			#Uncomment config file
+			with lcd('etc/'):
+				local("sed -i 's/#admin_token/admin_token/g' keystone.conf")
+				local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
 
 # Create database
 def database():
-	with lcd('keystone/'):
+	with lcd('IdM/keystone/'):
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
@@ -92,18 +95,18 @@ def database():
 
 # Start keystone service
 def start():
-	local('sudo service keystoneoauth2 start')
+	local('sudo service keystoneoauth2Prueba start')
 	
 
 # Stop keystone service
 def stop():
-	local('sudo service keystoneoauth2 stop')
+	local('sudo service keystoneoauth2Prueba stop')
 	
 
 # Load initial data (should be done once service is started) 
 # Use 'fab intial_data' instead
 def data(admin_token='ADMIN', ip='127.0.0.1'):
-	with lcd('keystone/'):
+	with lcd('IdM/keystone/'):
 		local('OS_SERVICE_TOKEN={token} CONTROLLER_PUBLIC_ADDRESS={ip} \
 			CONTROLLER_ADMIN_ADDRESS={ip} CONTROLLER_INTERNAL_ADDRESS={ip} \
 			tools/with_venv.sh tools/sample_data.sh'.format(token=admin_token, 
@@ -111,10 +114,10 @@ def data(admin_token='ADMIN', ip='127.0.0.1'):
 
 # Configure keystone as a service
 # @param username: directory home/{username}/...
-def keystone_service():
+def keystone_service(user):
 	with lcd('/etc/init/'):
 		if not os.path.isfile('/etc/init/keystoneoauth2.conf'):
-			text='# keystoneoauth2 - keystoneoauth2Prueba job file\ndescription "Keystone server extended to use OAuth2.0"\nauthor "Enrique G. Navalon <garcianavalon@gmail.com>"\nstart on (local-filesystems and net-device-up IFACE!=lo)\nstop on runlevel [016]\n# Automatically restart process if crashed\nrespawn\nsetuid root\nscript\ncd /home/sorube/Pruebas/keystone/\n#activate the venv\n. .venv/bin/activate\n#run keystone\nbin/keystone-all\nend script'
+			text='# keystoneoauth2 - keystoneoauth2 job file\ndescription "Keystone server extended to use OAuth2.0"\nauthor "Enrique G. Navalon <garcianavalon@gmail.com>"\nstart on (local-filesystems and net-device-up IFACE!=lo)\nstop on runlevel [016]\n# Automatically restart process if crashed\nrespawn\nsetuid root\nscript\ncd /home/{user}/IdM/keystone/\n#activate the venv\n. .venv/bin/activate\n#run keystone\nbin/keystone-all\nend script'.format(user=user)
 			fo = open('keystoneoauth2.conf','wb')
 			fo.write(text)
 			fo.close()
@@ -125,8 +128,8 @@ def keystone_service():
 
 # Keystone stop service and remove database
 def remove_database():
-	with lcd('keystone/'):
-		if os.path.isfile('keystone/keystone.db'):
+	with lcd('IdM/keystone/'):
+		if os.path.isfile('IdM/keystone/keystone.db'):
 			local('sudo rm keystone.db')
 
 
@@ -134,7 +137,7 @@ def initial_data(ip='127.0.0.1'):
 	
 	config = ConfigParser.ConfigParser()
 	
-	config.read('Pruebas/keystone/etc/keystone.conf')
+	config.read('IdM/keystone/etc/keystone.conf')
 	try:
 		admin_port = os.getenv('OS_SERVICE_ENDPOINT',config.defaults()['admin_port'])
 		endpoint = 'http://{ip}:{port}/v3'.format(ip=ip, port=admin_port)
@@ -288,3 +291,4 @@ def restart():
 	local('fab remove_database')
 	local('fab database')
 	local('fab start')
+
