@@ -25,6 +25,17 @@ IDM_ROOT = '../idm/'
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
 HORIZON_ROOT = IDM_ROOT + 'horizon/'
 
+INTERNAL_ROLES = [
+	'provider',
+	'purchaser',
+]
+INTERNAL_PERMISSIONS = [
+	'Manage the application',
+	'Manage roles', 
+	'Get and assign roles',
+	'Manage Authorizations', 
+]
+
 # from fabric.api import env, run
 # env.hosts = ['isabel@hpcm']
 
@@ -272,15 +283,14 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 									'Swift Service', swift_endpoints)
 
 		# Default Roles
-		provider = keystone.fiware_roles.roles.create(name='Provider')
-		purchaser = keystone.fiware_roles.roles.create(name='Purchaser')
-
+		for role in INTERNAL_ROLES:
+			keystone.fiware_roles.roles.create(name=role, 
+											is_internal=True)
 		# Default Permissions
-		manage_app = keystone.fiware_roles.permissions.create(name='Manage the application')
-		manage_roles = keystone.fiware_roles.permissions.create(name='Manage roles')
-		get_assign_roles = keystone.fiware_roles.permissions.create(name='Get and assign roles')
-		manage_authorizations = keystone.fiware_roles.permissions.create(name='Manage Authorizations')
-
+		for permission in INTERNAL_PERMISSIONS:
+			keystone.fiware_roles.permissions.create(name=permission, 
+													is_internal=True)
+										
 		# Create ec2 credentials 
 		# result = keystone.ec2.create(project_id=service_tenant.id, user_id=admin_user.id)
 		# admin_access = result.access
