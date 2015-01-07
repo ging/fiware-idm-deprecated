@@ -12,12 +12,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import ConfigParser
+import os.path
+
 from fabric.api import local
 from fabric.context_managers import lcd
-import os.path
-from keystoneclient.v3 import client
-import ConfigParser
 
+from keystoneclient.v3 import client
+
+IDM_ROOT = 'idm/'
+KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
+HORIZON_ROOT = IDM_ROOT + 'horizon/'
 
 # from fabric.api import env, run
 # env.hosts = ['isabel@hpcm']
@@ -67,8 +72,8 @@ import ConfigParser
 #Install Horizon
 
 def horizon_install():
-	local('mkdir IdM')
-	with lcd('IdM/'):
+	local('mkdir {0}'.format(IDM_ROOT))
+	with lcd(IDM_ROOT):
 		local('sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev')
 		local('git clone https://github.com/ging/horizon.git')
 		with lcd('horizon/'):
@@ -81,14 +86,14 @@ def horizon_install():
 
 # Run horizon server
 def horizon_runserver(ip='127.0.0.1:8000'):
-	with lcd('IdM/horizon/'):
+	with lcd(HORIZON_ROOT):
 		local('sudo tools/with_venv.sh python manage.py runserver {0}'.format(ip))
 
 
 # Install and configure Keystone
 # Change directory to default after tests
 def keystone_install():
-	with lcd('IdM/'):
+	with lcd(IDM_ROOT):
 		local('git clone https://github.com/ging/keystone.git')
 		with lcd('keystone/'):
 			local('sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev')
@@ -101,7 +106,7 @@ def keystone_install():
 
 # Create database
 def keystone_database_create():
-	with lcd('IdM/keystone/'):
+	with lcd(KEYSTONE_ROOT):
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
@@ -109,18 +114,18 @@ def keystone_database_create():
 
 # Start keystone service
 def keystone_service_start():
-	local('sudo service keystoneoauth2Prueba start')
+	local('sudo service keystoneoauth2 start')
 	
 
 # Stop keystone service
 def keystone_service_stop():
-	local('sudo service keystoneoauth2Prueba stop')
+	local('sudo service keystoneoauth2 stop')
 	
 
 # Load initial data (should be done once service is started) 
 # Use 'fab intial_data' instead
 def keystone_sample_data(admin_token='ADMIN', ip='127.0.0.1'):
-	with lcd('IdM/keystone/'):
+	with lcd(KEYSTONE_ROOT):
 		local('OS_SERVICE_TOKEN={token} CONTROLLER_PUBLIC_ADDRESS={ip} \
 			CONTROLLER_ADMIN_ADDRESS={ip} CONTROLLER_INTERNAL_ADDRESS={ip} \
 			tools/with_venv.sh tools/sample_data.sh'.format(token=admin_token, 
@@ -131,19 +136,19 @@ def keystone_sample_data(admin_token='ADMIN', ip='127.0.0.1'):
 def keystone_service_create(user):
 	with lcd('/etc/init/'):
 		if not os.path.isfile('/etc/init/keystoneoauth2.conf'):
-			text = '# keystoneoauth2 - keystoneoauth2 job file\ndescription "Keystone server extended to use OAuth2.0"\nauthor "Enrique G. Navalon <garcianavalon@gmail.com>"\nstart on (local-filesystems and net-device-up IFACE!=lo)\nstop on runlevel [016]\n# Automatically restart process if crashed\nrespawn\nsetuid root\nscript\ncd /home/{user}/IdM/keystone/\n#activate the venv\n. .venv/bin/activate\n#run keystone\nbin/keystone-all\nend script'.format(user=user)
+			text = '# keystoneoauth2 - keystoneoauth2 job file\ndescription "Keystone server extended to use OAuth2.0"\nauthor "Enrique G. Navalon <garcianavalon@gmail.com>"\nstart on (local-filesystems and net-device-up IFACE!=lo)\nstop on runlevel [016]\n# Automatically restart process if crashed\nrespawn\nsetuid root\nscript\ncd /home/{user}/idm/keystone/\n#activate the venv\n. .venv/bin/activate\n#run keystone\nbin/keystone-all\nend script'.format(user=user)
 			fo = open('keystoneoauth2.conf', 'wb')
 			fo.write(text)
 			fo.close()
 			local('sudo cp keystoneoauth2.conf /etc/init/')
 			local('sudo rm keystoneoauth2.conf')
 		else:
-			print('it already exists')
+			print('Service already exists in /etc/init')
 
 # Keystone stop service and remove database
 def keystone_database_delete():
-	with lcd('IdM/keystone/'):
-		if os.path.isfile('IdM/keystone/keystone.db'):
+	with lcd(KEYSTONE_ROOT):
+		if os.path.isfile('idm/keystone/keystone.db'):
 			local('sudo rm keystone.db')
 
 
@@ -151,7 +156,7 @@ def keystone_database_init(ip='127.0.0.1'):
 	
 	config = ConfigParser.ConfigParser()
 	
-	config.read('IdM/keystone/etc/keystone.conf')
+	config.read('idm/keystone/etc/keystone.conf')
 	try:
 		admin_port = os.getenv('OS_SERVICE_ENDPOINT', config.defaults()['admin_port'])
 		endpoint = 'http://{ip}:{port}/v3'.format(ip=ip, port=admin_port)
@@ -180,8 +185,8 @@ def keystone_database_init(ip='127.0.0.1'):
 		admin_role = keystone.roles.create(name='admin')
 		keystone.roles.grant(user=admin_user, role=admin_role, project=demo_tenant)
 		
-		#IdM Tenant
-		idm_tenant = keystone.projects.create(name='idm', description='Tenant for the IdM user', is_defaut=True, domain='default')
+		#idm Tenant
+		idm_tenant = keystone.projects.create(name='idm', description='Tenant for the idm user', is_defaut=True, domain='default')
 		idm_user = keystone.users.create(name='idm', password=IDM_PASSWORD, domain='default')
 		keystone.roles.grant(user=idm_user, role=admin_role, project=idm_tenant)
 
