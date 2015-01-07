@@ -220,32 +220,32 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=nova_service.id,
-			url='http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
+			url='http://{public_address}:8774/v2/$(tenant_id)s'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=nova_service.id,
-			url='http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
+			url='http://{public_address}:8774/v2/$(tenant_id)s'.format(public_address=public_address),
 			interface='admin')
-			# publicurl='http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
-			# adminurl='http://{admin_address}:8774/v2/%(project_id)s'.format(admin_address=admin_address),
-			# internalurl='http://{internal_address}:8774/v2/%(project_id)s'.format(internal_address=internal_address))
+			# publicurl='http://{public_address}:8774/v2/$(tenant_id)s'.format(public_address=public_address),
+			# adminurl='http://{admin_address}:8774/v2/$(tenant_id)s'.format(admin_address=admin_address),
+			# internalurl='http://{internal_address}:8774/v2/$(tenant_id)s'.format(internal_address=internal_address))
 
 		# Volume service
 		volume_service = keystone.services.create(name='volume', type='volume', description='Nova Volume Service')
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=volume_service.id,
-			url='http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
+			url='http://{public_address}:8776/v1/$(tenant_id)s'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=volume_service.id,
-			url='http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
+			url='http://{public_address}:8776/v1/$(tenant_id)s'.format(public_address=public_address),
 			interface='admin')
-			# publicurl='http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
-			# adminurl='http://{admin_address}:8776/v1/%(project_id)s'.format(admin_address=admin_address),
-			# internalurl='http://{internal_address}:8776/v1/%(project_id)s'.format(internal_address=internal_address))
+			# publicurl='http://{public_address}:8776/v1/$(tenant_id)s'.format(public_address=public_address),
+			# adminurl='http://{admin_address}:8776/v1/$(tenant_id)s'.format(admin_address=admin_address),
+			# internalurl='http://{internal_address}:8776/v1/$(tenant_id)s'.format(internal_address=internal_address))
 
 		# Image service
 		glance_service = keystone.services.create(name='glance', type='image', description='Glance Image Service')
@@ -284,16 +284,16 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=volume_service.id,
-			url='http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
+			url='http://{public_address}:8080/v1/AUTH_$(tenant_id)s'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=volume_service.id,
-			url='http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
+			url='http://{public_address}:8080/v1/AUTH_$(tenant_id)s'.format(public_address=public_address),
 			interface='admin')
-			# publicurl='http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
+			# publicurl='http://{public_address}:8080/v1/AUTH_$(tenant_id)s'.format(public_address=public_address),
 			# adminurl='http://{admin_address}:8080/v1'.format(admin_address=admin_address),
-			# internalurl='http://{internal_address}:8080/v1/AUTH_%(project_id)s'.format(internal_address=internal_address))
+			# internalurl='http://{internal_address}:8080/v1/AUTH_$(tenant_id)s'.format(internal_address=internal_address))
 
 		# Default Roles
 		provider = keystone.fiware_roles.roles.create(name='Provider')
