@@ -52,7 +52,7 @@ import ConfigParser
 
 #Install Horizon
 
-def install_horizon():
+def horizon_install():
 	local('mkdir IdM')
 	with lcd('IdM/'):
 		local('sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev')
@@ -66,14 +66,14 @@ def install_horizon():
 
 
 # Run horizon server
-def runserver(ip='127.0.0.1:8000'):
+def horizon_runserver(ip='127.0.0.1:8000'):
 	with lcd('IdM/horizon/'):
 		local('sudo tools/with_venv.sh python manage.py runserver {0}'.format(ip))
 
 
 # Install and configure Keystone
 # Change directory to default after tests
-def install_keystone():
+def keystone_install():
 	with lcd('IdM/'):
 		local('git clone https://github.com/ging/keystone.git')
 		with lcd('keystone/'):
@@ -86,7 +86,7 @@ def install_keystone():
 				local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
 
 # Create database
-def database():
+def keystone_database_create():
 	with lcd('IdM/keystone/'):
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
@@ -94,18 +94,18 @@ def database():
 
 
 # Start keystone service
-def start():
+def keystone_service_start():
 	local('sudo service keystoneoauth2Prueba start')
 	
 
 # Stop keystone service
-def stop():
+def keystone_service_stop():
 	local('sudo service keystoneoauth2Prueba stop')
 	
 
 # Load initial data (should be done once service is started) 
 # Use 'fab intial_data' instead
-def data(admin_token='ADMIN', ip='127.0.0.1'):
+def keystone_sample_data(admin_token='ADMIN', ip='127.0.0.1'):
 	with lcd('IdM/keystone/'):
 		local('OS_SERVICE_TOKEN={token} CONTROLLER_PUBLIC_ADDRESS={ip} \
 			CONTROLLER_ADMIN_ADDRESS={ip} CONTROLLER_INTERNAL_ADDRESS={ip} \
@@ -114,11 +114,11 @@ def data(admin_token='ADMIN', ip='127.0.0.1'):
 
 # Configure keystone as a service
 # @param username: directory home/{username}/...
-def keystone_service(user):
+def keystone_service_create(user):
 	with lcd('/etc/init/'):
 		if not os.path.isfile('/etc/init/keystoneoauth2.conf'):
-			text='# keystoneoauth2 - keystoneoauth2 job file\ndescription "Keystone server extended to use OAuth2.0"\nauthor "Enrique G. Navalon <garcianavalon@gmail.com>"\nstart on (local-filesystems and net-device-up IFACE!=lo)\nstop on runlevel [016]\n# Automatically restart process if crashed\nrespawn\nsetuid root\nscript\ncd /home/{user}/IdM/keystone/\n#activate the venv\n. .venv/bin/activate\n#run keystone\nbin/keystone-all\nend script'.format(user=user)
-			fo = open('keystoneoauth2.conf','wb')
+			text = '# keystoneoauth2 - keystoneoauth2 job file\ndescription "Keystone server extended to use OAuth2.0"\nauthor "Enrique G. Navalon <garcianavalon@gmail.com>"\nstart on (local-filesystems and net-device-up IFACE!=lo)\nstop on runlevel [016]\n# Automatically restart process if crashed\nrespawn\nsetuid root\nscript\ncd /home/{user}/IdM/keystone/\n#activate the venv\n. .venv/bin/activate\n#run keystone\nbin/keystone-all\nend script'.format(user=user)
+			fo = open('keystoneoauth2.conf', 'wb')
 			fo.write(text)
 			fo.close()
 			local('sudo cp keystoneoauth2.conf /etc/init/')
@@ -127,145 +127,157 @@ def keystone_service(user):
 			print('it already exists')
 
 # Keystone stop service and remove database
-def remove_database():
+def keystone_database_delete():
 	with lcd('IdM/keystone/'):
 		if os.path.isfile('IdM/keystone/keystone.db'):
 			local('sudo rm keystone.db')
 
 
-def initial_data(ip='127.0.0.1'):
+def keystone_database_init(ip='127.0.0.1'):
 	
 	config = ConfigParser.ConfigParser()
 	
 	config.read('IdM/keystone/etc/keystone.conf')
 	try:
-		admin_port = os.getenv('OS_SERVICE_ENDPOINT',config.defaults()['admin_port'])
+		admin_port = os.getenv('OS_SERVICE_ENDPOINT', config.defaults()['admin_port'])
 		endpoint = 'http://{ip}:{port}/v3'.format(ip=ip, port=admin_port)
 		token = os.getenv('OS_SERVICE_TOKEN', config.defaults()['admin_token'])
 		
 		# Passwords are either environment variables or their default value
-		ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD','secrete')
-		IDM_PASSWORD = os.getenv('IDM_PASSWORD','idm')
-		GLANCE_PASSWORD = os.getenv('SERVICE_PASSWORD','glance')
-		NOVA_PASSWORD = os.getenv('SERVICE_PASSWORD','nova')
-		EC2_PASSWORD = os.getenv('SERVICE_PASSWORD','ec2')
-		SWIFT_PASSWORD = os.getenv('SERVICE_PASSWORD','swiftpass')
+		ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'secrete')
+		IDM_PASSWORD = os.getenv('IDM_PASSWORD', 'idm')
+		GLANCE_PASSWORD = os.getenv('SERVICE_PASSWORD', 'glance')
+		NOVA_PASSWORD = os.getenv('SERVICE_PASSWORD', 'nova')
+		EC2_PASSWORD = os.getenv('SERVICE_PASSWORD', 'ec2')
+		SWIFT_PASSWORD = os.getenv('SERVICE_PASSWORD', 'swiftpass')
 
 		# Controller Addresses
-		public_address = os.getenv('CONTROLLER_PUBLIC_ADDRESS','127.0.0.1')
+		public_address = os.getenv('CONTROLLER_PUBLIC_ADDRESS', '127.0.0.1')
 		admin_address = os.getenv('CONTROLLER_ADMIN_ADDRESS', 'localhost')
 		internal_address = os.getenv('CONTROLLER_INTERNAL_ADDRESS', 'localhost')
 
-		public_port=35357
+		public_port = 35357
 
 		keystone = client.Client(token=token, endpoint=endpoint)
 		
 		#Default Tenant
-		demo_tenant = keystone.projects.create(name='demo', description='Default Tenant',domain='default')
-		admin_user = keystone.users.create(name='admin',password=ADMIN_PASSWORD,domain='default')
+		demo_tenant = keystone.projects.create(name='demo', description='Default Tenant', domain='default')
+		admin_user = keystone.users.create(name='admin', password=ADMIN_PASSWORD, domain='default')
 		admin_role = keystone.roles.create(name='admin')
 		keystone.roles.grant(user=admin_user, role=admin_role, project=demo_tenant)
 		
 		#IdM Tenant
-		idm_tenant = keystone.projects.create(name='idm',description='Tenant for the IdM user',is_defaut=True, domain='default')
-		idm_user = keystone.users.create(name='idm',password=IDM_PASSWORD, domain='default')
+		idm_tenant = keystone.projects.create(name='idm', description='Tenant for the IdM user', is_defaut=True, domain='default')
+		idm_user = keystone.users.create(name='idm', password=IDM_PASSWORD, domain='default')
 		keystone.roles.grant(user=idm_user, role=admin_role, project=idm_tenant)
 
 		#Service Tenant
-		service_tenant = keystone.projects.create(name='service',description='Service Tenant', is_defaut=True, domain='default')
+		service_tenant = keystone.projects.create(name='service', description='Service Tenant', is_defaut=True, domain='default')
 
-		glance_user = keystone.users.create(name='glance',password=GLANCE_PASSWORD, domain='default')
+		glance_user = keystone.users.create(name='glance', password=GLANCE_PASSWORD, domain='default')
 		keystone.roles.grant(user=glance_user, role=admin_role, project=service_tenant)
-		nova_user = keystone.users.create(name='nova',password=NOVA_PASSWORD, domain='default')
+		nova_user = keystone.users.create(name='nova', password=NOVA_PASSWORD, domain='default')
 		keystone.roles.grant(user=nova_user, role=admin_role, project=service_tenant)
-		ec2_user = keystone.users.create(name='ec2',password=EC2_PASSWORD, domain='default')
+		ec2_user = keystone.users.create(name='ec2', password=EC2_PASSWORD, domain='default')
 		keystone.roles.grant(user=ec2_user, role=admin_role, project=service_tenant)
-		swift_user = keystone.users.create(name='swift',password=SWIFT_PASSWORD, domain='default')
+		swift_user = keystone.users.create(name='swift', password=SWIFT_PASSWORD, domain='default')
 		keystone.roles.grant(user=swift_user, role=admin_role, project=service_tenant)
 
 		# Keystone service
 		keystone_service = keystone.services.create(name='keystone', type='identity', description="Keystone Identity Service")
 		keystone.endpoints.create(
-			region ='RegionOne', service=keystone_service,
-			url = 'http://{public_address}:5000/v3'.format(public_address=public_address),
+			region='RegionOne', 
+			service=keystone_service,
+			url='http://{public_address}:5000/v3'.format(public_address=public_address),
 			interface='puadfasfblic')
 		keystone.endpoints.create(
-			region ='RegionOne', service=keystone_service,
-			url = 'http://{public_address}:5000/v3'.format(public_address=public_address),
+			region='RegionOne', 
+			service=keystone_service,
+			url='http://{public_address}:5000/v3'.format(public_address=public_address),
 			interface='admin')
-			# publicurl = 'http://{public_address}:{public_port}/v2.0'.format(public_address=public_address, public_port=public_port),
-			# adminurl = 'http://{admin_address}:{admin_port}/v2.0'.format(admin_address=admin_address, admin_port=admin_port),
-			# internalurl = 'http://{internal_address}:{public_port}/v2.0'.format(internal_address=internal_address, public_port=public_port))
+			# publicurl='http://{public_address}:{public_port}/v2.0'.format(public_address=public_address, public_port=public_port),
+			# adminurl='http://{admin_address}:{admin_port}/v2.0'.format(admin_address=admin_address, admin_port=admin_port),
+			# internalurl='http://{internal_address}:{public_port}/v2.0'.format(internal_address=internal_address, public_port=public_port))
 
 		# Nova service
 		nova_service = keystone.services.create(name='nova', type='compute', description='Nova Compute Service')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=nova_service.id,
-			url = 'http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
+			region='RegionOne', 
+			service=nova_service.id,
+			url='http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=nova_service.id,
-			url = 'http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
+			region='RegionOne', 
+			service=nova_service.id,
+			url='http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
 			interface='admin')
-			# publicurl = 'http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
-			# adminurl = 'http://{admin_address}:8774/v2/%(project_id)s'.format(admin_address=admin_address),
-			# internalurl = 'http://{internal_address}:8774/v2/%(project_id)s'.format(internal_address=internal_address))
+			# publicurl='http://{public_address}:8774/v2/%(project_id)s'.format(public_address=public_address),
+			# adminurl='http://{admin_address}:8774/v2/%(project_id)s'.format(admin_address=admin_address),
+			# internalurl='http://{internal_address}:8774/v2/%(project_id)s'.format(internal_address=internal_address))
 
 		# Volume service
 		volume_service = keystone.services.create(name='volume', type='volume', description='Nova Volume Service')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=volume_service.id,
-			url = 'http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
+			region='RegionOne', 
+			service=volume_service.id,
+			url='http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=volume_service.id,
-			url = 'http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
+			region='RegionOne', 
+			service=volume_service.id,
+			url='http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
 			interface='admin')
-			# publicurl = 'http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
-			# adminurl = 'http://{admin_address}:8776/v1/%(project_id)s'.format(admin_address=admin_address),
-			# internalurl = 'http://{internal_address}:8776/v1/%(project_id)s'.format(internal_address=internal_address))
+			# publicurl='http://{public_address}:8776/v1/%(project_id)s'.format(public_address=public_address),
+			# adminurl='http://{admin_address}:8776/v1/%(project_id)s'.format(admin_address=admin_address),
+			# internalurl='http://{internal_address}:8776/v1/%(project_id)s'.format(internal_address=internal_address))
 
 		# Image service
-		glance_service = keystone.services.create(name='glance',type='image', description='Glance Image Service')
+		glance_service = keystone.services.create(name='glance', type='image', description='Glance Image Service')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=glance_service.id,
-			url = 'http://{public_address}:9292'.format(public_address=public_address),
+			region='RegionOne', 
+			service=glance_service.id,
+			url='http://{public_address}:9292'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=glance_service.id,
-			url = 'http://{public_address}:9292'.format(public_address=public_address),
+			region='RegionOne', 
+			service=glance_service.id,
+			url='http://{public_address}:9292'.format(public_address=public_address),
 			interface='admin')
-			# publicurl = 'http://{public_address}:9292'.format(public_address=public_address),
-			# adminurl = 'http://{admin_address}:9292'.format(admin_address=admin_address),
-			# internalurl = 'http://{internal_address}:9292'.format(internal_address=internal_address))
+			# publicurl='http://{public_address}:9292'.format(public_address=public_address),
+			# adminurl='http://{admin_address}:9292'.format(admin_address=admin_address),
+			# internalurl='http://{internal_address}:9292'.format(internal_address=internal_address))
 
 		# EC2 service
 		ec2_service = keystone.services.create(name='ec2', type='ec2', description='EC2 Compatibility Layer')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=ec2_service.id,
-			url = 'http://{public_address}:8773/services/Cloud'.format(public_address=public_address),
+			region='RegionOne', 
+			service=ec2_service.id,
+			url='http://{public_address}:8773/services/Cloud'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=ec2_service.id,
-			url = 'http://{public_address}:8773/services/Cloud'.format(public_address=public_address),
+			region='RegionOne', 
+			service=ec2_service.id,
+			url='http://{public_address}:8773/services/Cloud'.format(public_address=public_address),
 			interface='admin')
-			# publicurl = 'http://{public_address}:8773/services/Cloud'.format(public_address=public_address),
-			# adminurl = 'http://{admin_address}:8773/services/Admin'.format(admin_address=admin_address),
-			# internalurl = 'http://{internal_address}:8773/services/Cloud'.format(internal_address=internal_address))
+			# publicurl='http://{public_address}:8773/services/Cloud'.format(public_address=public_address),
+			# adminurl='http://{admin_address}:8773/services/Admin'.format(admin_address=admin_address),
+			# internalurl='http://{internal_address}:8773/services/Cloud'.format(internal_address=internal_address))
 
 		# Swift service
 		swift_service = keystone.services.create(name='swift', type='object-store', description='Swift Service')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=volume_service.id,
-			url = 'http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
+			region='RegionOne', 
+			service=volume_service.id,
+			url='http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
-			region = 'RegionOne', service=volume_service.id,
-			url = 'http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
+			region='RegionOne', 
+			service=volume_service.id,
+			url='http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
 			interface='admin')
-			# publicurl = 'http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
-			# adminurl = 'http://{admin_address}:8080/v1'.format(admin_address=admin_address),
-			# internalurl = 'http://{internal_address}:8080/v1/AUTH_%(project_id)s'.format(internal_address=internal_address))
+			# publicurl='http://{public_address}:8080/v1/AUTH_%(project_id)s'.format(public_address=public_address),
+			# adminurl='http://{admin_address}:8080/v1'.format(admin_address=admin_address),
+			# internalurl='http://{internal_address}:8080/v1/AUTH_%(project_id)s'.format(internal_address=internal_address))
 
 		# Default Roles
 		provider = keystone.fiware_roles.roles.create(name='Provider')
@@ -286,7 +298,7 @@ def initial_data(ip='127.0.0.1'):
 		print('Exception: {0}'.format(e))
 
 
-def restart():
+def keystone_reset():
 	local('fab stop')
 	local('fab remove_database')
 	local('fab database')
