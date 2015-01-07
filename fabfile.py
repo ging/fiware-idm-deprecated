@@ -209,8 +209,13 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=keystone_service,
-			url='http://{public_address}:5000/v3'.format(public_address=public_address),
+			url='http://{admin_address}:5000/v3'.format(admin_address=admin_address),
 			interface='admin')
+		keystone.endpoints.create(
+			region='RegionOne', 
+			service=keystone_service,
+			url='http://{internal_address}:5000/v3'.format(internal_address=internal_address),
+			interface='internal')
 			# publicurl='http://{public_address}:{public_port}/v2.0'.format(public_address=public_address, public_port=public_port),
 			# adminurl='http://{admin_address}:{admin_port}/v2.0'.format(admin_address=admin_address, admin_port=admin_port),
 			# internalurl='http://{internal_address}:{public_port}/v2.0'.format(internal_address=internal_address, public_port=public_port))
@@ -225,7 +230,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=nova_service.id,
-			url='http://{public_address}:8774/v2/$(tenant_id)s'.format(public_address=public_address),
+			url='http://{admin_address}:8774/v2/$(tenant_id)s'.format(admin_address=admin_address),
 			interface='admin')
 			# publicurl='http://{public_address}:8774/v2/$(tenant_id)s'.format(public_address=public_address),
 			# adminurl='http://{admin_address}:8774/v2/$(tenant_id)s'.format(admin_address=admin_address),
@@ -241,7 +246,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=volume_service.id,
-			url='http://{public_address}:8776/v1/$(tenant_id)s'.format(public_address=public_address),
+			url='http://{admin_address}:8776/v1/$(tenant_id)s'.format(admin_address=admin_address),
 			interface='admin')
 			# publicurl='http://{public_address}:8776/v1/$(tenant_id)s'.format(public_address=public_address),
 			# adminurl='http://{admin_address}:8776/v1/$(tenant_id)s'.format(admin_address=admin_address),
@@ -257,7 +262,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=glance_service.id,
-			url='http://{public_address}:9292'.format(public_address=public_address),
+			url='http://{admin_address}:9292'.format(admin_address=admin_address),
 			interface='admin')
 			# publicurl='http://{public_address}:9292'.format(public_address=public_address),
 			# adminurl='http://{admin_address}:9292'.format(admin_address=admin_address),
@@ -273,7 +278,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=ec2_service.id,
-			url='http://{public_address}:8773/services/Cloud'.format(public_address=public_address),
+			url='http://{admin_address}:8773/services/Cloud'.format(admin_address=admin_address),
 			interface='admin')
 			# publicurl='http://{public_address}:8773/services/Cloud'.format(public_address=public_address),
 			# adminurl='http://{admin_address}:8773/services/Admin'.format(admin_address=admin_address),
@@ -283,13 +288,13 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		swift_service = keystone.services.create(name='swift', type='object-store', description='Swift Service')
 		keystone.endpoints.create(
 			region='RegionOne', 
-			service=volume_service.id,
+			service=swift_service.id,
 			url='http://{public_address}:8080/v1/AUTH_$(tenant_id)s'.format(public_address=public_address),
 			interface='public')
 		keystone.endpoints.create(
 			region='RegionOne', 
-			service=volume_service.id,
-			url='http://{public_address}:8080/v1/AUTH_$(tenant_id)s'.format(public_address=public_address),
+			service=swift_service.id,
+			url='http://{admin_address}:8080/v1/AUTH_$(tenant_id)s'.format(admin_address=admin_address),
 			interface='admin')
 			# publicurl='http://{public_address}:8080/v1/AUTH_$(tenant_id)s'.format(public_address=public_address),
 			# adminurl='http://{admin_address}:8080/v1'.format(admin_address=admin_address),
