@@ -3,46 +3,56 @@ idm_deployment
 
 Automated deployment for FIWARE's IdM
 
-This fabric script is used to install Keystone and Horizon. The file has different commands that allows different actions.
+This fabric script is used to install Keystone and Horizon. The file has different commands that allows different actions, with wrappers to call multiple actions at once.
 
-Actions:
+To deploy:
 
-- fab install_horizon:
-      Installs horizon from GitHub repository 'ging/horizon'
-      Configures horizon according to said repository.
+- fab idm_deploy:
+    Calls horizon_deploy, keystone_deploy
 
-- fab runserver(:ip='yourip'):
+Horizon Actions:
+
+- fab horizon_deploy:
+    Calls horizon_install, horizon_runserver
+
+- fab horizon_install:
+    Installs horizon from GitHub repository 'ging/horizon'
+    Configures horizon according to said repository.
+
+- fab horizon_runserver(:ip='yourip'):
       Runs server on the 'ip' if used or on localhost by default.
 
+Keystone Actions:
 
-- fab install_keystone:
+- fab keystone_deploy:
+        Calls keystone_install, keystone_service_create, keystone_database_create,keystone_service_start, keystone_database_init
+
+- fab keystone_reset:
+        Convenience wrapper to reset to a clean installation in development. Calls keystone_service_stop, keystone_database_delete, keystone_database_create,keystone_service_start, keystone_database_init
+
+- fab keystone_install:
         Installs keystonse from GitHub repostitory 'ging/keystone'
         Creates keystone.conf file and configures it according to repository.
 
-- fab keystone_service:
+- fab keystone_service_create:
         Adds keystone to init.d to run as a service.
         Keystone can be run using: sudo service keystoneoauth2 start
         And can be stopped: sudo service keystoneoauth2 stop
 
-- fab start:
+- fab keystone_service_start:
         Starts keystone service
 
-- fab stop:
+- fab keystone_service_stop:
         Stops keystone service
 
-- fab database:
+- fab keystone_database_create:
         Creates database including the oauth2 and fiware_roles extensions.
 
-- fab data:
-        Creates initial data taken from the sample_data file given in keystone
-        This command should not be used for IdM, 'fab initial_data' should be used instead, which used Keystone v3.
+- fab keystone_database_init:
+        Initial data using keystone v3 and incorporating oauth2 and roles. Requires keystone to be running.
 
-- fab initial_data:
-        Initial data using keystone v3 and incorporating oauth2 and roles.
-
-- fab remove_database:
+- fab keystone_database_delete:
         Deletes existing dababase with all data
 
-- fab restart:
-        Stops keystone, deletes database (including initial data), creates new database with extensions, and starts service.
-
+- fab keystone_sample_data:
+        Runs the sample_data file given in keystone. This command should not be used for IdM, 'fab keystone_database_init' should be used instead, which used Keystone v3. Requires keystone to be running.
