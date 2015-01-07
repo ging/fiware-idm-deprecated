@@ -13,7 +13,7 @@
 # under the License.
 
 import ConfigParser
-import os.path
+import os
 
 from fabric.api import local
 from fabric.context_managers import lcd
@@ -145,9 +145,9 @@ def keystone_service_create(user):
 
 # Keystone stop service and remove database
 def keystone_database_delete(keystone_path=KEYSTONE_ROOT):
-	with lcd(keystone_path):
-		if os.path.isfile('idm/keystone/keystone.db'):
-			local('sudo rm keystone.db')
+	db_path = keystone_path + 'keystone.db'
+	if os.path.isfile(db_path):
+		local('sudo rm ' + db_path)
 
 def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 	
@@ -205,7 +205,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 			region='RegionOne', 
 			service=keystone_service,
 			url='http://{public_address}:5000/v3'.format(public_address=public_address),
-			interface='puadfasfblic')
+			interface='public')
 		keystone.endpoints.create(
 			region='RegionOne', 
 			service=keystone_service,
