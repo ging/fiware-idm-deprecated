@@ -7,7 +7,7 @@ This fabric script is used to install Keystone and Horizon. The file has differe
 
 Actions:
 
-- fab intall_horizon:
+- fab install_horizon:
       Installs horizon from GitHub repository 'ging/horizon'
       Configures horizon according to said repository.
 
