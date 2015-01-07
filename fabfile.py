@@ -72,16 +72,14 @@ HORIZON_ROOT = IDM_ROOT + 'horizon/'
 #Install Horizon
 
 def horizon_install():
-	local('mkdir {0}'.format(IDM_ROOT))
-	with lcd(IDM_ROOT):
-		local('sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev')
-		local('git clone https://github.com/ging/horizon.git')
-		with lcd('horizon/'):
-			local('git checkout development')
-			local('git submodule init')
-			local('git submodule update')
-			local('sudo python tools/install_venv.py')
-			local('cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py')
+	local('sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev')
+	local('git clone https://github.com/ging/horizon.git {0}'.format(HORIZON_ROOT))
+	with lcd(HORIZON_ROOT):
+		local('git checkout development')
+		local('git submodule init')
+		local('git submodule update')
+		local('sudo python tools/install_venv.py')
+		local('cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py')
 
 
 # Run horizon server
@@ -93,16 +91,15 @@ def horizon_runserver(ip='127.0.0.1:8000'):
 # Install and configure Keystone
 # Change directory to default after tests
 def keystone_install():
-	with lcd(IDM_ROOT):
-		local('git clone https://github.com/ging/keystone.git')
-		with lcd('keystone/'):
-			local('sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev')
-			local('python tools/install_venv.py')
-			local('cp etc/keystone.conf.sample etc/keystone.conf')
-			#Uncomment config file
-			with lcd('etc/'):
-				local("sed -i 's/#admin_token/admin_token/g' keystone.conf")
-				local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
+	local('git clone https://github.com/ging/keystone.git {0}'.format(KEYSTONE_ROOT))
+	with lcd(KEYSTONE_ROOT):
+		local('sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev')
+		local('python tools/install_venv.py')
+		local('cp etc/keystone.conf.sample etc/keystone.conf')
+		#Uncomment config file
+		with lcd('etc/'):
+			local("sed -i 's/#admin_token/admin_token/g' keystone.conf")
+			local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
 
 # Create database
 def keystone_database_create():
@@ -318,8 +315,8 @@ def keystone_database_init(ip='127.0.0.1'):
 
 
 def keystone_reset():
-	local('fab stop')
-	local('fab remove_database')
-	local('fab database')
-	local('fab start')
-
+	local('fab keystone_service_stop')
+	local('fab keystone_database_remove')
+	local('fab keystone_database_create')
+	local('fab keystone_keystone_service_start')
+	local('fab keystone_database_init')
