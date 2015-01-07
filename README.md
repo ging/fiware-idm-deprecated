@@ -1,7 +1,7 @@
 idm_deployment
 ==============
 
-Automated deployment for FIWARE's IdM
+Automated deployment for FIWARE's IdM using Fabric(http://www.fabfile.org/)
 
 This fabric script is used to install Keystone and Horizon. The file has different commands that allows different actions, with wrappers to call multiple actions at once.
 
