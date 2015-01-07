@@ -20,7 +20,7 @@ from fabric.context_managers import lcd
 
 from keystoneclient.v3 import client
 
-IDM_ROOT = './idm/'
+IDM_ROOT = '../idm/'
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
 HORIZON_ROOT = IDM_ROOT + 'horizon/'
 
@@ -104,7 +104,6 @@ def keystone_install(keystone_path=KEYSTONE_ROOT):
 # Create database
 def keystone_database_create(keystone_path=KEYSTONE_ROOT):
 	with lcd(keystone_path):
-		import pdb; pdb.set_trace()
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
