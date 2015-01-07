@@ -197,28 +197,72 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 
 		keystone = client.Client(token=token, endpoint=endpoint)
 		
-		#Default Tenant
-		demo_tenant = keystone.projects.create(name='demo', description='Default Tenant', domain='default')
-		admin_user = keystone.users.create(name='admin', password=ADMIN_PASSWORD, domain='default')
+		# Default keystone roles
+		# NOTE(garcianavalon) don't confuse it with keystone v2 API
+		# default role (member_role_name=_member_). We need a default
+		# role to add users to projects. Horizon knows this role throught
+		# the local_settings.py file.
+		member_role = keystone.roles.create(name='member')
 		admin_role = keystone.roles.create(name='admin')
-		keystone.roles.grant(user=admin_user, role=admin_role, project=demo_tenant)
+		#Default Tenant
+		
+		demo_tenant = keystone.projects.create(name='demo', 
+											description='Default Tenant',
+											domain='default')
+		admin_user = keystone.users.create(name='admin', 
+										password=ADMIN_PASSWORD, 
+										default_project=demo_tenant,
+										domain='default')
+		keystone.roles.grant(user=admin_user, 
+							role=admin_role, 
+							project=demo_tenant)
 		
 		#idm Tenant
-		idm_tenant = keystone.projects.create(name='idm', description='Tenant for the idm user', is_defaut=True, domain='default')
-		idm_user = keystone.users.create(name='idm', password=IDM_PASSWORD, domain='default')
-		keystone.roles.grant(user=idm_user, role=admin_role, project=idm_tenant)
+		idm_tenant = keystone.projects.create(name='idm', 
+									description='Tenant for the idm user', 
+									is_defaut=True, 
+									domain='default')
+		idm_user = keystone.users.create(name='idm', 
+									password=IDM_PASSWORD,
+									default_project=idm_tenant, 
+									domain='default')
+		keystone.roles.grant(user=idm_user, 
+							role=admin_role, 
+							project=idm_tenant)
 
 		#Service Tenant
-		service_tenant = keystone.projects.create(name='service', description='Service Tenant', is_defaut=True, domain='default')
+		service_tenant = keystone.projects.create(name='service', 
+											description='Service Tenant', 
+											is_defaut=True, 
+											domain='default')
 
-		glance_user = keystone.users.create(name='glance', password=GLANCE_PASSWORD, domain='default')
-		keystone.roles.grant(user=glance_user, role=admin_role, project=service_tenant)
-		nova_user = keystone.users.create(name='nova', password=NOVA_PASSWORD, domain='default')
-		keystone.roles.grant(user=nova_user, role=admin_role, project=service_tenant)
-		ec2_user = keystone.users.create(name='ec2', password=EC2_PASSWORD, domain='default')
-		keystone.roles.grant(user=ec2_user, role=admin_role, project=service_tenant)
-		swift_user = keystone.users.create(name='swift', password=SWIFT_PASSWORD, domain='default')
-		keystone.roles.grant(user=swift_user, role=admin_role, project=service_tenant)
+		glance_user = keystone.users.create(name='glance', 
+											password=GLANCE_PASSWORD, 
+											domain='default')
+		keystone.roles.grant(user=glance_user, 
+							role=admin_role, 
+							project=service_tenant)
+		nova_user = keystone.users.create(name='nova', 
+										password=NOVA_PASSWORD,
+										default_project=service_tenant,  
+										domain='default')
+		keystone.roles.grant(user=nova_user, 
+							role=admin_role, 
+							project=service_tenant)
+		ec2_user = keystone.users.create(name='ec2', 
+										password=EC2_PASSWORD,
+										default_project=service_tenant,  
+										domain='default')
+		keystone.roles.grant(user=ec2_user, 
+							role=admin_role, 
+							project=service_tenant)
+		swift_user = keystone.users.create(name='swift', 
+										password=SWIFT_PASSWORD,
+										default_project=service_tenant,  
+										domain='default')
+		keystone.roles.grant(user=swift_user, 
+							role=admin_role, 
+							project=service_tenant)
 
 		# Keystone service
 		keystone_endpoints = [
@@ -295,7 +339,6 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		# result = keystone.ec2.create(project_id=service_tenant.id, user_id=admin_user.id)
 		# admin_access = result.access
 		# admin_secret = result.secret
-
 	except Exception as e:
 		print('Exception: {0}'.format(e))
 
