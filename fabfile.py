@@ -20,7 +20,7 @@ from fabric.context_managers import lcd
 
 from keystoneclient.v3 import client
 
-IDM_ROOT = 'idm/'
+IDM_ROOT = './idm/'
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
 HORIZON_ROOT = IDM_ROOT + 'horizon/'
 
@@ -71,10 +71,10 @@ HORIZON_ROOT = IDM_ROOT + 'horizon/'
 
 #Install Horizon
 
-def horizon_install():
+def horizon_install(horizon_path=HORIZON_ROOT):
 	local('sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev')
-	local('git clone https://github.com/ging/horizon.git {0}'.format(HORIZON_ROOT))
-	with lcd(HORIZON_ROOT):
+	local('git clone https://github.com/ging/horizon.git {0}'.format(horizon_path))
+	with lcd(horizon_path):
 		local('git checkout development')
 		local('git submodule init')
 		local('git submodule update')
@@ -83,16 +83,16 @@ def horizon_install():
 
 
 # Run horizon server
-def horizon_runserver(ip='127.0.0.1:8000'):
-	with lcd(HORIZON_ROOT):
+def horizon_runserver(ip='127.0.0.1:8000',horizon_path=HORIZON_ROOT):
+	with lcd(horizon_path):
 		local('sudo tools/with_venv.sh python manage.py runserver {0}'.format(ip))
 
 
 # Install and configure Keystone
 # Change directory to default after tests
-def keystone_install():
-	local('git clone https://github.com/ging/keystone.git {0}'.format(KEYSTONE_ROOT))
-	with lcd(KEYSTONE_ROOT):
+def keystone_install(keystone_path=KEYSTONE_ROOT):
+	local('git clone https://github.com/ging/keystone.git {0}'.format(keystone_path))
+	with lcd(keystone_path):
 		local('sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev')
 		local('python tools/install_venv.py')
 		local('cp etc/keystone.conf.sample etc/keystone.conf')
@@ -102,8 +102,9 @@ def keystone_install():
 			local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
 
 # Create database
-def keystone_database_create():
-	with lcd(KEYSTONE_ROOT):
+def keystone_database_create(keystone_path=KEYSTONE_ROOT):
+	with lcd(keystone_path):
+		import pdb; pdb.set_trace()
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
@@ -121,8 +122,9 @@ def keystone_service_stop():
 
 # Load initial data (should be done once service is started) 
 # Use 'fab intial_data' instead
-def keystone_sample_data(admin_token='ADMIN', ip='127.0.0.1'):
-	with lcd(KEYSTONE_ROOT):
+def keystone_sample_data(admin_token='ADMIN', ip='127.0.0.1', 
+						keystone_path=KEYSTONE_ROOT):
+	with lcd(keystone_path):
 		local('OS_SERVICE_TOKEN={token} CONTROLLER_PUBLIC_ADDRESS={ip} \
 			CONTROLLER_ADMIN_ADDRESS={ip} CONTROLLER_INTERNAL_ADDRESS={ip} \
 			tools/with_venv.sh tools/sample_data.sh'.format(token=admin_token, 
@@ -143,17 +145,16 @@ def keystone_service_create(user):
 			print('Service already exists in /etc/init')
 
 # Keystone stop service and remove database
-def keystone_database_delete():
-	with lcd(KEYSTONE_ROOT):
+def keystone_database_delete(keystone_path=KEYSTONE_ROOT):
+	with lcd(keystone_path):
 		if os.path.isfile('idm/keystone/keystone.db'):
 			local('sudo rm keystone.db')
 
-
-def keystone_database_init(ip='127.0.0.1'):
+def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 	
 	config = ConfigParser.ConfigParser()
 	
-	config.read('idm/keystone/etc/keystone.conf')
+	config.read(keystone_path + 'etc/keystone.conf')
 	try:
 		admin_port = os.getenv('OS_SERVICE_ENDPOINT', config.defaults()['admin_port'])
 		endpoint = 'http://{ip}:{port}/v3'.format(ip=ip, port=admin_port)
@@ -314,9 +315,9 @@ def keystone_database_init(ip='127.0.0.1'):
 		print('Exception: {0}'.format(e))
 
 
-def keystone_reset():
+def keystone_reset(keystone_path=KEYSTONE_ROOT):
 	local('fab keystone_service_stop')
-	local('fab keystone_database_remove')
-	local('fab keystone_database_create')
+	local('fab keystone_database_delete:keystone_path=\'{0}\''.format(keystone_path))
+	local('fab keystone_database_create:keystone_path=\'{0}\''.format(keystone_path))
 	local('fab keystone_keystone_service_start')
-	local('fab keystone_database_init')
+	local('fab keystone_database_init:keystone_path=\'{0}\''.format(keystone_path))
