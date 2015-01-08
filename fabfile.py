@@ -24,18 +24,18 @@ from keystoneclient.v3 import client
 IDM_ROOT = '../idm/'
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
 HORIZON_ROOT = IDM_ROOT + 'horizon/'
-
-INTERNAL_ROLES = [
-	'provider',
-	'purchaser',
-]
+# TODO(garcianavalon) sync this with the extension, see https://trello.com/c/rTsUMnjw
+INTERNAL_ROLES = {
+	'provider':[0, 1, 2, 3, 4],
+	'purchaser':[3],
+}
 INTERNAL_PERMISSIONS = [
 	'Manage the application',
 	'Manage roles', 
-	'Get and assign roles',
-	'Manage Authorizations', 
+	'Get and assign all application roles',
+	'Manage Authorizations',
+	'Get and assign only owned roles',
 ]
-
 # from fabric.api import env, run
 # env.hosts = ['isabel@hpcm']
 
@@ -95,7 +95,7 @@ def horizon_install(horizon_path=HORIZON_ROOT):
 
 
 # Run horizon server
-def horizon_runserver(ip='127.0.0.1:8000',horizon_path=HORIZON_ROOT):
+def horizon_runserver(ip='127.0.0.1:8000', horizon_path=HORIZON_ROOT):
 	with lcd(horizon_path):
 		local('sudo tools/with_venv.sh python manage.py runserver {0}'.format(ip))
 
@@ -326,14 +326,22 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		create_service_and_enpoints('swift', 'object-store', 
 									'Swift Service', swift_endpoints)
 
-		# Default Roles
-		for role in INTERNAL_ROLES:
-			keystone.fiware_roles.roles.create(name=role, 
-											is_internal=True)
-		# Default Permissions
+		# Default Permissions and Roles
+		created_permissions = []
 		for permission in INTERNAL_PERMISSIONS:
-			keystone.fiware_roles.permissions.create(name=permission, 
-													is_internal=True)
+			created_permissions.append(
+				keystone.fiware_roles.permissions.create(name=permission, 
+													is_internal=True))
+		for role in INTERNAL_ROLES:
+			created_role = keystone.fiware_roles.roles.create(name=role, 
+														is_internal=True)
+			# Link roles with permissions
+			for index in INTERNAL_ROLES[role]:
+				keystone.fiware_roles.permissions.add_to_role(created_role,
+												created_permissions[index])
+
+		
+
 										
 		# Create ec2 credentials 
 		# result = keystone.ec2.create(project_id=service_tenant.id, user_id=admin_user.id)
