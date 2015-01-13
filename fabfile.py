@@ -39,7 +39,9 @@ INTERNAL_PERMISSIONS = [
 	'Manage Authorizations',
 	'Get and assign only owned roles',
 ]
-
+CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
+CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
+CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
 # from fabric.api import env, run
 # env.hosts = ['isabel@hpcm']
 
@@ -119,10 +121,11 @@ def keystone_install(keystone_path=KEYSTONE_ROOT):
 		local('sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev')
 		local('python tools/install_venv.py')
 		local('cp etc/keystone.conf.sample etc/keystone.conf')
-		#Uncomment config file
+		# Uncomment config file
 		with lcd('etc/'):
 			local("sed -i 's/#admin_token/admin_token/g' keystone.conf")
 			local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
+			local("sed -i 's/#public_port/public_port/g' keystone.conf")
 
 # Create database
 def keystone_database_create(keystone_path=KEYSTONE_ROOT):
@@ -163,7 +166,11 @@ def keystone_database_delete(keystone_path=KEYSTONE_ROOT):
 	if os.path.isfile(db_path):
 		local('sudo rm ' + db_path)
 
-def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
+def keystone_database_init(keystone_path=KEYSTONE_ROOT, 
+						internal_address=CONTROLLER_INTERNAL_ADDRESS, 
+						public_address=CONTROLLER_PUBLIC_ADDRESS,
+						admin_address=CONTROLLER_ADMIN_ADDRESS):
+
 	Endpoint = namedtuple('Enpoint', 'url interface')
 	def create_service_and_enpoints(name, endpoint_type, description, endpoints):
 		service = keystone.services.create(name=name, type=endpoint_type, 
@@ -175,13 +182,13 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 									interface=endpoint.interface)
 
 	config = ConfigParser.ConfigParser()
-	
 	config.read(keystone_path + 'etc/keystone.conf')
 	try:
-		admin_port = os.getenv('OS_SERVICE_ENDPOINT', config.defaults()['admin_port'])
-		endpoint = 'http://{ip}:{port}/v3'.format(ip=ip, port=admin_port)
+		admin_port = config.defaults()['admin_port']
+		public_port = config.defaults()['public_port']
 		token = os.getenv('OS_SERVICE_TOKEN', config.defaults()['admin_token'])
-		print admin_port, endpoint, token
+		print admin_port, public_port, token
+
 		# Passwords are either environment variables or their default value
 		ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'secrete')
 		IDM_PASSWORD = os.getenv('IDM_PASSWORD', 'idm')
@@ -190,16 +197,13 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		EC2_PASSWORD = os.getenv('SERVICE_PASSWORD', 'ec2')
 		SWIFT_PASSWORD = os.getenv('SERVICE_PASSWORD', 'swiftpass')
 
-		# Controller Addresses
-		public_address = os.getenv('CONTROLLER_PUBLIC_ADDRESS', '127.0.0.1')
-		admin_address = os.getenv('CONTROLLER_ADMIN_ADDRESS', 'localhost')
-		internal_address = os.getenv('CONTROLLER_INTERNAL_ADDRESS', 'localhost')
+		# Controller Addresses		
+		print public_address, admin_address, internal_address
 
-		public_port = 35357
-		print public_address, admin_address, internal_address, public_port
-
+		endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1', port=admin_port)
 		keystone = client.Client(token=token, endpoint=endpoint)
 		print 'Connected to keystone using token'
+
 		# Default keystone roles
 		# NOTE(garcianavalon) don't confuse it with keystone v2 API
 		# default role (member_role_name=_member_). We need a default
