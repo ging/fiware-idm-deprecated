@@ -19,6 +19,9 @@ from collections import namedtuple
 from fabric.api import local
 from fabric.context_managers import lcd
 
+# NOTE(garcianavalon) add the fiwareclient to PYTHONPATH
+import sys
+sys.path.insert(1,'./fiwareclient')
 from keystoneclient.v3 import client
 
 IDM_ROOT = '../idm/'
@@ -36,6 +39,7 @@ INTERNAL_PERMISSIONS = [
 	'Manage Authorizations',
 	'Get and assign only owned roles',
 ]
+
 # from fabric.api import env, run
 # env.hosts = ['isabel@hpcm']
 
@@ -79,7 +83,14 @@ INTERNAL_PERMISSIONS = [
 	# 	run('sudo service keystone_idm start')
 	# 	run('OS_SERVICE_TOKEN=ADMIN CONTROLLER_PUBLIC_ADDRESS="138.4.4.131" CONTROLLER_ADMIN_ADDRESS="138.4.4.131" CONTROLLER_INTERNAL_ADDRESS="138.4.4.131" tools/with_venv.sh tools/sample_data.sh')
 
+def setup_fiwareclient():
+	""" Download and install locally the fiwareclient."""
+	local('sudo git submodule init')
+	local('sudo git submodule update')
 
+def teardown_fiwareclient():
+	"""Remove the fiwareclient code."""
+	local('sudo rm -r fiwareclient')
 
 #Install Horizon
 
