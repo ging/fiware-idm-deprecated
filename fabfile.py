@@ -42,7 +42,7 @@ INTERNAL_PERMISSIONS = [
 # Keystone stop service and remove database
 # def remove_database():
 # 	with lcd('Keystone-idm/keystone/'):
-# 		local('sudo service keystoneoauth2 stop')
+# 		local('sudo service keystone_idm stop')
 # 		if os.path.isfile('keystone.db'):
 # 			local('sudo rm keystone.db')
 
@@ -54,7 +54,7 @@ INTERNAL_PERMISSIONS = [
 # 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync')
 # 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
 # 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
-# 		local('sudo service keystoneoauth2 start')
+# 		local('sudo service keystone_idm start')
 
 # # Set initial data for Keystone
 # def data_keystone(admin_token='ADMIN', ip='127.0.0.1'):
@@ -67,7 +67,7 @@ INTERNAL_PERMISSIONS = [
 
 		
 # def stop_service():
-# 	run('sudo service keystoneoauth2 stop')
+# 	run('sudo service keystone_idm stop')
 # 	with cd('keystone'):
 # 		run('sudo rm keystone.db')
 
@@ -76,7 +76,7 @@ INTERNAL_PERMISSIONS = [
 	# 	run('sudo tools/with_venv.sh bin/keystone-manage db_sync')
 	# 	run('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
 	# 	run('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
-	# 	run('sudo service keystoneoauth2 start')
+	# 	run('sudo service keystone_idm start')
 	# 	run('OS_SERVICE_TOKEN=ADMIN CONTROLLER_PUBLIC_ADDRESS="138.4.4.131" CONTROLLER_ADMIN_ADDRESS="138.4.4.131" CONTROLLER_INTERNAL_ADDRESS="138.4.4.131" tools/with_venv.sh tools/sample_data.sh')
 
 
@@ -123,12 +123,12 @@ def keystone_database_create(keystone_path=KEYSTONE_ROOT):
 
 # Start keystone service
 def keystone_service_start():
-	local('sudo service keystoneoauth2 start')
+	local('sudo service keystone_idm start')
 	
 
 # Stop keystone service
 def keystone_service_stop():
-	local('sudo service keystoneoauth2 stop')
+	local('sudo service keystone_idm stop')
 	
 
 # Load initial data (should be done once service is started) 
@@ -143,17 +143,8 @@ def keystone_sample_data(admin_token='ADMIN', ip='127.0.0.1',
 
 # Configure keystone as a service
 # @param username: directory home/{username}/...
-def keystone_service_create(user):
-	with lcd('/etc/init/'):
-		if not os.path.isfile('/etc/init/keystoneoauth2.conf'):
-			text = '# keystoneoauth2 - keystoneoauth2 job file\ndescription "Keystone server extended to use OAuth2.0"\nauthor "Enrique G. Navalon <garcianavalon@gmail.com>"\nstart on (local-filesystems and net-device-up IFACE!=lo)\nstop on runlevel [016]\n# Automatically restart process if crashed\nrespawn\nsetuid root\nscript\ncd /home/{user}/idm/keystone/\n#activate the venv\n. .venv/bin/activate\n#run keystone\nbin/keystone-all\nend script'.format(user=user)
-			fo = open('keystoneoauth2.conf', 'wb')
-			fo.write(text)
-			fo.close()
-			local('sudo cp keystoneoauth2.conf /etc/init/')
-			local('sudo rm keystoneoauth2.conf')
-		else:
-			print('Service already exists in /etc/init')
+def keystone_service_create(user=None):
+	local('sudo cp keystone_idm.conf /etc/init/')
 
 # Keystone stop service and remove database
 def keystone_database_delete(keystone_path=KEYSTONE_ROOT):
