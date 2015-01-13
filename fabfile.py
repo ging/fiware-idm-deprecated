@@ -170,7 +170,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		admin_port = os.getenv('OS_SERVICE_ENDPOINT', config.defaults()['admin_port'])
 		endpoint = 'http://{ip}:{port}/v3'.format(ip=ip, port=admin_port)
 		token = os.getenv('OS_SERVICE_TOKEN', config.defaults()['admin_token'])
-		
+		print admin_port, endpoint, token
 		# Passwords are either environment variables or their default value
 		ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'secrete')
 		IDM_PASSWORD = os.getenv('IDM_PASSWORD', 'idm')
@@ -185,9 +185,10 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		internal_address = os.getenv('CONTROLLER_INTERNAL_ADDRESS', 'localhost')
 
 		public_port = 35357
+		print public_address, admin_address, internal_address, public_port
 
 		keystone = client.Client(token=token, endpoint=endpoint)
-		
+		print 'Connected to keystone using token'
 		# Default keystone roles
 		# NOTE(garcianavalon) don't confuse it with keystone v2 API
 		# default role (member_role_name=_member_). We need a default
@@ -195,6 +196,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		# the local_settings.py file.
 		member_role = keystone.roles.create(name='member')
 		admin_role = keystone.roles.create(name='admin')
+		print 'created default keystone roles'
 		#Default Tenant
 		
 		demo_tenant = keystone.projects.create(name='demo', 
@@ -254,6 +256,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		keystone.roles.grant(user=swift_user, 
 							role=admin_role, 
 							project=service_tenant)
+		print 'Created default projects and users.'
 
 		# Keystone service
 		keystone_endpoints = [
@@ -316,6 +319,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 		]
 		create_service_and_enpoints('swift', 'object-store', 
 									'Swift Service', swift_endpoints)
+		print ('Created default services and endpoints.')
 
 		# Default Permissions and Roles
 		created_permissions = []
@@ -330,7 +334,7 @@ def keystone_database_init(ip='127.0.0.1', keystone_path=KEYSTONE_ROOT):
 			for index in INTERNAL_ROLES[role]:
 				keystone.fiware_roles.permissions.add_to_role(created_role,
 												created_permissions[index])
-
+		print ('Created default fiware roles and permissions.')
 		
 
 										
