@@ -53,6 +53,3 @@ Keystone Actions:
 
 - fab keystone_database_delete:
         Deletes existing dababase with all data
-
-- fab keystone_sample_data:
-        Runs the sample_data file given in keystone. This command should not be used for IdM, 'fab keystone_database_init' should be used instead, which used Keystone v3. Requires keystone to be running.

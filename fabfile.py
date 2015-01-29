@@ -14,19 +14,18 @@
 
 import ConfigParser
 import os
+import sys
 
 from collections import namedtuple
+
 from fabric.api import local
 from fabric.context_managers import lcd
 
-# NOTE(garcianavalon) add the fiwareclient to PYTHONPATH
-import sys
-sys.path.insert(1,'./fiwareclient')
-from keystoneclient.v3 import client
-
-IDM_ROOT = '../idm/'
+IDM_ROOT = ''
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
 HORIZON_ROOT = IDM_ROOT + 'horizon/'
+FIWARECLIENT_ROOT = IDM_ROOT + 'fiwareclient/'
+
 # TODO(garcianavalon) sync this with the extension, see https://trello.com/c/rTsUMnjw
 INTERNAL_ROLES = {
 	'provider':[0, 1, 2, 3, 4],
@@ -42,83 +41,91 @@ INTERNAL_PERMISSIONS = [
 CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
 CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
 CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
-# from fabric.api import env, run
-# env.hosts = ['isabel@hpcm']
-
-# Keystone stop service and remove database
-# def remove_database():
-# 	with lcd('Keystone-idm/keystone/'):
-# 		local('sudo service keystone_idm stop')
-# 		if os.path.isfile('keystone.db'):
-# 			local('sudo rm keystone.db')
-
-# # Create database with extensions, delete exiting database, start service
-# def start_database():
-# 	with lcd('Keystone-idm/keystone/'):
-# 		if os.path.isfile('keystone.db'):
-# 			local('sudo rm keystone.db')
-# 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync')
-# 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
-# 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
-# 		local('sudo service keystone_idm start')
-
-# # Set initial data for Keystone
-# def data_keystone(admin_token='ADMIN', ip='127.0.0.1'):
-# 	with lcd('Keystone-idm/keystone/'):
-# 		local('OS_SERVICE_TOKEN={token} CONTROLLER_PUBLIC_ADDRESS={ip} \
-# 			CONTROLLER_ADMIN_ADDRESS={ip} CONTROLLER_INTERNAL_ADDRESS={ip} \
-# 			tools/with_venv.sh tools/sample_data.sh'.format(token=admin_token, 
-# 															ip=ip))
 
 
-		
-# def stop_service():
-# 	run('sudo service keystone_idm stop')
-# 	with cd('keystone'):
-# 		run('sudo rm keystone.db')
+def deploy():
+	"""Fully installs the IdM."""
+	# TODO(garcianavalon) PARAMETERS!!!
+	fiwareclient_install()
+	keystone_deploy()
+	horizon_deploy()
+	print 'IdM successfully deployed! :)'
 
-# def start_service():
-#	with cd('keystone'):
-	# 	run('sudo tools/with_venv.sh bin/keystone-manage db_sync')
-	# 	run('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
-	# 	run('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
-	# 	run('sudo service keystone_idm start')
-	# 	run('OS_SERVICE_TOKEN=ADMIN CONTROLLER_PUBLIC_ADDRESS="138.4.4.131" CONTROLLER_ADMIN_ADDRESS="138.4.4.131" CONTROLLER_INTERNAL_ADDRESS="138.4.4.131" tools/with_venv.sh tools/sample_data.sh')
-
-def setup_fiwareclient():
+def fiwareclient_install(fiwareclient_path=FIWARECLIENT_ROOT):
 	""" Download and install locally the fiwareclient."""
-	local('sudo git submodule init')
-	local('sudo git submodule update')
+	print 'Installing the custom keystoneclient aka fiwareclient'
+	local('git clone https://github.com/ging/python-keystoneclient \
+		{0}'.format(fiwareclient_path))
+	print 'Done!'
 
-def teardown_fiwareclient():
-	"""Remove the fiwareclient code."""
-	local('sudo rm -r fiwareclient')
+def _fiwareclient_check_installation(fiwareclient_path=FIWARECLIENT_ROOT):
+	"""Check if fiwareclient has been correctly set up"""
+	# NOTE(garcianavalon) add the fiwareclient to PYTHONPATH
+	sys.path.insert(1, fiwareclient_path)
+	try:
+		from keystoneclient.v3 import client
+		return client
+	except Exception, e:
+		# TODO(garcianavalon) custom message/exception
+		raise e
+	
+# HORIZON
+def horizon_deploy():
+	"""Fully installs the IdM frontend"""
+	# TODO(garcianavalon) PARAMETERS!!!
+	horizon_install()
+	horizon_runserver()
 
 #Install Horizon
+def horizon_install(horizon_path=HORIZON_ROOT, 
+					fiwareclient_path=FIWARECLIENT_ROOT):
+	print 'Installing frontend (Horizon)'
+	local('sudo apt-get install git python-dev python-virtualenv \
+		libssl-dev libffi-dev libjpeg8-dev')
+	if os.path.isdir(horizon_path[:-1]):
 
-def horizon_install(horizon_path=HORIZON_ROOT):
-	local('sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev')
-	local('git clone https://github.com/ging/horizon.git {0}'.format(horizon_path))
+		print 'already downloaded'
+	else:
+		local('git clone https://github.com/ging/horizon.git {0}'.format(horizon_path))
+	# NOTE(garcianavalon) lets make sure the fiwareclient is correctly set up
+	fiwareclient_relative_path = ('../' + fiwareclient_path[:-1]).replace('/', '\/')
+	local("sed -i 's/-e fiwareclient/-e {fiwareclient}/g' \
+		{horizon}requirements.txt".format(fiwareclient=fiwareclient_relative_path,
+											horizon=horizon_path))
+	client = _fiwareclient_check_installation(fiwareclient_path)
 	with lcd(horizon_path):
-		local('git checkout development')
-		local('git submodule init')
-		local('git submodule update')
 		local('sudo python tools/install_venv.py')
-		local('cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py')
-
+		local('cp openstack_dashboard/local/local_settings.py.example \
+			openstack_dashboard/local/local_settings.py')
+	print 'Done!'
+		
 
 # Run horizon server
 def horizon_runserver(ip='127.0.0.1:8000', horizon_path=HORIZON_ROOT):
+	# TODO(garcianavalon) this is only for development!!! 
 	with lcd(horizon_path):
 		local('sudo tools/with_venv.sh python manage.py runserver {0}'.format(ip))
 
+# KEYSTONE
+def keystone_deploy():
+	"""Fully installs the IdM backend"""
+	# TODO(garcianavalon) PARAMETERS!!!
+	keystone_install()
+	keystone_database_create()
+	keystone_service_create()
+	keystone_service_start()
+	keystone_database_init()
 
 # Install and configure Keystone
 # Change directory to default after tests
 def keystone_install(keystone_path=KEYSTONE_ROOT):
-	local('git clone https://github.com/ging/keystone.git {0}'.format(keystone_path))
+	print 'Installing backend (Keystone)'
+	local('git clone https://github.com/ging/keystone.git \
+		{0}'.format(keystone_path))
 	with lcd(keystone_path):
-		local('sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev')
+		local('sudo apt-get install python-dev libxml2-dev \
+			libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
+			libldap2-dev libffi-dev')
 		local('python tools/install_venv.py')
 		local('cp etc/keystone.conf.sample etc/keystone.conf')
 		# Uncomment config file
@@ -126,39 +133,42 @@ def keystone_install(keystone_path=KEYSTONE_ROOT):
 			local("sed -i 's/#admin_token/admin_token/g' keystone.conf")
 			local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
 			local("sed -i 's/#public_port/public_port/g' keystone.conf")
+	print 'Done!'
 
 # Create database
 def keystone_database_create(keystone_path=KEYSTONE_ROOT):
 	with lcd(keystone_path):
 		local('sudo tools/with_venv.sh bin/keystone-manage db_sync')
-		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2')
-		local('sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles')
+		local('sudo tools/with_venv.sh bin/keystone-manage db_sync \
+			--extension=oauth2')
+		local('sudo tools/with_venv.sh bin/keystone-manage db_sync \
+			--extension=roles')
+		local('sudo tools/with_venv.sh bin/keystone-manage db_sync \
+			--extension=user_registration')
 
 
 # Start keystone service
 def keystone_service_start():
 	local('sudo service keystone_idm start')
 	
-
 # Stop keystone service
 def keystone_service_stop():
 	local('sudo service keystone_idm stop')
 	
-
-# Load initial data (should be done once service is started) 
-# Use 'fab intial_data' instead
-def keystone_sample_data(admin_token='ADMIN', ip='127.0.0.1', 
-						keystone_path=KEYSTONE_ROOT):
-	with lcd(keystone_path):
-		local('OS_SERVICE_TOKEN={token} CONTROLLER_PUBLIC_ADDRESS={ip} \
-			CONTROLLER_ADMIN_ADDRESS={ip} CONTROLLER_INTERNAL_ADDRESS={ip} \
-			tools/with_venv.sh tools/sample_data.sh'.format(token=admin_token, 
-															ip=ip))
-
 # Configure keystone as a service
 # @param username: directory home/{username}/...
-def keystone_service_create(user=None):
-	local('sudo cp keystone_idm.conf /etc/init/')
+def keystone_service_create(absolute_keystone_path=None):
+	if not absolute_keystone_path:
+		absolute_keystone_path = os.getcwd() + '/' + KEYSTONE_ROOT
+	from string import Template
+	in_file = open('keystone_idm.conf')
+	src = Template(in_file.read())
+	out_file = open("tmp_keystone_idm.conf", "w")
+	out_file.write(src.substitute({
+		'absolute_keystone_path': absolute_keystone_path}))
+	out_file.close()
+	local('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
+	local('sudo rm tmp_keystone_idm.conf')
 
 # Keystone stop service and remove database
 def keystone_database_delete(keystone_path=KEYSTONE_ROOT):
@@ -167,10 +177,12 @@ def keystone_database_delete(keystone_path=KEYSTONE_ROOT):
 		local('sudo rm ' + db_path)
 
 def keystone_database_init(keystone_path=KEYSTONE_ROOT, 
+						fiwareclient_path=FIWARECLIENT_ROOT,
 						internal_address=CONTROLLER_INTERNAL_ADDRESS, 
 						public_address=CONTROLLER_PUBLIC_ADDRESS,
 						admin_address=CONTROLLER_ADMIN_ADDRESS):
 
+	client = _fiwareclient_check_installation(fiwareclient_path)
 	Endpoint = namedtuple('Enpoint', 'url interface')
 	def create_service_and_enpoints(name, endpoint_type, description, endpoints):
 		service = keystone.services.create(name=name, type=endpoint_type, 
