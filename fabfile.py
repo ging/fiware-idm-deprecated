@@ -43,12 +43,12 @@ CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
 CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
 
 
-def deploy():
+def deploy(dev=False):
 	"""Fully installs the IdM."""
 	# TODO(garcianavalon) PARAMETERS!!!
 	fiwareclient_install()
-	keystone_deploy()
-	horizon_deploy()
+	keystone_deploy(dev=dev)
+	horizon_deploy(dev=dev)
 	print 'IdM successfully deployed! :)'
 
 def fiwareclient_install(fiwareclient_path=FIWARECLIENT_ROOT):
@@ -70,15 +70,21 @@ def _fiwareclient_check_installation(fiwareclient_path=FIWARECLIENT_ROOT):
 		raise e
 	
 # HORIZON
-def horizon_deploy():
+def horizon_deploy(dev=False):
 	"""Fully installs the IdM frontend"""
 	# TODO(garcianavalon) PARAMETERS!!!
 	horizon_install()
-	horizon_runserver()
+	if dev:
+		horizon_dev_runserver()
+	else:
+		# TODO(garcianavalon) production server!
+		pass
 
-#Install Horizon
+
+
 def horizon_install(horizon_path=HORIZON_ROOT, 
 					fiwareclient_path=FIWARECLIENT_ROOT):
+	"""Download and install Horizon and its dependencies."""
 	print 'Installing frontend (Horizon)'
 	local('sudo apt-get install git python-dev python-virtualenv \
 		libssl-dev libffi-dev libjpeg8-dev')
@@ -99,15 +105,15 @@ def horizon_install(horizon_path=HORIZON_ROOT,
 			openstack_dashboard/local/local_settings.py')
 	print 'Done!'
 		
-
-# Run horizon server
-def horizon_runserver(ip='127.0.0.1:8000', horizon_path=HORIZON_ROOT):
-	# TODO(garcianavalon) this is only for development!!! 
+def horizon_dev_runserver(address='127.0.0.1:8000', horizon_path=HORIZON_ROOT):
+	"""Run horizon server for development purposes"""
 	with lcd(horizon_path):
-		local('sudo tools/with_venv.sh python manage.py runserver {0}'.format(ip))
+		local('sudo tools/with_venv.sh python manage.py runserver \
+			{0}'.format(address))
+
 
 # KEYSTONE
-def keystone_deploy():
+def keystone_deploy(dev=False):
 	"""Fully installs the IdM backend"""
 	# TODO(garcianavalon) PARAMETERS!!!
 	keystone_install()
@@ -115,6 +121,10 @@ def keystone_deploy():
 	keystone_service_create()
 	keystone_service_start()
 	keystone_database_init()
+	if dev:
+		keystone_service_stop()
+		print 'Run fab keystone_dev_server on another terminal to \
+			run keystone\'s dev server'
 
 # Install and configure Keystone
 # Change directory to default after tests
@@ -372,6 +382,10 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 	except Exception as e:
 		print('Exception: {0}'.format(e))
 
+def keystone_dev_server(keystone_path=KEYSTONE_ROOT):
+	"""Runs the server in dev mode."""
+	with lcd(keystone_path):
+		local('sudo tools/with_venv.sh bin/keystone-all -v')
 
 def keystone_reset(keystone_path=KEYSTONE_ROOT):
 	local('fab keystone_service_stop')
