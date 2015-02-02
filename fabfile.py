@@ -118,11 +118,13 @@ def keystone_deploy(dev=False):
 	# TODO(garcianavalon) PARAMETERS!!!
 	keystone_install()
 	keystone_database_create()
-	keystone_service_create()
-	keystone_service_start()
+	if dev:
+		keystone_dev_server()
+	else:
+		keystone_service_create()
+		keystone_service_start()
 	keystone_database_init()
 	if dev:
-		keystone_service_stop()
 		print 'Run fab keystone_dev_server on another terminal to \
 			run keystone\'s dev server'
 
