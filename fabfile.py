@@ -238,16 +238,16 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 		print 'created default keystone roles'
 		#Default Tenant
 		
-		demo_tenant = keystone.projects.create(name='demo', 
-											description='Default Tenant',
-											domain='default')
-		admin_user = keystone.users.create(name='admin', 
-										password=ADMIN_PASSWORD, 
-										default_project=demo_tenant,
-										domain='default')
-		keystone.roles.grant(user=admin_user, 
-							role=admin_role, 
-							project=demo_tenant)
+		# demo_tenant = keystone.projects.create(name='demo', 
+		# 									description='Default Tenant',
+		# 									domain='default')
+		# admin_user = keystone.users.create(name='admin', 
+		# 								password=ADMIN_PASSWORD, 
+		# 								default_project=demo_tenant,
+		# 								domain='default')
+		# keystone.roles.grant(user=admin_user, 
+		# 					role=admin_role, 
+		# 					project=demo_tenant)
 		
 		#idm Tenant
 		idm_tenant = keystone.projects.create(name='idm', 
@@ -262,39 +262,39 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 							role=admin_role, 
 							project=idm_tenant)
 
-		#Service Tenant
-		service_tenant = keystone.projects.create(name='service', 
-											description='Service Tenant', 
-											is_defaut=True, 
-											domain='default')
+		# #Service Tenant
+		# service_tenant = keystone.projects.create(name='service', 
+		# 									description='Service Tenant', 
+		# 									is_defaut=True, 
+		# 									domain='default')
 
-		glance_user = keystone.users.create(name='glance', 
-											password=GLANCE_PASSWORD, 
-											domain='default')
-		keystone.roles.grant(user=glance_user, 
-							role=admin_role, 
-							project=service_tenant)
-		nova_user = keystone.users.create(name='nova', 
-										password=NOVA_PASSWORD,
-										default_project=service_tenant,  
-										domain='default')
-		keystone.roles.grant(user=nova_user, 
-							role=admin_role, 
-							project=service_tenant)
-		ec2_user = keystone.users.create(name='ec2', 
-										password=EC2_PASSWORD,
-										default_project=service_tenant,  
-										domain='default')
-		keystone.roles.grant(user=ec2_user, 
-							role=admin_role, 
-							project=service_tenant)
-		swift_user = keystone.users.create(name='swift', 
-										password=SWIFT_PASSWORD,
-										default_project=service_tenant,  
-										domain='default')
-		keystone.roles.grant(user=swift_user, 
-							role=admin_role, 
-							project=service_tenant)
+		# glance_user = keystone.users.create(name='glance', 
+		# 									password=GLANCE_PASSWORD, 
+		# 									domain='default')
+		# keystone.roles.grant(user=glance_user, 
+		# 					role=admin_role, 
+		# 					project=service_tenant)
+		# nova_user = keystone.users.create(name='nova', 
+		# 								password=NOVA_PASSWORD,
+		# 								default_project=service_tenant,  
+		# 								domain='default')
+		# keystone.roles.grant(user=nova_user, 
+		# 					role=admin_role, 
+		# 					project=service_tenant)
+		# ec2_user = keystone.users.create(name='ec2', 
+		# 								password=EC2_PASSWORD,
+		# 								default_project=service_tenant,  
+		# 								domain='default')
+		# keystone.roles.grant(user=ec2_user, 
+		# 					role=admin_role, 
+		# 					project=service_tenant)
+		# swift_user = keystone.users.create(name='swift', 
+		# 								password=SWIFT_PASSWORD,
+		# 								default_project=service_tenant,  
+		# 								domain='default')
+		# keystone.roles.grant(user=swift_user, 
+		# 					role=admin_role, 
+		# 					project=service_tenant)
 		print 'Created default projects and users.'
 
 		# Keystone service
@@ -309,56 +309,56 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 		create_service_and_enpoints('keystone', 'identity', 
 									'Keystone Identity Service', keystone_endpoints)
 
-		# Nova service
-		nova_endpoints = [
-			Endpoint('http://{public_address}:8774/v2/$(tenant_id)s'
-				.format(public_address=public_address), 'public'),
-			Endpoint('http://{admin_address}:8774/v2/$(tenant_id)s'
-				.format(admin_address=admin_address), 'admin'),
-		]
-		create_service_and_enpoints('nova', 'compute', 
-									'Nova Compute Service', nova_endpoints)
+		# # Nova service
+		# nova_endpoints = [
+		# 	Endpoint('http://{public_address}:8774/v2/$(tenant_id)s'
+		# 		.format(public_address=public_address), 'public'),
+		# 	Endpoint('http://{admin_address}:8774/v2/$(tenant_id)s'
+		# 		.format(admin_address=admin_address), 'admin'),
+		# ]
+		# create_service_and_enpoints('nova', 'compute', 
+		# 							'Nova Compute Service', nova_endpoints)
 		
-		# Volume service
-		volume_endpoints = [
-			Endpoint('http://{public_address}:8776/v1/$(tenant_id)s'
-				.format(public_address=public_address), 'public'),
-			Endpoint('http://{admin_address}:8776/v1/$(tenant_id)s'
-				.format(admin_address=admin_address), 'admin'),
-		]
-		create_service_and_enpoints('volume', 'volume', 
-									'Nova Volume Service', volume_endpoints)
+		# # Volume service
+		# volume_endpoints = [
+		# 	Endpoint('http://{public_address}:8776/v1/$(tenant_id)s'
+		# 		.format(public_address=public_address), 'public'),
+		# 	Endpoint('http://{admin_address}:8776/v1/$(tenant_id)s'
+		# 		.format(admin_address=admin_address), 'admin'),
+		# ]
+		# create_service_and_enpoints('volume', 'volume', 
+		# 							'Nova Volume Service', volume_endpoints)
 
-		# Image service
-		image_endpoints = [
-			Endpoint('http://{public_address}:9292'
-				.format(public_address=public_address), 'public'),
-			Endpoint('http://{admin_address}:9292'
-				.format(admin_address=admin_address), 'admin'),
-		]
-		create_service_and_enpoints('glance', 'image', 
-									'Glance Image Service', image_endpoints)
+		# # Image service
+		# image_endpoints = [
+		# 	Endpoint('http://{public_address}:9292'
+		# 		.format(public_address=public_address), 'public'),
+		# 	Endpoint('http://{admin_address}:9292'
+		# 		.format(admin_address=admin_address), 'admin'),
+		# ]
+		# create_service_and_enpoints('glance', 'image', 
+		# 							'Glance Image Service', image_endpoints)
 
-		# EC2 service
-		ec2_endpoints = [
-			Endpoint('http://{public_address}:8773/services/Cloud'
-				.format(public_address=public_address), 'public'),
-			Endpoint('http://{admin_address}:8773/services/Cloud'
-				.format(admin_address=admin_address), 'admin'),
-		]
-		create_service_and_enpoints('ec2', 'ec2', 
-									'EC2 Compatibility Layer', ec2_endpoints)
+		# # EC2 service
+		# ec2_endpoints = [
+		# 	Endpoint('http://{public_address}:8773/services/Cloud'
+		# 		.format(public_address=public_address), 'public'),
+		# 	Endpoint('http://{admin_address}:8773/services/Cloud'
+		# 		.format(admin_address=admin_address), 'admin'),
+		# ]
+		# create_service_and_enpoints('ec2', 'ec2', 
+		# 							'EC2 Compatibility Layer', ec2_endpoints)
 
-		# Swift service
-		swift_endpoints = [
-			Endpoint('http://{public_address}:8080/v1/AUTH_$(tenant_id)s'
-				.format(public_address=public_address), 'public'),
-			Endpoint('http://{admin_address}:8080/v1/AUTH_$(tenant_id)s'
-				.format(admin_address=admin_address), 'admin'),
-		]
-		create_service_and_enpoints('swift', 'object-store', 
-									'Swift Service', swift_endpoints)
-		print ('Created default services and endpoints.')
+		# # Swift service
+		# swift_endpoints = [
+		# 	Endpoint('http://{public_address}:8080/v1/AUTH_$(tenant_id)s'
+		# 		.format(public_address=public_address), 'public'),
+		# 	Endpoint('http://{admin_address}:8080/v1/AUTH_$(tenant_id)s'
+		# 		.format(admin_address=admin_address), 'admin'),
+		# ]
+		# create_service_and_enpoints('swift', 'object-store', 
+		# 							'Swift Service', swift_endpoints)
+		# print ('Created default services and endpoints.')
 
 		# Default Permissions and Roles
 		created_permissions = []
@@ -383,6 +383,81 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 		# admin_secret = result.secret
 	except Exception as e:
 		print('Exception: {0}'.format(e))
+
+def keystone_database_test_data(keystone_path=KEYSTONE_ROOT, 
+						fiwareclient_path=FIWARECLIENT_ROOT,
+						keystone=None, admin_role=None):
+	"""Populate the database with some users, organizations and applications
+	for convenience"""
+
+	if not keystone:
+		# TODO(garcianavalon) better with the idm account
+		client = _fiwareclient_check_installation(fiwareclient_path)
+		config = ConfigParser.ConfigParser()
+		config.read(keystone_path + 'etc/keystone.conf')
+		admin_port = config.defaults()['admin_port']
+		token = os.getenv('OS_SERVICE_TOKEN', config.defaults()['admin_token'])
+		endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1', port=admin_port)
+		keystone = client.Client(token=token, endpoint=endpoint)
+
+	# Create 4 users
+	users = []
+	for i in range(4):
+		users += _register_user(keystone, 'user' + str(i))
+
+	# Log as user0
+	user0 = users[0]
+	keystone = client.Client(username=user0.username, 
+							password=user0.password,
+                        	project_name=user0.username, 
+                        	auth_url=endpoint)
+
+	# Create 1 organization for user0
+	test_org = keystone.projects.create(name='Test Organization', 
+							description='Testing data',
+							domain='default',
+							enabled=True,
+							img='/static/dashboard/img/logos/small/group.png',
+                            city='',
+                            email='',
+                            website='')
+	
+	# Create 1 application for user0
+	test_app = keystone.oauth2.consumers.create(
+    					name='Test Application',
+                        redirect_uris=['localhost/login'],
+                        description='Test data',
+                        scopes=['all_info'],
+                        client_type='confidential',
+                        grant_type='authorization_code',
+                        url='localhost',
+                        img='/static/dashboard/img/logos/small/app.png')
+
+	# Create a role for the application
+	test_role = keystone.fiware_roles.roles.create(
+										name='Test role',
+						                is_internal=False,
+						                application=test_app)
+	# Give it the permission to get and assign only the owned roles
+	internal_permission_owned = next(p for p 
+							in keystone.fiware_roles.permissions.list() 
+							if p.val == INTERNAL_PERMISSIONS[4])
+	keystone.fiware_roles.permissions.add_to_role(internal_permission_owned, 
+												test_role)
+	# And assign the role to user1
+	user1 = users[1]
+	keystone.fiware_roles.roles.add_to_user(test_role, user1, user1.default_project)
+	
+
+def _register_user(keystone, name, activate=True):
+	user = keystone.user_registration.users.register(name=name, 
+											password='test', 
+											domain='default')
+
+	if activate:
+		user = keystone.user_registration.users.activate(user=user,
+										activation_key=user['activation_key'])
+	return user
 
 def keystone_dev_server(keystone_path=KEYSTONE_ROOT):
 	"""Runs the server in dev mode."""
