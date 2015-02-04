@@ -427,7 +427,7 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
                         	project_name=user0.name, 
                         	auth_url=endpoint)
 
-	# Create 1 organization for user0
+	# Create 1 organization for user0 and give him admin role in it
 	test_org = keystone.projects.create(name='Test Organization', 
 							description='Testing data',
 							domain='default',
@@ -436,6 +436,10 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
                             city='',
                             email='',
                             website='')
+	keystone.roles.grant(user=user0.id, 
+							role=admin_role.id, 
+							project=test_org.id)
+
 	
 	# Create 1 application for user0
 	test_app = keystone.oauth2.consumers.create(
