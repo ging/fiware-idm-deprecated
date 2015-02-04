@@ -227,13 +227,13 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 		token = os.getenv('OS_SERVICE_TOKEN', config.defaults()['admin_token'])
 		print admin_port, public_port, token
 
-		# Passwords are either environment variables or their default value
-		ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'secrete')
+		# # Passwords are either environment variables or their default value
+		# ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'secrete')
 		IDM_PASSWORD = os.getenv('IDM_PASSWORD', 'idm')
-		GLANCE_PASSWORD = os.getenv('SERVICE_PASSWORD', 'glance')
-		NOVA_PASSWORD = os.getenv('SERVICE_PASSWORD', 'nova')
-		EC2_PASSWORD = os.getenv('SERVICE_PASSWORD', 'ec2')
-		SWIFT_PASSWORD = os.getenv('SERVICE_PASSWORD', 'swiftpass')
+		# GLANCE_PASSWORD = os.getenv('SERVICE_PASSWORD', 'glance')
+		# NOVA_PASSWORD = os.getenv('SERVICE_PASSWORD', 'nova')
+		# EC2_PASSWORD = os.getenv('SERVICE_PASSWORD', 'ec2')
+		# SWIFT_PASSWORD = os.getenv('SERVICE_PASSWORD', 'swiftpass')
 
 		# Controller Addresses		
 		print public_address, admin_address, internal_address
@@ -413,17 +413,18 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
 		token = os.getenv('OS_SERVICE_TOKEN', config.defaults()['admin_token'])
 		endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1', port=admin_port)
 		keystone = client.Client(token=token, endpoint=endpoint)
-
+	if not admin_role:
+		admin_role = keystone.roles.find(name='admin')
 	# Create 4 users
 	users = []
 	for i in range(4):
-		users += _register_user(keystone, 'user' + str(i))
+		users.append(_register_user(keystone, 'user' + str(i)))
 
 	# Log as user0
 	user0 = users[0]
-	keystone = client.Client(username=user0.username, 
-							password=user0.password,
-                        	project_name=user0.username, 
+	keystone = client.Client(username=user0.name, 
+							password='test',
+                        	project_name=user0.name, 
                         	auth_url=endpoint)
 
 	# Create 1 organization for user0
@@ -451,26 +452,27 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
 	test_role = keystone.fiware_roles.roles.create(
 										name='Test role',
 						                is_internal=False,
-						                application=test_app)
+						                application=test_app.id)
 	# Give it the permission to get and assign only the owned roles
 	internal_permission_owned = next(p for p 
 							in keystone.fiware_roles.permissions.list() 
-							if p.val == INTERNAL_PERMISSIONS[4])
-	keystone.fiware_roles.permissions.add_to_role(internal_permission_owned, 
-												test_role)
+							if p.name == INTERNAL_PERMISSIONS[4])
+	keystone.fiware_roles.permissions.add_to_role(role=test_role,
+								permission=internal_permission_owned)
 	# And assign the role to user1
 	user1 = users[1]
-	keystone.fiware_roles.roles.add_to_user(test_role, user1, user1.default_project)
+	keystone.fiware_roles.roles.add_to_user(role=test_role.id, 
+									user=user1.id, 
+									organization=user1.default_project_id)
 	
 
 def _register_user(keystone, name, activate=True):
-	user = keystone.user_registration.users.register(name=name, 
+	user = keystone.user_registration.users.register_user(name=name, 
 											password='test', 
 											domain='default')
-
 	if activate:
-		user = keystone.user_registration.users.activate(user=user,
-										activation_key=user['activation_key'])
+		user = keystone.user_registration.users.activate_user(user=user.id,
+										activation_key=user.activation_key)
 	return user
 
 def keystone_dev_server(keystone_path=KEYSTONE_ROOT):
@@ -478,9 +480,10 @@ def keystone_dev_server(keystone_path=KEYSTONE_ROOT):
 	with lcd(keystone_path):
 		local('sudo tools/with_venv.sh bin/keystone-all -v')
 
-def keystone_reset(keystone_path=KEYSTONE_ROOT):
-	local('fab keystone_service_stop')
-	local('fab keystone_database_delete:keystone_path=\'{0}\''.format(keystone_path))
-	local('fab keystone_database_create:keystone_path=\'{0}\''.format(keystone_path))
-	local('fab keystone_keystone_service_start')
-	local('fab keystone_database_init:keystone_path=\'{0}\''.format(keystone_path))
+def keystone_database_reset(keystone_path=KEYSTONE_ROOT):
+	"""Deletes keystone's database and create a new one, populated with
+	the base data needed by the IdM. Requires a keystone instance running.
+	"""
+	keystone_database_delete(keystone_path=keystone_path)
+	keystone_database_create(keystone_path=keystone_path)
+	keystone_database_init(keystone_path=keystone_path)
