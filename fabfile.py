@@ -46,16 +46,20 @@ CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
 def deploy(dev=False):
 	"""Fully installs the IdM."""
 	# TODO(garcianavalon) PARAMETERS!!!
-	fiwareclient_install()
+	fiwareclient_install(dev=dev)
 	keystone_deploy(dev=dev)
 	horizon_deploy(dev=dev)
 	print 'IdM successfully deployed! :)'
 
-def fiwareclient_install(fiwareclient_path=FIWARECLIENT_ROOT):
+def fiwareclient_install(fiwareclient_path=FIWARECLIENT_ROOT, 
+						dev=False):
 	""" Download and install locally the fiwareclient."""
 	print 'Installing the custom keystoneclient aka fiwareclient'
 	local('git clone https://github.com/ging/python-keystoneclient \
 		{0}'.format(fiwareclient_path))
+	with lcd(fiwareclient_path):
+		if dev:
+			local('git checkout development')
 	print 'Done!'
 
 def _fiwareclient_check_installation(fiwareclient_path=FIWARECLIENT_ROOT):
@@ -73,7 +77,7 @@ def _fiwareclient_check_installation(fiwareclient_path=FIWARECLIENT_ROOT):
 def horizon_deploy(dev=False):
 	"""Fully installs the IdM frontend"""
 	# TODO(garcianavalon) PARAMETERS!!!
-	horizon_install()
+	horizon_install(dev=dev)
 	if dev:
 		horizon_dev_runserver()
 	else:
@@ -83,16 +87,18 @@ def horizon_deploy(dev=False):
 
 
 def horizon_install(horizon_path=HORIZON_ROOT, 
-					fiwareclient_path=FIWARECLIENT_ROOT):
+					fiwareclient_path=FIWARECLIENT_ROOT,
+					dev=False):
 	"""Download and install Horizon and its dependencies."""
 	print 'Installing frontend (Horizon)'
 	local('sudo apt-get install git python-dev python-virtualenv \
 		libssl-dev libffi-dev libjpeg8-dev')
-	if os.path.isdir(horizon_path[:-1]):
 
+	if os.path.isdir(horizon_path[:-1]):
 		print 'already downloaded'
 	else:
 		local('git clone https://github.com/ging/horizon.git {0}'.format(horizon_path))
+
 	# NOTE(garcianavalon) lets make sure the fiwareclient is correctly set up
 	fiwareclient_relative_path = ('../' + fiwareclient_path[:-1]).replace('/', '\/')
 	local("sed -i 's/-e fiwareclient/-e {fiwareclient}/g' \
@@ -100,6 +106,9 @@ def horizon_install(horizon_path=HORIZON_ROOT,
 											horizon=horizon_path))
 	client = _fiwareclient_check_installation(fiwareclient_path)
 	with lcd(horizon_path):
+		if dev:
+			local('git checkout development')
+
 		local('sudo python tools/install_venv.py')
 		local('cp openstack_dashboard/local/local_settings.py.example \
 			openstack_dashboard/local/local_settings.py')
@@ -116,7 +125,7 @@ def horizon_dev_runserver(address='127.0.0.1:8000', horizon_path=HORIZON_ROOT):
 def keystone_deploy(dev=False):
 	"""Fully installs the IdM backend"""
 	# TODO(garcianavalon) PARAMETERS!!!
-	keystone_install()
+	keystone_install(dev=dev)
 	keystone_database_create()
 	if dev:
 		keystone_dev_server()
@@ -130,11 +139,16 @@ def keystone_deploy(dev=False):
 
 # Install and configure Keystone
 # Change directory to default after tests
-def keystone_install(keystone_path=KEYSTONE_ROOT):
+def keystone_install(keystone_path=KEYSTONE_ROOT,
+					dev=False):
 	print 'Installing backend (Keystone)'
 	local('git clone https://github.com/ging/keystone.git \
 		{0}'.format(keystone_path))
+
 	with lcd(keystone_path):
+		if dev:
+			local('git checkout development')
+
 		local('sudo apt-get install python-dev libxml2-dev \
 			libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
 			libldap2-dev libffi-dev')
