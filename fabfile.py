@@ -110,8 +110,8 @@ def horizon_install(horizon_path=HORIZON_ROOT,
         {horizon}requirements.txt".format(
         horizon=horizon_path,
         fiwareclient=fiwareclient_relative_path))
-    pasds
-    client = _fiwareclient_check_installation(fiwareclient_path)
+
+    _fiwareclient_check_installation(fiwareclient_path)
     with lcd(horizon_path):
         if dev:
             local('git checkout development')
