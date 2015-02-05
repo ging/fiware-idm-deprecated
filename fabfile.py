@@ -441,7 +441,7 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
 							project=test_org.id)
 
 	
-	# Create 1 application for user0
+	# Create 1 application for user0 and give him the provider role
 	test_app = keystone.oauth2.consumers.create(
     					name='Test Application',
                         redirect_uris=['localhost/login'],
@@ -451,6 +451,12 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
                         grant_type='authorization_code',
                         url='localhost',
                         img='/static/dashboard/img/logos/small/app.png')
+	provider_role = next(r for r 
+						in keystone.fiware_roles.roles.list() 
+						if r.name == 'provider')
+	keystone.fiware_roles.roles.add_to_user(role=provider_role.id, 
+									user=user0.id, 
+									organization=user0.default_project_id)
 
 	# Create a role for the application
 	test_role = keystone.fiware_roles.roles.create(
