@@ -20,6 +20,7 @@ from collections import namedtuple
 
 from fabric.api import local
 from fabric.context_managers import lcd
+from fabric.contrib import console
 
 IDM_ROOT = ''
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
@@ -57,18 +58,22 @@ def fiwareclient_install(fiwareclient_path=FIWARECLIENT_ROOT,
                          dev=False):
     """ Download and install locally the fiwareclient."""
     print 'Installing the custom keystoneclient aka fiwareclient'
-    local('git clone https://github.com/ging/python-keystoneclient \
+    if os.path.isdir(fiwareclient_path[:-1]):
+        print 'already downloaded'
+    else:
+        local('git clone https://github.com/ging/python-keystoneclient \
         {0}'.format(fiwareclient_path))
     with lcd(fiwareclient_path):
         if dev:
             local('git checkout development')
+
+    local('sudo pip install -e {0}'.format(fiwareclient_path[:-1]))
     print 'Done!'
 
 
 def _fiwareclient_check_installation(fiwareclient_path=FIWARECLIENT_ROOT):
     """Check if fiwareclient has been correctly set up"""
     # NOTE(garcianavalon) add the fiwareclient to PYTHONPATH
-    sys.path.insert(1, fiwareclient_path)
     try:
         from keystoneclient.v3 import client
         return client
@@ -136,15 +141,22 @@ def keystone_deploy(dev=False):
     # TODO(garcianavalon) PARAMETERS!!!
     keystone_install(dev=dev)
     keystone_database_create()
-    if dev:
-        keystone_dev_server()
-    else:
+    if not dev:
         keystone_service_create()
         keystone_service_start()
-    keystone_database_init()
+        keystone_database_init()
     if dev:
         print 'Run fab keystone_dev_server on another terminal to \
             run keystone\'s dev server'
+        if console.confirm("Do you want to install now the initial data?"):
+            keystone_database_init()
+        else:
+            print 'Run fab keystone_database_init when you are ready.'
+
+        if console.confirm("Do you want to install now some test data?"):
+            keystone_database_test_data()
+        else:
+            print 'Run fab keystone_database_test_data when you are ready.'
 
 
 # Install and configure Keystone
@@ -152,23 +164,24 @@ def keystone_deploy(dev=False):
 def keystone_install(keystone_path=KEYSTONE_ROOT,
                      dev=False):
     print 'Installing backend (Keystone)'
-    local('git clone https://github.com/ging/keystone.git \
-        {0}'.format(keystone_path))
-
-    with lcd(keystone_path):
-        if dev:
-            local('git checkout development')
-
-        local('sudo apt-get install python-dev libxml2-dev \
+    if os.path.isdir(keystone_path[:-1]):
+        print 'already downloaded'
+    else:
+        local('sudo git clone https://github.com/ging/keystone.git \
+            {0}'.format(keystone_path))
+    local('sudo apt-get install python-dev libxml2-dev \
             libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
             libldap2-dev libffi-dev')
-        local('python tools/install_venv.py')
-        local('cp etc/keystone.conf.sample etc/keystone.conf')
+    with lcd(keystone_path):
+        if dev:
+            local('sudo git checkout development')
+        local('sudo python tools/install_venv.py')
+        local('sudo cp etc/keystone.conf.sample etc/keystone.conf')
         # Uncomment config file
         with lcd('etc/'):
-            local("sed -i 's/#admin_token/admin_token/g' keystone.conf")
-            local("sed -i 's/#admin_port/admin_port/g' keystone.conf")
-            local("sed -i 's/#public_port/public_port/g' keystone.conf")
+            local("sudo sed -i 's/#admin_token/admin_token/g' keystone.conf")
+            local("sudo sed -i 's/#admin_port/admin_port/g' keystone.conf")
+            local("sudo sed -i 's/#public_port/public_port/g' keystone.conf")
     print 'Done!'
 
 
@@ -259,7 +272,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
                                                   port=admin_port)
         keystone = client.Client(token=token, endpoint=endpoint)
         print 'Connected to keystone using token'
-
+        import pdb; pdb.set_trace()
         # Default keystone roles
         # NOTE(garcianavalon) don't confuse it with keystone v2 API
         # default role (member_role_name=_member_). We need a default
