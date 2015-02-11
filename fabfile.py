@@ -167,14 +167,14 @@ def keystone_install(keystone_path=KEYSTONE_ROOT,
     if os.path.isdir(keystone_path[:-1]):
         print 'already downloaded'
     else:
-        local('sudo git clone https://github.com/ging/keystone.git \
+        local('git clone https://github.com/ging/keystone.git \
             {0}'.format(keystone_path))
     local('sudo apt-get install python-dev libxml2-dev \
             libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
             libldap2-dev libffi-dev')
     with lcd(keystone_path):
         if dev:
-            local('sudo git checkout development')
+            local('git checkout development')
         local('sudo python tools/install_venv.py')
         local('sudo cp etc/keystone.conf.sample etc/keystone.conf')
         # Uncomment config file
@@ -272,7 +272,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
                                                   port=admin_port)
         keystone = client.Client(token=token, endpoint=endpoint)
         print 'Connected to keystone using token'
-        import pdb; pdb.set_trace()
+
         # Default keystone roles
         # NOTE(garcianavalon) don't confuse it with keystone v2 API
         # default role (member_role_name=_member_). We need a default
