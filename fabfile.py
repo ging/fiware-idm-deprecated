@@ -407,8 +407,11 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
                              project_name=idm_user.name,
                              auth_url=endpoint)
         idm_app = keystone.oauth2.consumers.create(
-            'idm', grant_type='authorization_code', client_type='confidential')
-        # Default Permissions and Roles
+            'idm', 
+            grant_type='authorization_code', 
+            client_type='confidential', 
+            is_default=True)
+        # Default Permissions and roles
         created_permissions = []
         for permission in INTERNAL_PERMISSIONS:
             created_permissions.append(
