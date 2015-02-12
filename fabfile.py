@@ -407,22 +407,27 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         # 							'Swift Service', swift_endpoints)
         # print ('Created default services and endpoints.')
 
+        # Default internal application
+        # Log as idm
+        keystone = client.Client(username=idm_user.name,
+                             password=IDM_PASSWORD,
+                             project_name=idm_user.name,
+                             auth_url=endpoint)
+        idm_app = keystone.oauth2.consumers.create(
+            'idm', grant_type='authorization_code', client_type='confidential')
         # Default Permissions and Roles
         created_permissions = []
         for permission in INTERNAL_PERMISSIONS:
             created_permissions.append(
                 keystone.fiware_roles.permissions.create(
-                    name=permission,
-                    is_internal=True))
+                    name=permission, application=idm_app, is_internal=True))
         for role in INTERNAL_ROLES:
             created_role = keystone.fiware_roles.roles.create(
-                name=role,
-                is_internal=True)
+                name=role, application=idm_app, is_internal=True)
             # Link roles with permissions
             for index in INTERNAL_ROLES[role]:
                 keystone.fiware_roles.permissions.add_to_role(
-                    created_role,
-                    created_permissions[index])
+                    created_role, created_permissions[index])
         print ('Created default fiware roles and permissions.')
 
         # Create ec2 credentials
@@ -494,6 +499,7 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
     keystone.fiware_roles.roles.add_to_user(
         role=provider_role.id,
         user=user0.id,
+        application=test_app.id,
         organization=user0.default_project_id)
 
     # Create a role for the application
@@ -513,6 +519,7 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
     keystone.fiware_roles.roles.add_to_user(
         role=test_role.id,
         user=user1.id,
+        application=test_app.id,
         organization=user1.default_project_id)
 
 
