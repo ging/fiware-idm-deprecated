@@ -53,6 +53,15 @@ def deploy(dev=False):
     horizon_deploy(dev=dev)
     print 'IdM successfully deployed! :)'
 
+def _check_dependencies():
+    local('sudo apt-get install python-dev libxml2-dev \
+            libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
+            libldap2-dev libffi-dev')
+    local('sudo apt-get install git python-dev python-virtualenv \
+        libssl-dev libffi-dev libjpeg8-dev')
+    print 'Dependencies correctly installed'
+
+
 
 def fiwareclient_install(fiwareclient_path=FIWARECLIENT_ROOT,
                          dev=False):
@@ -63,6 +72,7 @@ def fiwareclient_install(fiwareclient_path=FIWARECLIENT_ROOT,
     else:
         local('git clone https://github.com/ging/python-keystoneclient \
         {0}'.format(fiwareclient_path))
+        _check_dependencies()
     with lcd(fiwareclient_path):
         if dev:
             local('git checkout development')
@@ -99,8 +109,9 @@ def horizon_install(horizon_path=HORIZON_ROOT,
                     dev=False):
     """Download and install Horizon and its dependencies."""
     print 'Installing frontend (Horizon)'
-    local('sudo apt-get install git python-dev python-virtualenv \
-        libssl-dev libffi-dev libjpeg8-dev')
+    _check_dependencies()
+    # local('sudo apt-get install git python-dev python-virtualenv \
+    #     libssl-dev libffi-dev libjpeg8-dev')
 
     if os.path.isdir(horizon_path[:-1]):
         print 'already downloaded'
@@ -169,9 +180,10 @@ def keystone_install(keystone_path=KEYSTONE_ROOT,
     else:
         local('git clone https://github.com/ging/keystone.git \
             {0}'.format(keystone_path))
-    local('sudo apt-get install python-dev libxml2-dev \
-            libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
-            libldap2-dev libffi-dev')
+    _check_dependencies()
+    # local('sudo apt-get install python-dev libxml2-dev \
+    #         libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
+    #         libldap2-dev libffi-dev')
     with lcd(keystone_path):
         if dev:
             local('git checkout development')
@@ -200,7 +212,6 @@ def keystone_database_create(keystone_path=KEYSTONE_ROOT):
 # Start keystone service
 def keystone_service_start():
     local('sudo service keystone_idm start')
-
 
 # Stop keystone service
 def keystone_service_stop():
@@ -243,6 +254,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
                                     description, endpoints):
         service = keystone.services.create(name=name, type=endpoint_type,
                                            description=description)
+        print 'Create service'
         for endpoint in endpoints:
             keystone.endpoints.create(region='RegionOne',
                                       service=service,
