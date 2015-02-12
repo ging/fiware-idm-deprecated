@@ -109,13 +109,6 @@ def horizon_install(horizon_path=HORIZON_ROOT,
             {0}'.format(horizon_path))
 
     # NOTE(garcianavalon) lets make sure the fiwareclient is correctly set up
-    fiwareclient_relative_path = ('../' + fiwareclient_path[:-1]
-                                  ).replace('/', '\/')
-    local("sed -i 's/-e fiwareclient/-e {fiwareclient}/g' \
-        {horizon}requirements.txt".format(
-        horizon=horizon_path,
-        fiwareclient=fiwareclient_relative_path))
-
     _fiwareclient_check_installation(fiwareclient_path)
     with lcd(horizon_path):
         if dev:
