@@ -120,13 +120,6 @@ def horizon_install(horizon_path=HORIZON_ROOT,
             {0}'.format(horizon_path))
 
     # NOTE(garcianavalon) lets make sure the fiwareclient is correctly set up
-    fiwareclient_relative_path = ('../' + fiwareclient_path[:-1]
-                                  ).replace('/', '\/')
-    local("sed -i 's/-e fiwareclient/-e {fiwareclient}/g' \
-        {horizon}requirements.txt".format(
-        horizon=horizon_path,
-        fiwareclient=fiwareclient_relative_path))
-
     _fiwareclient_check_installation(fiwareclient_path)
     with lcd(horizon_path):
         if dev:
@@ -310,7 +303,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         idm_tenant = keystone.projects.create(
             name='idm',
             description='Tenant for the idm user',
-            is_defaut=True,
+            is_default=True,
             domain='default')
         idm_user = keystone.users.create(name='idm',
                                          password=IDM_PASSWORD,
@@ -323,7 +316,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         # #Service Tenant
         # service_tenant = keystone.projects.create(name='service',
         # 									description='Service Tenant',
-        # 									is_defaut=True,
+        # 									is_default=True,
         # 									domain='default')
 
         # glance_user = keystone.users.create(name='glance',
@@ -419,22 +412,40 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         # 							'Swift Service', swift_endpoints)
         # print ('Created default services and endpoints.')
 
-        # Default Permissions and Roles
+        # Default internal application
+        # Log as idm
+        keystone = client.Client(username=idm_user.name,
+                             password=IDM_PASSWORD,
+                             project_name=idm_user.name,
+                             auth_url=endpoint)
+        idm_app = keystone.oauth2.consumers.create(
+            'idm', 
+            grant_type='authorization_code', 
+            client_type='confidential', 
+            is_default=True)
+        # Default Permissions and roles
         created_permissions = []
         for permission in INTERNAL_PERMISSIONS:
             created_permissions.append(
                 keystone.fiware_roles.permissions.create(
-                    name=permission,
-                    is_internal=True))
+                    name=permission, application=idm_app, is_internal=True))
+        created_roles = []
         for role in INTERNAL_ROLES:
             created_role = keystone.fiware_roles.roles.create(
-                name=role,
-                is_internal=True)
+                name=role, application=idm_app, is_internal=True)
+            created_roles.append(created_role)
             # Link roles with permissions
             for index in INTERNAL_ROLES[role]:
                 keystone.fiware_roles.permissions.add_to_role(
-                    created_role,
-                    created_permissions[index])
+                    created_role, created_permissions[index])
+
+        # Make the idm user administrator
+        keystone.fiware_roles.roles.add_to_user(
+            role=created_roles[0],
+            user=idm_user,
+            application=idm_app,
+            organization=idm_tenant)
+
         print ('Created default fiware roles and permissions.')
 
         # Create ec2 credentials
@@ -506,6 +517,7 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
     keystone.fiware_roles.roles.add_to_user(
         role=provider_role.id,
         user=user0.id,
+        application=test_app.id,
         organization=user0.default_project_id)
 
     # Create a role for the application
@@ -525,6 +537,7 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
     keystone.fiware_roles.roles.add_to_user(
         role=test_role.id,
         user=user1.id,
+        application=test_app.id,
         organization=user1.default_project_id)
 
 
