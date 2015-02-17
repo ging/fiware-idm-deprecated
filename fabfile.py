@@ -291,7 +291,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         idm_tenant = keystone.projects.create(
             name='idm',
             description='Tenant for the idm user',
-            is_defaut=True,
+            is_default=True,
             domain='default')
         idm_user = keystone.users.create(name='idm',
                                          password=IDM_PASSWORD,
@@ -304,7 +304,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         # #Service Tenant
         # service_tenant = keystone.projects.create(name='service',
         # 									description='Service Tenant',
-        # 									is_defaut=True,
+        # 									is_default=True,
         # 									domain='default')
 
         # glance_user = keystone.users.create(name='glance',
