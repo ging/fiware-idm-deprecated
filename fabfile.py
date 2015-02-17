@@ -417,13 +417,23 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
             created_permissions.append(
                 keystone.fiware_roles.permissions.create(
                     name=permission, application=idm_app, is_internal=True))
+        created_roles = []
         for role in INTERNAL_ROLES:
             created_role = keystone.fiware_roles.roles.create(
                 name=role, application=idm_app, is_internal=True)
+            created_roles.append(created_role)
             # Link roles with permissions
             for index in INTERNAL_ROLES[role]:
                 keystone.fiware_roles.permissions.add_to_role(
                     created_role, created_permissions[index])
+
+        # Make the idm user administrator
+        keystone.fiware_roles.roles.add_to_user(
+            role=created_roles[0],
+            user=idm_user,
+            application=idm_app,
+            organization=idm_tenant)
+
         print ('Created default fiware roles and permissions.')
 
         # Create ec2 credentials
