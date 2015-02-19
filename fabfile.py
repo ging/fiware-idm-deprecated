@@ -411,6 +411,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
             grant_type='authorization_code', 
             client_type='confidential', 
             is_default=True)
+        print 'IdM app id: ' + idm_app.id
         # Default Permissions and roles
         created_permissions = []
         for permission in INTERNAL_PERMISSIONS:
@@ -426,10 +427,12 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
             for index in INTERNAL_ROLES[role]:
                 keystone.fiware_roles.permissions.add_to_role(
                     created_role, created_permissions[index])
+        for role in created_roles:
+            print role.name + ':' + role.id
 
         # Make the idm user administrator
         keystone.fiware_roles.roles.add_to_user(
-            role=created_roles[0],
+            role=next(r for r in created_roles if r.name == 'provider'),
             user=idm_user,
             application=idm_app,
             organization=idm_tenant)
