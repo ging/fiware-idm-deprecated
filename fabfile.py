@@ -289,11 +289,11 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 
         # idm Tenant
         idm_tenant = keystone.projects.create(
-            name='idm',
+            name='idm@idm.com',
             description='Tenant for the idm user',
             is_default=True,
             domain='default')
-        idm_user = keystone.users.create(name='idm',
+        idm_user = keystone.users.create(name='idm@idm.com',
                                          password=IDM_PASSWORD,
                                          default_project=idm_tenant,
                                          domain='default')
@@ -469,7 +469,7 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
     # Create 4 users
     users = []
     for i in range(4):
-        users.append(_register_user(keystone, 'user' + str(i)))
+        users.append(_register_user(keystone, 'user' + str(i) + '@test.com'))
 
     # Log as user0
     user0 = users[0]
