@@ -301,11 +301,11 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 
         # idm Tenant
         idm_tenant = keystone.projects.create(
-            name='idm@idm.com',
+            name='idm',
             description='Tenant for the idm user',
             is_default=True,
             domain='default')
-        idm_user = keystone.users.create(name='idm@idm.com',
+        idm_user = keystone.users.create(name='idm',
                                          password=IDM_PASSWORD,
                                          default_project=idm_tenant,
                                          domain='default')
@@ -423,7 +423,6 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
             grant_type='authorization_code', 
             client_type='confidential', 
             is_default=True)
-        print 'IdM app id: ' + idm_app.id
         # Default Permissions and roles
         created_permissions = []
         for permission in INTERNAL_PERMISSIONS:
@@ -439,12 +438,10 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
             for index in INTERNAL_ROLES[role]:
                 keystone.fiware_roles.permissions.add_to_role(
                     created_role, created_permissions[index])
-        for role in created_roles:
-            print role.name + ':' + role.id
 
         # Make the idm user administrator
         keystone.fiware_roles.roles.add_to_user(
-            role=next(r for r in created_roles if r.name == 'provider'),
+            role=created_roles[0],
             user=idm_user,
             application=idm_app,
             organization=idm_tenant)
@@ -452,14 +449,11 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         print ('Created default fiware roles and permissions.')
 
         provider_role = next(r for r
-                         in keystone.fiware_roles.roles.list()
-                         if r.name == 'provider')
-
+                        in keystone.fiware_roles.roles.list()
+                        if r.name == 'provider')
         purchaser_role = next(r for r
-                         in keystone.fiware_roles.roles.list()
-                         if r.name == 'purchaser')
-
-
+                        in keystone.fiware_roles.roles.list()
+                        if r.name == 'purchaser')
         _set_idm_configuration(idm_id=idm_app.id,
                                purchaser_role_id=purchaser_role.id,
                                provider_role_id=provider_role.id)
@@ -474,10 +468,10 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 
 def _set_idm_configuration(idm_id,provider_role_id,purchaser_role_id):
     with lcd('horizon/openstack_dashboard/local/'):
-            local("sudo sed -i 's/$idm_id/{0}/g' local_settings.py".format('"' + idm_id+ '"'))
-            local("sudo sed -i 's/$provider_role_id/{0}/g' local_settings.py".format('"' + provider_role_id+ '"'))
-            local("sudo sed -i 's/$purchaser_role_id/{0}/g' local_settings.py".format('"' + purchaser_role_id+ '"'))
-    print 'local_settings configured!'
+        local("sudo sed -i 's/$idm_id/{0}/g' local_settings.py".format('"' + idm_id+ '"'))
+        local("sudo sed -i 's/$provider_role_id/{0}/g' local_settings.py".format('"' + provider_role_id+ '"'))
+        local("sudo sed -i 's/$purchaser_role_id/{0}/g' local_settings.py".format('"' + purchaser_role_id+ '"'))
+        print 'local_settings configured!'
 
 
 def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
@@ -498,16 +492,19 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
         keystone = client.Client(token=token, endpoint=endpoint)
     if not admin_role:
         admin_role = keystone.roles.find(name='admin')
+
     # Create 4 users
     users = []
     for i in range(4):
-        users.append(_register_user(keystone, 'user' + str(i) + '@test.com'))
+        users.append(_register_user(keystone, 'user' + str(i)))
 
     # Log as user0
     user0 = users[0]
+    import pdb
+    pdb.set_trace()
     keystone = client.Client(username=user0.name,
                              password='test',
-                             project_name=user0.name,
+                             project_name=user0.username,
                              auth_url=endpoint)
 
     # Create 1 organization for user0 and give him admin role in it
@@ -565,9 +562,11 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
 
 
 def _register_user(keystone, name, activate=True):
+    email = name + '@test.com'
     user = keystone.user_registration.users.register_user(
-        name=name,
+        name=email,
         password='test',
+        username=name,
         domain='default')
     if activate:
         user = keystone.user_registration.users.activate_user(
