@@ -301,11 +301,11 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 
         # idm Tenant
         idm_tenant = keystone.projects.create(
-            name='idm',
+            name='idm@idm.com',
             description='Tenant for the idm user',
             is_default=True,
             domain='default')
-        idm_user = keystone.users.create(name='idm',
+        idm_user = keystone.users.create(name='idm@idm.com',
                                          password=IDM_PASSWORD,
                                          default_project=idm_tenant,
                                          domain='default')
@@ -423,6 +423,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
             grant_type='authorization_code', 
             client_type='confidential', 
             is_default=True)
+        print 'IdM app id: ' + idm_app.id
         # Default Permissions and roles
         created_permissions = []
         for permission in INTERNAL_PERMISSIONS:
@@ -438,10 +439,12 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
             for index in INTERNAL_ROLES[role]:
                 keystone.fiware_roles.permissions.add_to_role(
                     created_role, created_permissions[index])
+        for role in created_roles:
+            print role.name + ':' + role.id
 
         # Make the idm user administrator
         keystone.fiware_roles.roles.add_to_user(
-            role=created_roles[0],
+            role=next(r for r in created_roles if r.name == 'provider'),
             user=idm_user,
             application=idm_app,
             organization=idm_tenant)
@@ -498,7 +501,7 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
     # Create 4 users
     users = []
     for i in range(4):
-        users.append(_register_user(keystone, 'user' + str(i)))
+        users.append(_register_user(keystone, 'user' + str(i) + '@test.com'))
 
     # Log as user0
     user0 = users[0]
