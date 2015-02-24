@@ -500,8 +500,6 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
 
     # Log as user0
     user0 = users[0]
-    import pdb
-    pdb.set_trace()
     keystone = client.Client(username=user0.name,
                              password='test',
                              project_name=user0.username,
