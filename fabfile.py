@@ -448,6 +448,19 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
 
         print ('Created default fiware roles and permissions.')
 
+        provider_role = next(r for r
+                         in keystone.fiware_roles.roles.list()
+                         if r.name == 'provider')
+
+        purchaser_role = next(r for r
+                         in keystone.fiware_roles.roles.list()
+                         if r.name == 'purchaser')
+
+
+        _set_idm_configuration(idm_id=idm_app.id,
+                               purchaser_role_id=purchaser_role.id,
+                               provider_role_id=provider_role.id)
+
         # Create ec2 credentials
         # result = keystone.ec2.create(project_id=service_tenant.id,
         #  							   user_id=admin_user.id)
@@ -455,6 +468,13 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         # admin_secret = result.secret
     except Exception as e:
         print('Exception: {0}'.format(e))
+
+def _set_idm_configuration(idm_id,provider_role_id,purchaser_role_id):
+    with lcd('horizon/openstack_dashboard/local/'):
+            local("sudo sed -i 's/$idm_id/{0}/g' local_settings.py".format('"' + idm_id+ '"'))
+            local("sudo sed -i 's/$provider_role_id/{0}/g' local_settings.py".format('"' + provider_role_id+ '"'))
+            local("sudo sed -i 's/$purchaser_role_id/{0}/g' local_settings.py".format('"' + purchaser_role_id+ '"'))
+    print 'local_settings configured!'
 
 
 def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
