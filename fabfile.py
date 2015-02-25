@@ -306,6 +306,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
             is_default=True,
             domain='default')
         idm_user = keystone.users.create(name='idm',
+                                         username='idm',
                                          password=IDM_PASSWORD,
                                          default_project=idm_tenant,
                                          domain='default')
