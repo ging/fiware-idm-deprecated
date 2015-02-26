@@ -262,13 +262,8 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         token = os.getenv('OS_SERVICE_TOKEN', config.defaults()['admin_token'])
         print admin_port, public_port, token
 
-        # # Passwords are either environment variables or their default value
-        # ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'secrete')
+        # TODO(garcianavalon) remove al os.getenv calls and extract them to conf
         IDM_PASSWORD = os.getenv('IDM_PASSWORD', 'idm')
-        # GLANCE_PASSWORD = os.getenv('SERVICE_PASSWORD', 'glance')
-        # NOVA_PASSWORD = os.getenv('SERVICE_PASSWORD', 'nova')
-        # EC2_PASSWORD = os.getenv('SERVICE_PASSWORD', 'ec2')
-        # SWIFT_PASSWORD = os.getenv('SERVICE_PASSWORD', 'swiftpass')
 
         # Controller Addresses
         print public_address, admin_address, internal_address
@@ -286,18 +281,6 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         member_role = keystone.roles.create(name='member')
         admin_role = keystone.roles.create(name='admin')
         print 'created default keystone roles'
-        # Default Tenant
-
-        # demo_tenant = keystone.projects.create(name='demo',
-        # 									description='Default Tenant',
-        # 									domain='default')
-        # admin_user = keystone.users.create(name='admin',
-        # 								password=ADMIN_PASSWORD,
-        # 								default_project=demo_tenant,
-        # 								domain='default')
-        # keystone.roles.grant(user=admin_user,
-        # 					role=admin_role,
-        # 					project=demo_tenant)
 
         # idm Tenant
         idm_tenant = keystone.projects.create(
@@ -314,40 +297,7 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
                              role=admin_role,
                              project=idm_tenant)
 
-        # #Service Tenant
-        # service_tenant = keystone.projects.create(name='service',
-        # 									description='Service Tenant',
-        # 									is_default=True,
-        # 									domain='default')
-
-        # glance_user = keystone.users.create(name='glance',
-        # 									password=GLANCE_PASSWORD,
-        # 									domain='default')
-        # keystone.roles.grant(user=glance_user,
-        # 					role=admin_role,
-        # 					project=service_tenant)
-        # nova_user = keystone.users.create(name='nova',
-        # 								password=NOVA_PASSWORD,
-        # 								default_project=service_tenant,
-        # 								domain='default')
-        # keystone.roles.grant(user=nova_user,
-        # 					role=admin_role,
-        # 					project=service_tenant)
-        # ec2_user = keystone.users.create(name='ec2',
-        # 								password=EC2_PASSWORD,
-        # 								default_project=service_tenant,
-        # 								domain='default')
-        # keystone.roles.grant(user=ec2_user,
-        # 					role=admin_role,
-        # 					project=service_tenant)
-        # swift_user = keystone.users.create(name='swift',
-        # 								password=SWIFT_PASSWORD,
-        # 								default_project=service_tenant,
-        # 								domain='default')
-        # keystone.roles.grant(user=swift_user,
-        # 					role=admin_role,
-        # 					project=service_tenant)
-        print 'Created default projects and users.'
+        print 'Created default idm project and user.'
 
         # Keystone service
         keystone_endpoints = [
@@ -361,57 +311,6 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         create_service_and_enpoints('keystone', 'identity',
                                     'Keystone Identity Service',
                                     keystone_endpoints)
-
-        # # Nova service
-        # nova_endpoints = [
-        # 	Endpoint('http://{public_address}:8774/v2/$(tenant_id)s'
-        # 		.format(public_address=public_address), 'public'),
-        # 	Endpoint('http://{admin_address}:8774/v2/$(tenant_id)s'
-        # 		.format(admin_address=admin_address), 'admin'),
-        # ]
-        # create_service_and_enpoints('nova', 'compute',
-        # 							'Nova Compute Service', nova_endpoints)
-
-        # # Volume service
-        # volume_endpoints = [
-        # 	Endpoint('http://{public_address}:8776/v1/$(tenant_id)s'
-        # 		.format(public_address=public_address), 'public'),
-        # 	Endpoint('http://{admin_address}:8776/v1/$(tenant_id)s'
-        # 		.format(admin_address=admin_address), 'admin'),
-        # ]
-        # create_service_and_enpoints('volume', 'volume',
-        # 							'Nova Volume Service', volume_endpoints)
-
-        # # Image service
-        # image_endpoints = [
-        # 	Endpoint('http://{public_address}:9292'
-        # 		.format(public_address=public_address), 'public'),
-        # 	Endpoint('http://{admin_address}:9292'
-        # 		.format(admin_address=admin_address), 'admin'),
-        # ]
-        # create_service_and_enpoints('glance', 'image',
-        # 							'Glance Image Service', image_endpoints)
-
-        # # EC2 service
-        # ec2_endpoints = [
-        # 	Endpoint('http://{public_address}:8773/services/Cloud'
-        # 		.format(public_address=public_address), 'public'),
-        # 	Endpoint('http://{admin_address}:8773/services/Cloud'
-        # 		.format(admin_address=admin_address), 'admin'),
-        # ]
-        # create_service_and_enpoints('ec2', 'ec2',
-        # 							'EC2 Compatibility Layer', ec2_endpoints)
-
-        # # Swift service
-        # swift_endpoints = [
-        # 	Endpoint('http://{public_address}:8080/v1/AUTH_$(tenant_id)s'
-        # 		.format(public_address=public_address), 'public'),
-        # 	Endpoint('http://{admin_address}:8080/v1/AUTH_$(tenant_id)s'
-        # 		.format(admin_address=admin_address), 'admin'),
-        # ]
-        # create_service_and_enpoints('swift', 'object-store',
-        # 							'Swift Service', swift_endpoints)
-        # print ('Created default services and endpoints.')
 
         # Default internal application
         # Log as idm
@@ -455,25 +354,15 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         purchaser_role = next(r for r
                         in keystone.fiware_roles.roles.list()
                         if r.name == 'purchaser')
-        _set_idm_configuration(idm_id=idm_app.id,
-                               purchaser_role_id=purchaser_role.id,
-                               provider_role_id=provider_role.id)
+        _set_idm_configuration(idm_id=idm_app.id)
 
-        # Create ec2 credentials
-        # result = keystone.ec2.create(project_id=service_tenant.id,
-        #  							   user_id=admin_user.id)
-        # admin_access = result.access
-        # admin_secret = result.secret
     except Exception as e:
         print('Exception: {0}'.format(e))
 
-def _set_idm_configuration(idm_id,provider_role_id,purchaser_role_id):
+def _set_idm_configuration(idm_id):
     with lcd('horizon/openstack_dashboard/local/'):
         local("sudo sed -i 's/$idm_id/{0}/g' local_settings.py".format('"' + idm_id+ '"'))
-        local("sudo sed -i 's/$provider_role_id/{0}/g' local_settings.py".format('"' + provider_role_id+ '"'))
-        local("sudo sed -i 's/$purchaser_role_id/{0}/g' local_settings.py".format('"' + purchaser_role_id+ '"'))
         print 'local_settings configured!'
-
 
 def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
                                 fiwareclient_path=FIWARECLIENT_ROOT,
@@ -559,7 +448,6 @@ def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
         application=test_app.id,
         organization=user1.default_project_id)
 
-
 def _register_user(keystone, name, activate=True):
     email = name + '@test.com'
     user = keystone.user_registration.users.register_user(
@@ -573,12 +461,10 @@ def _register_user(keystone, name, activate=True):
             activation_key=user.activation_key)
     return user
 
-
 def keystone_dev_server(keystone_path=KEYSTONE_ROOT):
     """Runs the server in dev mode."""
     with lcd(keystone_path):
         local('sudo tools/with_venv.sh bin/keystone-all -v')
-
 
 def keystone_database_reset(keystone_path=KEYSTONE_ROOT):
     """Deletes keystone's database and create a new one, populated with
