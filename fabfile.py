@@ -354,14 +354,13 @@ def keystone_database_init(keystone_path=KEYSTONE_ROOT,
         purchaser_role = next(r for r
                         in keystone.fiware_roles.roles.list()
                         if r.name == 'purchaser')
-        _set_idm_configuration(idm_id=idm_app.id)
+        _set_idm_configuration()
 
     except Exception as e:
         print('Exception: {0}'.format(e))
 
-def _set_idm_configuration(idm_id):
+def _set_idm_configuration():
     with lcd('horizon/openstack_dashboard/local/'):
-        local("sudo sed -i 's/$idm_id/{0}/g' local_settings.py".format('"' + idm_id+ '"'))
         print 'local_settings configured!'
 
 def keystone_database_test_data(keystone_path=KEYSTONE_ROOT,
