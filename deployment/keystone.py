@@ -32,21 +32,21 @@ def deploy(dev):
     """Fully installs the IdM backend"""
     # TODO(garcianavalon) PARAMETERS!!!
     install(dev=dev)
-    keystone_database_create()
+    database_create()
     if not dev:
-        keystone_service_create()
-        keystone_service_start()
-        keystone_database_init()
+        service_create()
+        service_start()
+        database_init()
     if dev:
         print 'Run fab keystone_dev_server on another terminal to \
             run keystone\'s dev server'
         if console.confirm("Do you want to install now the initial data?"):
-            keystone_database_init()
+            database_init()
         else:
             print 'Run fab keystone_database_init when you are ready.'
 
         if console.confirm("Do you want to install now some test data?"):
-            keystone_database_test_data()
+            test_data()
         else:
             print 'Run fab keystone_database_test_data when you are ready.'
 
@@ -104,7 +104,7 @@ def dev_server(keystone_path):
     """Runs the server in dev mode."""
     with lcd(keystone_path):
         local('sudo tools/with_venv.sh bin/keystone-all -v')
-        
+
 def database_delete(db_path):
     if os.path.isfile(db_path):
         local('sudo rm ' + db_path)

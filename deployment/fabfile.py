@@ -12,10 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import ConfigParser
 import os
-
-from collections import namedtuple
 
 from deployment import fiwareclient
 from deployment import horizon
@@ -23,17 +20,20 @@ from deployment import keystone
 from deployment.conf import settings
 
 from fabric.api import local
-from fabric.context_managers import lcd
-from fabric.contrib import console
 
 
 def deploy(dev=False):
     """Fully installs the IdM."""
     # TODO(garcianavalon) PARAMETERS!!!
-    fiwareclient_install(dev=dev)
+    set_up(dev=dev)
     keystone_deploy(dev=dev)
     horizon_deploy(dev=dev)
     print 'IdM successfully deployed! :)'
+
+def set_up(dev=False):
+    """Install system and python dependencies."""
+    _install_dependencies()
+    fiwareclient_install(dev=dev)
 
 def _install_dependencies():
     local('{command} {dependencies}').format(
@@ -90,11 +90,11 @@ def keystone_database_delete(keystone_path=settings.KEYSTONE_ROOT,
     keystone.database_delete(db_path)
 
 def keystone_database_init(keystone_path=settings.KEYSTONE_ROOT,
-                           fiwareclient_path=settings.FIWARECLIENT_ROOT,
                            internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
                            public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
                            admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
-    keystone.database_init(keystone_path, fiwareclient_path, internal_address,
+
+    keystone.database_init(keystone_path, internal_address,
                            public_address, admin_address)
 
 def keystone_test_data(keystone_path=settings.KEYSTONE_ROOT):
