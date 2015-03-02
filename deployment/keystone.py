@@ -18,9 +18,7 @@ import os
 
 from collections import namedtuple
 
-from deployment import fiwareclient
-from deployment import horizon
-from deployment.conf import settings
+from conf import settings
 
 from fabric.api import local
 from fabric.context_managers import lcd
@@ -75,14 +73,14 @@ def install(keystone_path, dev):
 def database_create(keystone_path, verbose):
     add_verbose = '-v' if verbose else ''
     with lcd(keystone_path):
-        local('sudo tools/with_venv.sh bin/keystone-manage db_sync {v}'
-            ).format(v=add_verbose)
-        local('sudo tools/with_venv.sh bin/keystone-manage db_sync {v} \
-            --extension=oauth2').format(v=add_verbose)
-        local('sudo tools/with_venv.sh bin/keystone-manage db_sync {v} \
-            --extension=roles').format(v=add_verbose)
-        local('sudo tools/with_venv.sh bin/keystone-manage db_sync {v} \
-            --extension=user_registration').format(v=add_verbose)
+        local('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync'.format(
+            v=add_verbose))
+        local('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+            --extension=oauth2'.format(v=add_verbose))
+        local('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+            --extension=roles'.format(v=add_verbose))
+        local('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+            --extension=user_registration'.format(v=add_verbose))
 
 def service_create(absolute_keystone_path):
     in_file = open('keystone_idm.conf')
@@ -146,7 +144,8 @@ def database_init(keystone_path, internal_address, public_address,
     print 'Connected to keystone using token'
 
     # Keystone service
-    _create_endpoints()
+    _create_endpoints(keystone, internal_address, public_address,
+        admin_address)
 
     # Default keystone roles
     # NOTE(garcianavalon) don't confuse it with keystone v2 API

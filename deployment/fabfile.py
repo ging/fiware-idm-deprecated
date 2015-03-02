@@ -14,10 +14,10 @@
 
 import os
 
-from deployment import fiwareclient
-from deployment import horizon
-from deployment import keystone
-from deployment.conf import settings
+import fiwareclient
+import horizon
+import keystone
+from conf import settings
 
 from fabric.api import local
 

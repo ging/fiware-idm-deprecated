@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-IDM_ROOT = ''
+IDM_ROOT = '../'
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
 HORIZON_ROOT = IDM_ROOT + 'horizon/'
 FIWARECLIENT_ROOT = IDM_ROOT + 'fiwareclient/'
