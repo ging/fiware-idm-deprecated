@@ -186,6 +186,7 @@ def database_init(keystone_path, internal_address, public_address,
 
     idm_app = keystone.oauth2.consumers.create(
         settings.IDM_USER_CREDENTIALS['username'], 
+        description='',
         grant_type='authorization_code', 
         client_type='confidential', 
         is_default=True)
