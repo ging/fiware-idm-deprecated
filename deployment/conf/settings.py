@@ -65,11 +65,10 @@ UBUNTU_DEPENDENCIES = {
 # This dictinary holds the old ids for permissions and roles. Only used
 # for migration purposes.
 MIGRATION_OLD_IDS = {
-	'Manage the application': '1',
-    'Manage roles': '2',
-    'Get and assign all application roles': '3',
-    'Manage Authorizations': '4',
-    'Get and assign only owned roles': '5',
-    'provider': '6',
-    'purchaser': '7',
+    'Manage the application': '4',
+    'Manage roles': '7',
+    'Get and assign all application roles': '8',
+    'Manage Authorizations': '5',
+    'provider': '10',
+    'purchaser': '11',
 }

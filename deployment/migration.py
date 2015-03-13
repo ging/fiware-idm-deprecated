@@ -37,7 +37,7 @@ def populate(keystone_path, internal_address, public_address,
 
     # Keystone service
     deployment_keystone.create_endpoints(keystone, internal_address,
-        public_address, admin_address)
+        public_address, admin_address, public_port)
 
     # Default keystone roles
     # NOTE(garcianavalon) don't confuse it with keystone v2 API

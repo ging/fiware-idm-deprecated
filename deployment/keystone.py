@@ -108,15 +108,15 @@ def database_delete(db_path):
         local('sudo rm ' + db_path)
 
 def create_endpoints(keystone, internal_address, public_address,
-                      admin_address):
+                      admin_address, port):
     Endpoint = namedtuple('Enpoint', 'url interface')
     endpoints = [
-        Endpoint('http://{public_address}:5000/v3'
-                 .format(public_address=public_address), 'public'),
-        Endpoint('http://{admin_address}:5000/v3'
-                 .format(admin_address=admin_address), 'admin'),
-        Endpoint('http://{internal_address}:5000/v3'
-                 .format(internal_address=internal_address), 'internal')
+        Endpoint('http://{public_address}:{port}/v3'
+                 .format(public_address=public_address, port=port), 'public'),
+        Endpoint('http://{admin_address}:{port}/v3'
+                 .format(admin_address=admin_address, port=port), 'admin'),
+        Endpoint('http://{internal_address}:{port}/v3'
+                 .format(internal_address=internal_address, port=port), 'internal')
     ]
     service = keystone.services.create(name='keystone', type='identity',
         description='Keystone Identity Service')
@@ -145,7 +145,7 @@ def database_init(keystone_path, internal_address, public_address,
 
     # Keystone service
     create_endpoints(keystone, internal_address, public_address,
-        admin_address)
+        admin_address, public_port)
 
     # Default keystone roles
     # NOTE(garcianavalon) don't confuse it with keystone v2 API
