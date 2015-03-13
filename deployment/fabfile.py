@@ -14,10 +14,11 @@
 
 import os
 
-import deployment.fiwareclient as fiwareclient
-import deployment.horizon as horizon
-import deployment.migration as migration
-import deployment.keystone as keystone
+import fiwareclient
+import horizon
+import migration
+import keystone
+
 from conf import settings
 
 from fabric.api import local

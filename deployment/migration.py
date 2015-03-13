@@ -17,7 +17,7 @@ import uuid
 
 from conf import settings
 
-from deployment import keystone as deployment_keystone
+import keystone as deployment_keystone
 
 from keystoneclient.v3 import client
 
