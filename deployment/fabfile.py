@@ -14,12 +14,21 @@
 
 import os
 
-import fiwareclient
-import horizon
-import keystone
+import deployment.fiwareclient as fiwareclient
+import deployment.horizon as horizon
+import deployment.migration as migration
+import deployment.keystone as keystone
 from conf import settings
 
 from fabric.api import local
+
+def migration_populate(keystone_path=settings.KEYSTONE_ROOT,
+                       internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
+                       public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
+                       admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
+    """Populates the database with migration specifics from the old idm."""
+    migration.populate(keystone_path, internal_address, public_address,
+        admin_address)
 
 
 def deploy(dev=False):

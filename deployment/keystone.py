@@ -107,7 +107,7 @@ def database_delete(db_path):
     if os.path.isfile(db_path):
         local('sudo rm ' + db_path)
 
-def _create_endpoints(keystone, internal_address, public_address,
+def create_endpoints(keystone, internal_address, public_address,
                       admin_address):
     Endpoint = namedtuple('Enpoint', 'url interface')
     endpoints = [
@@ -144,7 +144,7 @@ def database_init(keystone_path, internal_address, public_address,
     print 'Connected to keystone using token'
 
     # Keystone service
-    _create_endpoints(keystone, internal_address, public_address,
+    create_endpoints(keystone, internal_address, public_address,
         admin_address)
 
     # Default keystone roles

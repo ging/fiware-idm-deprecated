@@ -61,3 +61,15 @@ UBUNTU_DEPENDENCIES = {
 		'libjpeg8-dev',
 	],
 }
+
+# This dictinary holds the old ids for permissions and roles. Only used
+# for migration purposes.
+MIGRATION_OLD_IDS = {
+	'Manage the application': '1',
+    'Manage roles': '2',
+    'Get and assign all application roles': '3',
+    'Manage Authorizations': '4',
+    'Get and assign only owned roles': '5',
+    'provider': '6',
+    'purchaser': '7',
+}
