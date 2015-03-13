@@ -26,9 +26,9 @@ def populate(keystone_path, internal_address, public_address,
              admin_address):
     config = ConfigParser.ConfigParser()
     config.read(keystone_path + 'etc/keystone.conf')
-    admin_port = config.defaults()['admin_port']
-    public_port = config.defaults()['public_port']
-    token = config.defaults()['admin_token']
+    admin_port = config.get('DEFAULT', 'admin_port')
+    public_port = config.get('DEFAULT', 'public_port')
+    token = config.get('DEFAULT', 'admin_token')
 
     endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
                                               port=admin_port)
