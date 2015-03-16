@@ -45,6 +45,7 @@ def populate(keystone_path, internal_address, public_address,
     # role to add users to projects. Horizon knows this role throught
     # the local_settings.py file.
     member_role = keystone.roles.create(name='member')
+    owner_role = keystone.roles.create(name='owner')
     admin_role = keystone.roles.create(name='admin')
     print 'created default keystone roles'
 
