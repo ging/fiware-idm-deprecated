@@ -153,6 +153,7 @@ def database_init(keystone_path, internal_address, public_address,
     # role to add users to projects. Horizon knows this role throught
     # the local_settings.py file.
     member_role = keystone.roles.create(name='member')
+    owner_role = keystone.roles.create(name='owner')
     admin_role = keystone.roles.create(name='admin')
     print 'created default keystone roles'
 
@@ -172,6 +173,9 @@ def database_init(keystone_path, internal_address, public_address,
 
     keystone.roles.grant(user=idm_user,
                          role=admin_role,
+                         project=idm_tenant)
+    keystone.roles.grant(user=idm_user,
+                         role=owner_role,
                          project=idm_tenant)
 
     print 'Created default idm project and user.'
@@ -249,7 +253,7 @@ def test_data(keystone_path, keystone=None):
             project_name=settings.IDM_USER_CREDENTIALS['project'],
             auth_url=endpoint)
 
-    admin_role = keystone.roles.find(name='admin')
+    owner_role = keystone.roles.find(name='owner')
 
     # Create 4 users
     users = []
@@ -263,7 +267,7 @@ def test_data(keystone_path, keystone=None):
                              project_name=user0.username,
                              auth_url=endpoint)
 
-    # Create 1 organization for user0 and give him admin role in it
+    # Create 1 organization for user0 and give him owner role in it
     test_org = keystone.projects.create(
         name='Test Organization',
         description='Testing data',
@@ -274,7 +278,7 @@ def test_data(keystone_path, keystone=None):
         email='',
         website='')
     keystone.roles.grant(user=user0.id,
-                         role=admin_role.id,
+                         role=owner_role.id,
                          project=test_org.id)
 
     # Create 1 application for user0 and give him the provider role
