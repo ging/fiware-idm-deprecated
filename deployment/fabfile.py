@@ -99,12 +99,12 @@ def keystone_database_delete(keystone_path=settings.KEYSTONE_ROOT,
     db_path = keystone_path + keystone_db
     keystone.database_delete(db_path)
 
-def keystone_database_init(keystone_path=settings.KEYSTONE_ROOT,
+def keystone_database_populate(keystone_path=settings.KEYSTONE_ROOT,
                            internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
                            public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
                            admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
 
-    keystone.database_init(keystone_path, internal_address,
+    keystone.database_populate(keystone_path, internal_address,
                            public_address, admin_address)
 
 def keystone_test_data(keystone_path=settings.KEYSTONE_ROOT):
@@ -119,4 +119,4 @@ def keystone_database_reset(keystone_path=settings.KEYSTONE_ROOT):
     """
     keystone_database_delete(keystone_path=keystone_path)
     keystone_database_create(keystone_path=keystone_path)
-    keystone_database_init(keystone_path=keystone_path)
+    keystone_database_populate(keystone_path=keystone_path)

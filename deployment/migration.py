@@ -12,71 +12,35 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import ConfigParser
 import uuid
 
 from conf import settings
 
 import keystone as deployment_keystone
 
-from keystoneclient.v3 import client
-
 
 def populate(keystone_path, internal_address, public_address,
              admin_address):
-    config = ConfigParser.ConfigParser()
-    config.read(keystone_path + 'etc/keystone.conf')
-    admin_port = config.get('DEFAULT', 'admin_port')
-    public_port = config.get('DEFAULT', 'public_port')
-    token = config.get('DEFAULT', 'admin_token')
+    config = deployment_keystone.get_config(keystone_path)
+    keystone = deployment_keystone.admin_token_connection(config)
 
-    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
-                                              port=admin_port)
-    keystone = client.Client(token=token, endpoint=endpoint)
-    print 'Connected to keystone using token'
+    # Keystone services
+    deployment_keystone.create_endpoints(keystone, internal_address, public_address,
+        admin_address, config)
 
-    # Keystone service
-    deployment_keystone.create_endpoints(keystone, internal_address,
-        public_address, admin_address, public_port)
+    keystone_roles = deployment_keystone.create_keystone_roles(keystone)
 
-    # Default keystone roles
-    # NOTE(garcianavalon) don't confuse it with keystone v2 API
-    # default role (member_role_name=_member_). We need a default
-    # role to add users to projects. Horizon knows this role throught
-    # the local_settings.py file.
-    member_role = keystone.roles.create(name='member')
-    owner_role = keystone.roles.create(name='owner')
-    admin_role = keystone.roles.create(name='admin')
-    print 'created default keystone roles'
+    idm_user = deployment_keystone.create_idm_user_and_project(keystone, keystone_roles)
+    
+    # user our migration method here to asign ids to roles and permissions
+    idm_app = create_internal_roles_and_permissions(keystone)
 
-    # idm Tenant
-    idm_tenant = keystone.projects.create(
-        name=settings.IDM_USER_CREDENTIALS['project'],
-        description='',
-        is_default=True,
-        domain=settings.IDM_USER_CREDENTIALS['domain'])
+    # Make the idm user administrator
+    deployment_keystone.grant_administrator(keystone, idm_app, [idm_user])
+    
 
-    idm_user = keystone.users.create(
-        name=settings.IDM_USER_CREDENTIALS['username'],
-        username=settings.IDM_USER_CREDENTIALS['username'],
-        password=settings.IDM_USER_CREDENTIALS['password'],
-        default_project=idm_tenant,
-        domain=settings.IDM_USER_CREDENTIALS['domain'])
-
-    keystone.roles.grant(user=idm_user,
-                         role=admin_role,
-                         project=idm_tenant)
-
-    print 'Created default idm project and user.'
-
+def create_internal_roles_and_permissions(keystone):
     # Default internal application
-    # Log as idm
-    keystone = client.Client(
-        username=idm_user.name,
-        password=settings.IDM_USER_CREDENTIALS['password'],
-        project_name=idm_user.name,
-        auth_url=endpoint)
-
     idm_app = keystone.oauth2.consumers.create(
         settings.IDM_USER_CREDENTIALS['username'], 
         description='',
@@ -103,14 +67,5 @@ def populate(keystone_path, internal_address, public_address,
             keystone.fiware_roles.permissions.add_to_role(
                 created_role, created_permissions[index])
 
-    # Make the idm user administrator
-    provider_role = next(r for r
-                    in keystone.fiware_roles.roles.list()
-                    if r.name == 'provider')
-    keystone.fiware_roles.roles.add_to_user(
-        role=provider_role,
-        user=idm_user,
-        application=idm_app,
-        organization=idm_tenant)
-
     print ('Created default fiware roles and permissions.')
+    return idm_app
