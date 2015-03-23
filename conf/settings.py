@@ -51,29 +51,33 @@ CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
 CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
 CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
 
-# TODO(garcianavalon): split dependencies
 UBUNTU_DEPENDENCIES = {
-	'install_command': 'sudo apt-get install',
 	'horizon': [
 		'python-dev',
-		'python-virtualenv',
-		'libxml2-dev',
-		'libxslt1-dev',
-		'libsasl2-dev',
-		'libsqlite3-dev',
-		'libssl-dev',
-		'libldap2-dev',
-		'libffi-dev',
-		'libjpeg8-dev',
+        'python-virtualenv',
+        'libssl-dev',
+        'libffi-dev',
+        'libjpeg8-dev',
 	],
     'keystone': [
+        'python-dev',
+        'python-virtualenv',
+        'libxml2-dev',
+        'libxslt1-dev',
+        'libsasl2-dev',
+        'libssl-dev',
+        'libldap2-dev',
+        'libffi-dev',
+        'libsqlite3-dev',
     ],
     'mysql': [
+        'python-mysqldb',
     ],
     'sqlite': [
+        'libsqlite3-dev',
     ],
 }
-
+    
 # This dictinary holds the old ids for permissions and roles. Only used
 # for migration purposes.
 MIGRATION_OLD_IDS = {
