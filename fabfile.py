@@ -15,7 +15,7 @@
 from deployment import keystone
 from deployment import horizon
 from deployment import migration
-from deployment.conf import settings
+from conf import settings
 
 from fabric.operations import local as lrun, run
 from fabric.context_managers import lcd, cd

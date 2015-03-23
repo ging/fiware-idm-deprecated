@@ -14,9 +14,8 @@
 
 import os
 
-from fabric.api import run
 from fabric.api import task
-from deployment.conf import settings
+from conf import settings
 from fabric.state import env
 
 @task

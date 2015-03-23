@@ -1,7 +1,7 @@
 idm_deployment
 ==============
 
-Set of tools for deploying and testing for FIWARE's IdM KeyRock using Fabric(http://www.fabfile.org/)
+Set of tools to help in developing, deploying and testing FIWARE's IdM KeyRock using Fabric(http://www.fabfile.org/)
 
 Dependencies
 Before you can run any command you must install the following dependencies:

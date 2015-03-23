@@ -18,7 +18,7 @@ import os
 
 from collections import namedtuple
 
-from deployment.conf import settings
+from conf import settings
 
 from fabric.contrib import console
 

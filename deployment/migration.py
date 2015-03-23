@@ -15,7 +15,7 @@
 import uuid
 
 from deployment.keystone import PopulateTask
-from deployment.conf import settings
+from conf import settings
 
 class MigratePopulateTask(PopulateTask):
     """Populates the database with migration specifics from the old idm."""
@@ -25,7 +25,7 @@ class MigratePopulateTask(PopulateTask):
             public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
             admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
 
-        config = self._get_config(keystone_path)
+        config = self._get_keystone_config(keystone_path)
         keystone = self._admin_token_connection(config)
 
         # Keystone services
