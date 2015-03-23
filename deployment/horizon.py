@@ -15,24 +15,23 @@
 import os
 
 from fabric.api import run
-from fabric.context_managers import cd
 from fabric.api import task
 from deployment.conf import settings
+from fabric.state import env
 
 @task
-def deploy(env, dev):
+def deploy(dev):
     """Fully installs the IdM frontend"""
     # TODO(garcianavalon) PARAMETERS!!!
-    install(env, dev=dev)
+    install(dev=dev)
     if dev:
-        dev_server(env)
+        dev_server()
     else:
         # TODO(garcianavalon) production server!
         pass
 
 @task
 def install(horizon_path=settings.HORIZON_ROOT,
-            fiwareclient_path=settings.FIWARECLIENT_ROOT,
             dev=False):
     """Download and install Horizon and its dependencies."""
     print 'Installing frontend (Horizon)'
@@ -43,7 +42,7 @@ def install(horizon_path=settings.HORIZON_ROOT,
         env.run('git clone https://github.com/ging/horizon.git \
             {0}'.format(horizon_path))
 
-    with cd(horizon_path):
+    with env.cd(horizon_path):
         if dev:
             env.run('git checkout development')
 
@@ -53,8 +52,9 @@ def install(horizon_path=settings.HORIZON_ROOT,
     print 'Done!'
 
 @task
-def dev_server(env, horizon_path, address):
+def dev_server(address=settings.HORIZON_DEV_ADDRESS,
+               horizon_path=settings.HORIZON_ROOT):
     """Run horizon server for development purposes"""
-    with cd(horizon_path):
+    with env.cd(horizon_path):
         env.run('sudo tools/with_venv.sh python manage.py runserver \
             {0}'.format(address))

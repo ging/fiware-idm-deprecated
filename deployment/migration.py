@@ -20,7 +20,7 @@ from deployment.conf import settings
 class MigratePopulateTask(PopulateTask):
     """Populates the database with migration specifics from the old idm."""
     name = "populate"
-    def run(self, environment, keystone_path=settings.KEYSTONE_ROOT,
+    def run(self, keystone_path=settings.KEYSTONE_ROOT,
             internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
             public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
             admin_address=settings.CONTROLLER_ADMIN_ADDRESS):

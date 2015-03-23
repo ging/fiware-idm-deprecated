@@ -20,39 +20,40 @@ from collections import namedtuple
 
 from deployment.conf import settings
 
-from fabric.context_managers import cd
 from fabric.contrib import console
 
 from keystoneclient.v3 import client
 
 from fabric.api import task
 from fabric.tasks import Task
+from fabric.state import env
+from fabric.api import execute
 
 @task
-def deploy(env, dev):
+def deploy(dev):
     """Fully installs the IdM backend"""
     # TODO(garcianavalon) PARAMETERS!!!
-    install(env, dev=dev)
-    database_create(env)
+    install(dev=dev)
+    database_create()
     if not dev:
-        service_create(env)
-        service_start(env)
-        database_populate(env)
+        service_create()
+        service_start() 
+        execute('keystone.populate')
     if dev:
         print 'Run fab keystone_dev_server on another terminal to \
             run keystone\'s dev server'
         if console.confirm("Do you want to install now the initial data?"):
-            database_populate(env)
+           execute('keystone.populate')
         else:
             print 'Run fab keystone_database_populate when you are ready.'
 
         if console.confirm("Do you want to install now some test data?"):
-            test_data(env)
+            test_data()
         else:
             print 'Run fab keystone_database_test_data when you are ready.'
 
 @task
-def install(env, keystone_path, dev):
+def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
     print 'Installing backend (Keystone)'
     if os.path.isdir(keystone_path[:-1]):
         print 'already downloaded'
@@ -62,22 +63,22 @@ def install(env, keystone_path, dev):
     # env.run('sudo apt-get install python-dev libxml2-dev \
     #         libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
     #         libldap2-dev libffi-dev')
-    with cd(keystone_path):
+    with env.cd(keystone_path):
         if dev:
             env.run('git checkout development')
         env.run('sudo python tools/install_venv.py')
         env.run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
         # Uncomment config file
-        with cd('etc/'):
+        with env.cd('etc/'):
             env.run("sudo sed -i 's/#admin_token/admin_token/g' keystone.conf")
             env.run("sudo sed -i 's/#admin_port/admin_port/g' keystone.conf")
             env.run("sudo sed -i 's/#public_port/public_port/g' keystone.conf")
     print 'Done!'
 
 @task
-def database_create(env, keystone_path, verbose):
+def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
     add_verbose = '-v' if verbose else ''
-    with cd(keystone_path):
+    with env.cd(keystone_path):
         env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync'.format(
             v=add_verbose))
         env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
@@ -88,7 +89,26 @@ def database_create(env, keystone_path, verbose):
             --extension=user_registration'.format(v=add_verbose))
 
 @task
-def service_create(env, absolute_keystone_path):
+def database_delete(keystone_path=settings.KEYSTONE_ROOT,
+                    keystone_db=settings.KEYSTONE_DEV_DATABASE):
+    db_path = keystone_path + keystone_db
+    if os.path.isfile(db_path):
+        env.run('sudo rm ' + db_path)
+
+@task
+def database_reset(keystone_path=settings.KEYSTONE_ROOT):
+    """Deletes keystone's database and create a new one, populated with
+    the base data needed by the IdM. Requires a keystone instance running.
+    """
+    execute(database_delete, keystone_path=keystone_path)
+    execute(database_create, keystone_path=keystone_path)
+    execute('keystone.populate', keystone_path=keystone_path)
+
+
+@task
+def service_create(absolute_keystone_path=None):
+    if not absolute_keystone_path:
+        absolute_keystone_path = os.getcwd() + '/' + settings.KEYSTONE_ROOT
     in_file = open('keystone_idm.conf')
     src = string.Template(in_file.read())
     out_file = open("tmp_keystone_idm.conf", "w")
@@ -99,32 +119,27 @@ def service_create(env, absolute_keystone_path):
     env.run('sudo rm tmp_keystone_idm.conf')
 
 @task
-def service_start(env):
+def service_start():
     env.run('sudo service keystone_idm start')
 
 @task
-def service_stop(env):
+def service_stop():
     env.run('sudo service keystone_idm stop')
 
 @task
-def dev_server(env, keystone_path):
+def dev_server(keystone_path=settings.KEYSTONE_ROOT):
     """Runs the server in dev mode."""
-    with cd(keystone_path):
+    with env.cd(keystone_path):
         env.run('sudo tools/with_venv.sh bin/keystone-all -v')
-
-@task
-def database_delete(env, db_path):
-    if os.path.isfile(db_path):
-        env.run('sudo rm ' + db_path)
 
 class PopulateTask(Task):
     name = "populate"
-    def run(self, environment, keystone_path=settings.KEYSTONE_ROOT,
+    def run(self, keystone_path=settings.KEYSTONE_ROOT,
             internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
             public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
             admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
 
-        config = self._get_config(keystone_path)
+        config = self._get_keystone_config(keystone_path)
         keystone = self._admin_token_connection(config)
 
         # Keystone services
@@ -140,7 +155,7 @@ class PopulateTask(Task):
         # Make the idm user administrator
         self._grant_administrator(keystone, idm_app, [idm_user])
 
-    def _create_endpoints(env, keystone, internal_address, public_address,
+    def _create_endpoints(self, keystone, internal_address, public_address,
                           admin_address, config):
         public_port = config.get('DEFAULT', 'public_port')
         admin_port = config.get('DEFAULT', 'admin_port')
@@ -167,7 +182,7 @@ class PopulateTask(Task):
 
         print 'Created Identity Service and Endpoints'    
 
-    def _admin_token_connection(config):
+    def _admin_token_connection(self, config):
         
         admin_port = config.get('DEFAULT', 'admin_port')
         token = config.get('DEFAULT', 'admin_token')
@@ -179,12 +194,12 @@ class PopulateTask(Task):
 
         return keystone
 
-    def _get_config(keystone_path):
+    def _get_keystone_config(self, keystone_path):
         config = ConfigParser.ConfigParser()
         config.read(keystone_path + 'etc/keystone.conf')
         return config
 
-    def _create_keystone_roles(keystone):
+    def _create_keystone_roles(self, keystone):
         # Default keystone roles
         # NOTE(garcianavalon) don't confuse it with keystone v2 API
         # default role (member_role_name=_member_). We need a default
@@ -198,7 +213,7 @@ class PopulateTask(Task):
         print 'created default keystone roles'
         return keystone_roles
 
-    def _create_idm_user_and_project(keystone, keystone_roles):
+    def _create_idm_user_and_project(self, keystone, keystone_roles):
         idm_project = keystone.projects.create(
             name=settings.IDM_USER_CREDENTIALS['project'],
             description='',
@@ -222,7 +237,7 @@ class PopulateTask(Task):
 
         return idm_user
 
-    def _create_internal_roles_and_permissions(keystone):
+    def _create_internal_roles_and_permissions(self, keystone):
         # Default internal application
         idm_app = keystone.oauth2.consumers.create(
             settings.IDM_USER_CREDENTIALS['username'], 
@@ -250,7 +265,7 @@ class PopulateTask(Task):
         print ('Created default fiware roles and permissions.')
         return idm_app
 
-    def _grant_administrator(keystone, idm_app, users):
+    def _grant_administrator(self, keystone, idm_app, users):
         provider_role = next(r for r
                         in keystone.fiware_roles.roles.list()
                         if r.name == 'provider')
@@ -262,7 +277,6 @@ class PopulateTask(Task):
                 organization=user.default_project_id)
 
 instance = PopulateTask()
-
 
 
 def _register_user(keystone, name, activate=True):
@@ -279,7 +293,7 @@ def _register_user(keystone, name, activate=True):
     return user
 
 @task
-def test_data(keystone_path, keystone=None):
+def test_data(keystone_path=settings.KEYSTONE_ROOT, keystone=None):
     """Populate the database with some users, organizations and applications
     for convenience"""
 
