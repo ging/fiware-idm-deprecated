@@ -46,8 +46,9 @@ def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
             dependencies += ' ' + ' '.join(settings.UBUNTU_DEPENDENCIES['mysql'])
         
         env.run('sudo apt-get install {0}'.format(dependencies))
-        env.run('sudo python tools/install_venv.py')
         env.run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
+        env.run('sudo python tools/install_venv.py')
+
         # Uncomment config file
         with env.cd('etc/'):
             env.run(("sudo sed -i "
