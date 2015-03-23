@@ -79,9 +79,9 @@ UBUNTU_DEPENDENCIES = {
 # for migration purposes.
 MIGRATION_OLD_IDS = {
     'Manage the application': '4',
-    'Manage roles': '7',
+    'Manage roles': '5',
     'Get and assign all application roles': '8',
-    'Manage Authorizations': '5',
-    'provider': '10',
-    'purchaser': '11',
+    'Manage Authorizations': '6',
+    'provider': '106',
+    'purchaser': '191',
 }
