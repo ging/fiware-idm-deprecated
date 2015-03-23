@@ -18,8 +18,8 @@ HORIZON_ROOT = IDM_ROOT + 'horizon/'
 
 # Hosts
 HOSTS = {
-    'keystone': ['138.4.4.131'],
-    'horizon': ['138.4.4.131'],
+    'keystone': ['isabel@138.4.4.131'],
+    'horizon': ['isabel@138.4.4.131'],
 }
 
 # Development settings
