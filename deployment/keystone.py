@@ -18,10 +18,10 @@ import os
 
 from collections import namedtuple
 
-from conf import settings
+from deployment.conf import settings
 
-from fabric.api import local
-from fabric.context_managers import lcd
+from fabric.api import run
+from fabric.context_managers import cd
 from fabric.contrib import console
 
 from keystoneclient.v3 import client
@@ -53,33 +53,33 @@ def install(keystone_path, dev):
     if os.path.isdir(keystone_path[:-1]):
         print 'already downloaded'
     else:
-        local('git clone https://github.com/ging/keystone.git \
+        run('git clone https://github.com/ging/keystone.git \
             {0}'.format(keystone_path))
-    # local('sudo apt-get install python-dev libxml2-dev \
+    # run('sudo apt-get install python-dev libxml2-dev \
     #         libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
     #         libldap2-dev libffi-dev')
-    with lcd(keystone_path):
+    with cd(keystone_path):
         if dev:
-            local('git checkout development')
-        local('sudo python tools/install_venv.py')
-        local('sudo cp etc/keystone.conf.sample etc/keystone.conf')
+            run('git checkout development')
+        run('sudo python tools/install_venv.py')
+        run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
         # Uncomment config file
-        with lcd('etc/'):
-            local("sudo sed -i 's/#admin_token/admin_token/g' keystone.conf")
-            local("sudo sed -i 's/#admin_port/admin_port/g' keystone.conf")
-            local("sudo sed -i 's/#public_port/public_port/g' keystone.conf")
+        with cd('etc/'):
+            run("sudo sed -i 's/#admin_token/admin_token/g' keystone.conf")
+            run("sudo sed -i 's/#admin_port/admin_port/g' keystone.conf")
+            run("sudo sed -i 's/#public_port/public_port/g' keystone.conf")
     print 'Done!'
 
 def database_create(keystone_path, verbose):
     add_verbose = '-v' if verbose else ''
-    with lcd(keystone_path):
-        local('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync'.format(
+    with cd(keystone_path):
+        run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync'.format(
             v=add_verbose))
-        local('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+        run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
             --extension=oauth2'.format(v=add_verbose))
-        local('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+        run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
             --extension=roles'.format(v=add_verbose))
-        local('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+        run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
             --extension=user_registration'.format(v=add_verbose))
 
 def service_create(absolute_keystone_path):
@@ -89,35 +89,39 @@ def service_create(absolute_keystone_path):
     out_file.write(src.substitute({
         'absolute_keystone_path': absolute_keystone_path}))
     out_file.close()
-    local('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
-    local('sudo rm tmp_keystone_idm.conf')
+    run('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
+    run('sudo rm tmp_keystone_idm.conf')
 
 def service_start():
-    local('sudo service keystone_idm start')
+    run('sudo service keystone_idm start')
 
 def service_stop():
-    local('sudo service keystone_idm stop')
+    run('sudo service keystone_idm stop')
 
 def dev_server(keystone_path):
     """Runs the server in dev mode."""
-    with lcd(keystone_path):
-        local('sudo tools/with_venv.sh bin/keystone-all -v')
+    with cd(keystone_path):
+        run('sudo tools/with_venv.sh bin/keystone-all -v')
 
 def database_delete(db_path):
     if os.path.isfile(db_path):
-        local('sudo rm ' + db_path)
+        run('sudo rm ' + db_path)
 
 def create_endpoints(keystone, internal_address, public_address,
                       admin_address, config):
-    port = config.get('DEFAULT', 'public_port')
-    Endpoint = namedtuple('Enpoint', 'url interface')
+    public_port = config.get('DEFAULT', 'public_port')
+    admin_port = config.get('DEFAULT', 'admin_port')
+    Endpoint = namedtuple('Endpoint', 'url interface')
     endpoints = [
         Endpoint('http://{public_address}:{port}/v3'
-                 .format(public_address=public_address, port=port), 'public'),
+                 .format(public_address=public_address, port=public_port), 
+                 'public'),
         Endpoint('http://{admin_address}:{port}/v3'
-                 .format(admin_address=admin_address, port=port), 'admin'),
+                 .format(admin_address=admin_address, port=admin_port), 
+                 'admin'),
         Endpoint('http://{internal_address}:{port}/v3'
-                 .format(internal_address=internal_address, port=port), 'internal')
+                 .format(internal_address=internal_address, port=public_port), 
+                 'internal')
     ]
     service = keystone.services.create(name='keystone', type='identity',
         description='Keystone Identity Service')

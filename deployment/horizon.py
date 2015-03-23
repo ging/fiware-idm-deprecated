@@ -14,8 +14,8 @@
 
 import os
 
-from fabric.api import local
-from fabric.context_managers import lcd
+from fabric.api import run
+from fabric.context_managers import cd
 
 
 def deploy(fiwareclient_path, dev):
@@ -35,20 +35,20 @@ def install(horizon_path, dev):
     if os.path.isdir(horizon_path[:-1]):
         print 'already downloaded'
     else:
-        local('git clone https://github.com/ging/horizon.git \
+        run('git clone https://github.com/ging/horizon.git \
             {0}'.format(horizon_path))
 
-    with lcd(horizon_path):
+    with cd(horizon_path):
         if dev:
-            local('git checkout development')
+            run('git checkout development')
 
-        local('sudo python tools/install_venv.py')
-        local('cp openstack_dashboard/local/local_settings.py.example \
+        run('sudo python tools/install_venv.py')
+        run('cp openstack_dashboard/local/local_settings.py.example \
             openstack_dashboard/local/local_settings.py')
     print 'Done!'
 
 def dev_server(horizon_path, address):
     """Run horizon server for development purposes"""
-    with lcd(horizon_path):
-        local('sudo tools/with_venv.sh python manage.py runserver \
+    with cd(horizon_path):
+        run('sudo tools/with_venv.sh python manage.py runserver \
             {0}'.format(address))

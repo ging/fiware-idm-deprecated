@@ -46,9 +46,10 @@ CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
 CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
 CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
 
+# TODO(garcianavalon): split dependencies
 UBUNTU_DEPENDENCIES = {
 	'install_command': 'sudo apt-get install',
-	'dependencies': [
+	'horizon': [
 		'python-dev',
 		'python-virtualenv',
 		'libxml2-dev',
@@ -60,6 +61,12 @@ UBUNTU_DEPENDENCIES = {
 		'libffi-dev',
 		'libjpeg8-dev',
 	],
+    'keystone': [
+    ],
+    'mysql': [
+    ],
+    'sqlite': [
+    ],
 }
 
 # This dictinary holds the old ids for permissions and roles. Only used

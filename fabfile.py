@@ -14,14 +14,13 @@
 
 import os
 
-import fiwareclient
-import horizon
-import migration
-import keystone
+from deployment import keystone
+from deployment import horizon
+from deployment import migration
+from deployment import fiwareclient
+from deployment.conf import settings
 
-from conf import settings
-
-from fabric.api import local
+from fabric.api import run
 
 def migration_populate(keystone_path=settings.KEYSTONE_ROOT,
                        internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
@@ -46,7 +45,7 @@ def set_up(dev=False):
     fiwareclient_install(dev=dev)
 
 def _install_dependencies():
-    local('{command} {dependencies}').format(
+    run('{command} {dependencies}').format(
         command=settings.UBUNTU_DEPENDENCIES['install_command'],
         dependencies=' '.join(settings.UBUNTU_DEPENDENCIES['dependencies']))
     print 'Dependencies correctly installed'

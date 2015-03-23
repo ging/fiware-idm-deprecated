@@ -14,9 +14,8 @@
 
 import uuid
 
-from conf import settings
-
-import keystone as deployment_keystone
+from deployment import keystone as deployment_keystone
+from deployment.conf import settings
 
 
 def populate(keystone_path, internal_address, public_address,

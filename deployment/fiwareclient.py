@@ -14,8 +14,8 @@
 
 import os
 
-from fabric.api import local
-from fabric.context_managers import lcd
+from fabric.api import run
+from fabric.context_managers import cd
 
 
 def install(fiwareclient_path, dev):
@@ -24,12 +24,12 @@ def install(fiwareclient_path, dev):
     if os.path.isdir(fiwareclient_path[:-1]):
         print 'already downloaded'
     else:
-        local('git clone https://github.com/ging/python-keystoneclient \
+        run('git clone https://github.com/ging/python-keystoneclient \
         {0}'.format(fiwareclient_path))
 
-    with lcd(fiwareclient_path):
+    with cd(fiwareclient_path):
         if dev:
-            local('git checkout development')
+            run('git checkout development')
 
-    local('sudo pip install -e {0}'.format(fiwareclient_path[:-1]))
+    run('sudo pip install -e {0}'.format(fiwareclient_path[:-1]))
     print 'Done!'
