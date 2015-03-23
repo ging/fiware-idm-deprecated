@@ -31,6 +31,7 @@ from fabric.api import execute
 
 @task
 def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
+    import pdb; pdb.set_trace()
     """Download and install the Back-end and its dependencies."""
     if os.path.isdir(keystone_path[:-1]):
         print 'already downloaded'
@@ -41,9 +42,9 @@ def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['keystone'])
         if dev:
             env.run('git checkout development')
-            dependencies += ' '.join(settings.UBUNTU_DEPENDENCIES['sqlite'])
+            dependencies += ' ' + ' '.join(settings.UBUNTU_DEPENDENCIES['sqlite'])
         else:
-            dependencies += ' '.join(settings.UBUNTU_DEPENDENCIES['mysql'])
+            dependencies += ' ' + ' '.join(settings.UBUNTU_DEPENDENCIES['mysql'])
         
         env.run('sudo apt-get install {0}'.format(dependencies))
         env.run('sudo python tools/install_venv.py')
