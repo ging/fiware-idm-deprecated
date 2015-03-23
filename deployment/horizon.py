@@ -21,7 +21,7 @@ from fabric.state import env
 @task
 def install(horizon_path=settings.HORIZON_ROOT,
             dev=False):
-    """Download and install Horizon and its dependencies."""
+    """Download and install the Front-end and its dependencies."""
     if os.path.isdir(horizon_path[:-1]):
         print 'already downloaded'
     else:

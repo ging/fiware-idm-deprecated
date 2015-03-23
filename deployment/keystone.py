@@ -30,53 +30,44 @@ from fabric.state import env
 from fabric.api import execute
 
 @task
-def deploy(dev):
-    """Fully installs the IdM backend"""
-    # TODO(garcianavalon) PARAMETERS!!!
-    install(dev=dev)
-    database_create()
-    if not dev:
-        service_create()
-        service_start() 
-        execute('keystone.populate')
-    if dev:
-        print 'Run fab keystone_dev_server on another terminal to \
-            run keystone\'s dev server'
-        if console.confirm("Do you want to install now the initial data?"):
-           execute('keystone.populate')
-        else:
-            print 'Run fab keystone_database_populate when you are ready.'
-
-        if console.confirm("Do you want to install now some test data?"):
-            test_data()
-        else:
-            print 'Run fab keystone_database_test_data when you are ready.'
-
-@task
 def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
-    print 'Installing backend (Keystone)'
+    """Download and install the Back-end and its dependencies."""
     if os.path.isdir(keystone_path[:-1]):
         print 'already downloaded'
     else:
         env.run('git clone https://github.com/ging/keystone.git \
             {0}'.format(keystone_path))
-    # env.run('sudo apt-get install python-dev libxml2-dev \
-    #         libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
-    #         libldap2-dev libffi-dev')
     with env.cd(keystone_path):
+        dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['keystone'])
         if dev:
             env.run('git checkout development')
+            dependencies += ' '.join(settings.UBUNTU_DEPENDENCIES['sqlite'])
+        else:
+            dependencies += ' '.join(settings.UBUNTU_DEPENDENCIES['mysql'])
+        
+        env.run('sudo apt-get install {0}'.format(dependencies))
         env.run('sudo python tools/install_venv.py')
         env.run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
         # Uncomment config file
         with env.cd('etc/'):
-            env.run("sudo sed -i 's/#admin_token/admin_token/g' keystone.conf")
-            env.run("sudo sed -i 's/#admin_port/admin_port/g' keystone.conf")
-            env.run("sudo sed -i 's/#public_port/public_port/g' keystone.conf")
+            env.run(("sudo sed -i "
+                "'s/#admin_token=ADMIN/admin_token={0}/g' " 
+                "keystone.conf").format(settings.KEYSTONE_ADMIN_TOKEN))
+            env.run(("sudo sed -i "
+                "'s/#admin_port=35357/admin_port={0}/g' "
+                "keystone.conf").format(settings.KEYSTONE_ADMIN_PORT))
+            env.run(("sudo sed -i "
+                "'s/#public_port=5000/public_port={0}/g' "
+                "keystone.conf").format(settings.KEYSTONE_PUBLIC_PORT))
     print 'Done!'
 
 @task
-def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
+def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True,
+                    mysql_user=False):
+    if mysql_user:
+        env.run('mysql -u {0} -p '.format(mysql_user))
+        env.run('CREATE DATABASE {0};'.format(settings.KEYSTONE_PROD_DATABASE))
+
     add_verbose = '-v' if verbose else ''
     with env.cd(keystone_path):
         env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync'.format(
@@ -90,18 +81,25 @@ def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
 
 @task
 def database_delete(keystone_path=settings.KEYSTONE_ROOT,
-                    keystone_db=settings.KEYSTONE_DEV_DATABASE):
-    db_path = keystone_path + keystone_db
-    if os.path.isfile(db_path):
-        env.run('sudo rm ' + db_path)
+                    keystone_db=settings.KEYSTONE_DEV_DATABASE,
+                    mysql_user=False):
+    if mysql_user:
+        env.run('mysql -u {0} -p '.format(mysql_user))
+        env.run('DROP DATABASE {0};'.format(settings.KEYSTONE_PROD_DATABASE))
+    else:
+        db_path = keystone_path + keystone_db
+        if os.path.isfile(db_path):
+            env.run('sudo rm ' + db_path)
 
 @task
-def database_reset(keystone_path=settings.KEYSTONE_ROOT):
+def database_reset(keystone_path=settings.KEYSTONE_ROOT, mysql_user=False):
     """Deletes keystone's database and create a new one, populated with
     the base data needed by the IdM. Requires a keystone instance running.
     """
-    execute(database_delete, keystone_path=keystone_path)
-    execute(database_create, keystone_path=keystone_path)
+    execute(database_delete, keystone_path=keystone_path, 
+        mysql_user=mysql_user)
+    execute(database_create, keystone_path=keystone_path, 
+        mysql_user=mysql_user)
     execute('keystone.populate', keystone_path=keystone_path)
 
 
@@ -109,7 +107,7 @@ def database_reset(keystone_path=settings.KEYSTONE_ROOT):
 def service_create(absolute_keystone_path=None):
     if not absolute_keystone_path:
         absolute_keystone_path = os.getcwd() + '/' + settings.KEYSTONE_ROOT
-    in_file = open('keystone_idm.conf')
+    in_file = open('../conf/keystone_idm.conf')
     src = string.Template(in_file.read())
     out_file = open("tmp_keystone_idm.conf", "w")
     out_file.write(src.substitute({

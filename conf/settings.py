@@ -26,6 +26,9 @@ HOSTS = {
 KEYSTONE_DEV_DATABASE = 'keystone.db'
 HORIZON_DEV_ADDRESS = '127.0.0.1:8000'
 
+# Production settings
+KEYSTONE_PROD_DATABASE = 'keystone'
+
 # TODO(garcianavalon) sync this with the extension,
 # see https://trello.com/c/rTsUMnjw
 INTERNAL_ROLES = {
@@ -46,6 +49,10 @@ IDM_USER_CREDENTIALS = {
     'project': 'idm',
     'domain': 'default',
 }
+
+KEYSTONE_ADMIN_PORT = '35357'
+KEYSTONE_PUBLIC_PORT = '5000'
+KEYSTONE_ADMIN_TOKEN = 'ADMIN'
 
 CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
 CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'

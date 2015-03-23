@@ -1,9 +1,15 @@
 idm_deployment
 ==============
 
-Set of tools to help in developing, deploying and testing FIWARE's IdM KeyRock using [Fabric](http://www.fabfile.org/)
+Set of tools to help in developing, deploying and testing FIWARE's IdM KeyRock using [Fabric](http://www.fabfile.org/).
+
+The IdM is made out of two components, the web-based front-end and the restful back-end. You can check specific documentation in their repos
+[ging/keystone](https:/github.com/ging/keystone)
+[ging/horizon](https:/github.com/ging/horizon)
 
 ### Set up
+Please, check the project wikis for specific documentation and dependencies. This section only covers the tools dependencies.
+
 Before you can run any command you must install the following dependencies:
 
 #### virtualenvwrapper
