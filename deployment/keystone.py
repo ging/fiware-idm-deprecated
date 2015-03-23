@@ -31,7 +31,6 @@ from fabric.api import execute
 
 @task
 def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
-    import pdb; pdb.set_trace()
     """Download and install the Back-end and its dependencies."""
     if os.path.isdir(keystone_path[:-1]):
         print 'already downloaded'
