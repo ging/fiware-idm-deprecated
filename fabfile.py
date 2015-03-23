@@ -17,18 +17,33 @@ import os
 from deployment import keystone
 from deployment import horizon
 from deployment import migration
-from deployment import fiwareclient
 from deployment.conf import settings
 
-from fabric.api import run
+from fabric.operations import local as lrun, run
+from fabric.api import task
+from fabric.state import env
 
-def migration_populate(keystone_path=settings.KEYSTONE_ROOT,
-                       internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
-                       public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
-                       admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
-    """Populates the database with migration specifics from the old idm."""
-    migration.populate(keystone_path, internal_address, public_address,
-        admin_address)
+@task
+def localhost():
+    """Run the task in local machine."""
+    env.run = lrun
+    env.hosts = ['localhost']
+
+@task
+def keystone_host():
+    """Run the task in the keystone machine.
+    To change it, modify deployment:conf:settings.py
+    """
+    env.run = run
+    env.hosts = settings.HOSTS['keystone']
+
+@task
+def horizon_host():
+    """Run the task in the horizon machine.
+    To change it, modify deployment:conf:settings.py
+    """
+    env.run = run
+    env.hosts = settings.HOSTS['horizon']
 
 
 def deploy(dev=False):
@@ -42,28 +57,17 @@ def deploy(dev=False):
 def set_up(dev=False):
     """Install system and python dependencies."""
     _install_dependencies()
-    fiwareclient_install(dev=dev)
 
 def _install_dependencies():
-    run('{command} {dependencies}').format(
-        command=settings.UBUNTU_DEPENDENCIES['install_command'],
-        dependencies=' '.join(settings.UBUNTU_DEPENDENCIES['dependencies']))
+    command = settings.UBUNTU_DEPENDENCIES['install_command']
+    dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['dependencies'])
+    env.run('{command} {dependencies}'.format(command=command, 
+        dependencies=dependencies))
     print 'Dependencies correctly installed'
-
-def fiwareclient_install(fiwareclient_path=settings.FIWARECLIENT_ROOT,
-                         dev=False):
-    _install_dependencies()
-    fiwareclient.install(fiwareclient_path, dev)
 
 # HORIZON
 def horizon_deploy(dev=False):
     horizon.deploy(dev)
-
-def horizon_install(horizon_path=settings.HORIZON_ROOT,
-                    fiwareclient_path=settings.FIWARECLIENT_ROOT,
-                    dev=False):
-    _install_dependencies()
-    horizon.install(horizon_path, fiwareclient_path, dev)
 
 
 def horizon_dev_server(address=settings.HORIZON_DEV_ADDRESS,
@@ -97,14 +101,6 @@ def keystone_database_delete(keystone_path=settings.KEYSTONE_ROOT,
                              keystone_db=settings.KEYSTONE_DEV_DATABASE):
     db_path = keystone_path + keystone_db
     keystone.database_delete(db_path)
-
-def keystone_database_populate(keystone_path=settings.KEYSTONE_ROOT,
-                           internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
-                           public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
-                           admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
-
-    keystone.database_populate(keystone_path, internal_address,
-                           public_address, admin_address)
 
 def keystone_test_data(keystone_path=settings.KEYSTONE_ROOT):
     keystone.test_data(keystone_path)

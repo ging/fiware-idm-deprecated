@@ -16,39 +16,45 @@ import os
 
 from fabric.api import run
 from fabric.context_managers import cd
+from fabric.api import task
+from deployment.conf import settings
 
-
-def deploy(fiwareclient_path, dev):
+@task
+def deploy(env, dev):
     """Fully installs the IdM frontend"""
     # TODO(garcianavalon) PARAMETERS!!!
-    install(dev=dev)
+    install(env, dev=dev)
     if dev:
-        dev_server()
+        dev_server(env)
     else:
         # TODO(garcianavalon) production server!
         pass
 
-def install(horizon_path, dev):
+@task
+def install(horizon_path=settings.HORIZON_ROOT,
+            fiwareclient_path=settings.FIWARECLIENT_ROOT,
+            dev=False):
     """Download and install Horizon and its dependencies."""
     print 'Installing frontend (Horizon)'
 
     if os.path.isdir(horizon_path[:-1]):
         print 'already downloaded'
     else:
-        run('git clone https://github.com/ging/horizon.git \
+        env.run('git clone https://github.com/ging/horizon.git \
             {0}'.format(horizon_path))
 
     with cd(horizon_path):
         if dev:
-            run('git checkout development')
+            env.run('git checkout development')
 
-        run('sudo python tools/install_venv.py')
-        run('cp openstack_dashboard/local/local_settings.py.example \
+        env.run('sudo python tools/install_venv.py')
+        env.run('cp openstack_dashboard/local/local_settings.py.example \
             openstack_dashboard/local/local_settings.py')
     print 'Done!'
 
-def dev_server(horizon_path, address):
+@task
+def dev_server(env, horizon_path, address):
     """Run horizon server for development purposes"""
     with cd(horizon_path):
-        run('sudo tools/with_venv.sh python manage.py runserver \
+        env.run('sudo tools/with_venv.sh python manage.py runserver \
             {0}'.format(address))

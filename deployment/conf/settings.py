@@ -17,6 +17,12 @@ KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
 HORIZON_ROOT = IDM_ROOT + 'horizon/'
 FIWARECLIENT_ROOT = IDM_ROOT + 'fiwareclient/'
 
+# Hosts
+HOSTS = {
+    'keystone': '138.4.4.131',
+    'horizon': '138.4.4.131',
+}
+
 # Development settings
 KEYSTONE_DEV_DATABASE = 'keystone.db'
 HORIZON_DEV_ADDRESS = '127.0.0.1:8000'

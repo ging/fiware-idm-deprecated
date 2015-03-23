@@ -20,232 +20,249 @@ from collections import namedtuple
 
 from deployment.conf import settings
 
-from fabric.api import run
 from fabric.context_managers import cd
 from fabric.contrib import console
 
 from keystoneclient.v3 import client
 
-def deploy(dev):
+from fabric.api import task
+from fabric.tasks import Task
+
+@task
+def deploy(env, dev):
     """Fully installs the IdM backend"""
     # TODO(garcianavalon) PARAMETERS!!!
-    install(dev=dev)
-    database_create()
+    install(env, dev=dev)
+    database_create(env)
     if not dev:
-        service_create()
-        service_start()
-        database_init()
+        service_create(env)
+        service_start(env)
+        database_populate(env)
     if dev:
         print 'Run fab keystone_dev_server on another terminal to \
             run keystone\'s dev server'
         if console.confirm("Do you want to install now the initial data?"):
-            database_init()
+            database_populate(env)
         else:
-            print 'Run fab keystone_database_init when you are ready.'
+            print 'Run fab keystone_database_populate when you are ready.'
 
         if console.confirm("Do you want to install now some test data?"):
-            test_data()
+            test_data(env)
         else:
             print 'Run fab keystone_database_test_data when you are ready.'
 
-def install(keystone_path, dev):
+@task
+def install(env, keystone_path, dev):
     print 'Installing backend (Keystone)'
     if os.path.isdir(keystone_path[:-1]):
         print 'already downloaded'
     else:
-        run('git clone https://github.com/ging/keystone.git \
+        env.run('git clone https://github.com/ging/keystone.git \
             {0}'.format(keystone_path))
-    # run('sudo apt-get install python-dev libxml2-dev \
+    # env.run('sudo apt-get install python-dev libxml2-dev \
     #         libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev \
     #         libldap2-dev libffi-dev')
     with cd(keystone_path):
         if dev:
-            run('git checkout development')
-        run('sudo python tools/install_venv.py')
-        run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
+            env.run('git checkout development')
+        env.run('sudo python tools/install_venv.py')
+        env.run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
         # Uncomment config file
         with cd('etc/'):
-            run("sudo sed -i 's/#admin_token/admin_token/g' keystone.conf")
-            run("sudo sed -i 's/#admin_port/admin_port/g' keystone.conf")
-            run("sudo sed -i 's/#public_port/public_port/g' keystone.conf")
+            env.run("sudo sed -i 's/#admin_token/admin_token/g' keystone.conf")
+            env.run("sudo sed -i 's/#admin_port/admin_port/g' keystone.conf")
+            env.run("sudo sed -i 's/#public_port/public_port/g' keystone.conf")
     print 'Done!'
 
-def database_create(keystone_path, verbose):
+@task
+def database_create(env, keystone_path, verbose):
     add_verbose = '-v' if verbose else ''
     with cd(keystone_path):
-        run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync'.format(
+        env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync'.format(
             v=add_verbose))
-        run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+        env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
             --extension=oauth2'.format(v=add_verbose))
-        run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+        env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
             --extension=roles'.format(v=add_verbose))
-        run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
+        env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
             --extension=user_registration'.format(v=add_verbose))
 
-def service_create(absolute_keystone_path):
+@task
+def service_create(env, absolute_keystone_path):
     in_file = open('keystone_idm.conf')
     src = string.Template(in_file.read())
     out_file = open("tmp_keystone_idm.conf", "w")
     out_file.write(src.substitute({
         'absolute_keystone_path': absolute_keystone_path}))
     out_file.close()
-    run('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
-    run('sudo rm tmp_keystone_idm.conf')
+    env.run('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
+    env.run('sudo rm tmp_keystone_idm.conf')
 
-def service_start():
-    run('sudo service keystone_idm start')
+@task
+def service_start(env):
+    env.run('sudo service keystone_idm start')
 
-def service_stop():
-    run('sudo service keystone_idm stop')
+@task
+def service_stop(env):
+    env.run('sudo service keystone_idm stop')
 
-def dev_server(keystone_path):
+@task
+def dev_server(env, keystone_path):
     """Runs the server in dev mode."""
     with cd(keystone_path):
-        run('sudo tools/with_venv.sh bin/keystone-all -v')
+        env.run('sudo tools/with_venv.sh bin/keystone-all -v')
 
-def database_delete(db_path):
+@task
+def database_delete(env, db_path):
     if os.path.isfile(db_path):
-        run('sudo rm ' + db_path)
+        env.run('sudo rm ' + db_path)
 
-def create_endpoints(keystone, internal_address, public_address,
-                      admin_address, config):
-    public_port = config.get('DEFAULT', 'public_port')
-    admin_port = config.get('DEFAULT', 'admin_port')
-    Endpoint = namedtuple('Endpoint', 'url interface')
-    endpoints = [
-        Endpoint('http://{public_address}:{port}/v3'
-                 .format(public_address=public_address, port=public_port), 
-                 'public'),
-        Endpoint('http://{admin_address}:{port}/v3'
-                 .format(admin_address=admin_address, port=admin_port), 
-                 'admin'),
-        Endpoint('http://{internal_address}:{port}/v3'
-                 .format(internal_address=internal_address, port=public_port), 
-                 'internal')
-    ]
-    service = keystone.services.create(name='keystone', type='identity',
-        description='Keystone Identity Service')
+class PopulateTask(Task):
+    name = "populate"
+    def run(self, environment, keystone_path=settings.KEYSTONE_ROOT,
+            internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
+            public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
+            admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
 
-    for endpoint in endpoints:
-        keystone.endpoints.create(region='RegionOne',
-                                  service=service,
-                                  url=endpoint.url,
-                                  interface=endpoint.interface)
+        config = self._get_config(keystone_path)
+        keystone = self._admin_token_connection(config)
 
-    print 'Created Identity Service and Endpoints'    
+        # Keystone services
+        self._create_endpoints(keystone, internal_address, public_address,
+            admin_address, config)
 
-def admin_token_connection(config):
-    
-    admin_port = config.get('DEFAULT', 'admin_port')
-    token = config.get('DEFAULT', 'admin_token')
+        keystone_roles = self._create_keystone_roles(keystone)
 
-    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
-                                              port=admin_port)
-    keystone = client.Client(token=token, endpoint=endpoint)
-    print 'Connected to keystone using token'
+        idm_user = self._create_idm_user_and_project(keystone, keystone_roles)
+        
+        idm_app = self._create_internal_roles_and_permissions(keystone)
 
-    return keystone
+        # Make the idm user administrator
+        self._grant_administrator(keystone, idm_app, [idm_user])
 
-def get_config(keystone_path):
-    config = ConfigParser.ConfigParser()
-    config.read(keystone_path + 'etc/keystone.conf')
-    return config
+    def _create_endpoints(env, keystone, internal_address, public_address,
+                          admin_address, config):
+        public_port = config.get('DEFAULT', 'public_port')
+        admin_port = config.get('DEFAULT', 'admin_port')
+        Endpoint = namedtuple('Endpoint', 'url interface')
+        endpoints = [
+            Endpoint('http://{public_address}:{port}/v3'
+                     .format(public_address=public_address, port=public_port), 
+                     'public'),
+            Endpoint('http://{admin_address}:{port}/v3'
+                     .format(admin_address=admin_address, port=admin_port), 
+                     'admin'),
+            Endpoint('http://{internal_address}:{port}/v3'
+                     .format(internal_address=internal_address, port=public_port), 
+                     'internal')
+        ]
+        service = keystone.services.create(name='keystone', type='identity',
+            description='Keystone Identity Service')
 
-def create_keystone_roles(keystone):
-    # Default keystone roles
-    # NOTE(garcianavalon) don't confuse it with keystone v2 API
-    # default role (member_role_name=_member_). We need a default
-    # role to add users to projects. Horizon knows this role throught
-    # the local_settings.py file.
-    keystone_roles = {
-        'member': keystone.roles.create(name='member'),
-        'owner': keystone.roles.create(name='owner'),
-        'admin': keystone.roles.create(name='admin'),
-    }
-    print 'created default keystone roles'
-    return keystone_roles
+        for endpoint in endpoints:
+            keystone.endpoints.create(region='RegionOne',
+                                      service=service,
+                                      url=endpoint.url,
+                                      interface=endpoint.interface)
 
-def create_idm_user_and_project(keystone, keystone_roles):
-    idm_project = keystone.projects.create(
-        name=settings.IDM_USER_CREDENTIALS['project'],
-        description='',
-        is_default=True,
-        domain=settings.IDM_USER_CREDENTIALS['domain'])
+        print 'Created Identity Service and Endpoints'    
 
-    idm_user = keystone.users.create(
-        name=settings.IDM_USER_CREDENTIALS['username'],
-        username=settings.IDM_USER_CREDENTIALS['username'],
-        password=settings.IDM_USER_CREDENTIALS['password'],
-        default_project=idm_project,
-        domain=settings.IDM_USER_CREDENTIALS['domain'])
+    def _admin_token_connection(config):
+        
+        admin_port = config.get('DEFAULT', 'admin_port')
+        token = config.get('DEFAULT', 'admin_token')
 
-    keystone.roles.grant(user=idm_user,
-                         role=keystone_roles['admin'],
-                         project=idm_project)
-    keystone.roles.grant(user=idm_user,
-                         role=keystone_roles['owner'],
-                         project=idm_project)
-    print 'Created default idm project and user.'
+        endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
+                                                  port=admin_port)
+        keystone = client.Client(token=token, endpoint=endpoint)
+        print 'Connected to keystone using token'
 
-    return idm_user
+        return keystone
 
-def create_internal_roles_and_permissions(keystone):
-    # Default internal application
-    idm_app = keystone.oauth2.consumers.create(
-        settings.IDM_USER_CREDENTIALS['username'], 
-        description='',
-        grant_type='authorization_code', 
-        client_type='confidential', 
-        is_default=True)
+    def _get_config(keystone_path):
+        config = ConfigParser.ConfigParser()
+        config.read(keystone_path + 'etc/keystone.conf')
+        return config
 
-    # Default Permissions and roles
-    created_permissions = []
-    for permission in settings.INTERNAL_PERMISSIONS:
-        created_permissions.append(
-            keystone.fiware_roles.permissions.create(
-                name=permission, application=idm_app, is_internal=True))
-    created_roles = []
-    for role in settings.INTERNAL_ROLES:
-        created_role = keystone.fiware_roles.roles.create(
-            name=role, application=idm_app, is_internal=True)
-        created_roles.append(created_role)
-        # Link roles with permissions
-        for index in settings.INTERNAL_ROLES[role]:
-            keystone.fiware_roles.permissions.add_to_role(
-                created_role, created_permissions[index])
+    def _create_keystone_roles(keystone):
+        # Default keystone roles
+        # NOTE(garcianavalon) don't confuse it with keystone v2 API
+        # default role (member_role_name=_member_). We need a default
+        # role to add users to projects. Horizon knows this role throught
+        # the local_settings.py file.
+        keystone_roles = {
+            'member': keystone.roles.create(name='member'),
+            'owner': keystone.roles.create(name='owner'),
+            'admin': keystone.roles.create(name='admin'),
+        }
+        print 'created default keystone roles'
+        return keystone_roles
 
-    print ('Created default fiware roles and permissions.')
-    return idm_app
+    def _create_idm_user_and_project(keystone, keystone_roles):
+        idm_project = keystone.projects.create(
+            name=settings.IDM_USER_CREDENTIALS['project'],
+            description='',
+            is_default=True,
+            domain=settings.IDM_USER_CREDENTIALS['domain'])
 
-def grant_administrator(keystone, idm_app, users):
-    provider_role = next(r for r
-                    in keystone.fiware_roles.roles.list()
-                    if r.name == 'provider')
-    for user in users:
-        keystone.fiware_roles.roles.add_to_user(
-            role=provider_role,
-            user=user,
-            application=idm_app,
-            organization=user.default_project_id)
+        idm_user = keystone.users.create(
+            name=settings.IDM_USER_CREDENTIALS['username'],
+            username=settings.IDM_USER_CREDENTIALS['username'],
+            password=settings.IDM_USER_CREDENTIALS['password'],
+            default_project=idm_project,
+            domain=settings.IDM_USER_CREDENTIALS['domain'])
 
-def database_populate(keystone_path, internal_address, public_address,
-                  admin_address):
+        keystone.roles.grant(user=idm_user,
+                             role=keystone_roles['admin'],
+                             project=idm_project)
+        keystone.roles.grant(user=idm_user,
+                             role=keystone_roles['owner'],
+                             project=idm_project)
+        print 'Created default idm project and user.'
 
-    config = get_config(keystone_path)
-    keystone = admin_token_connection(config)
+        return idm_user
 
-    # Keystone services
-    create_endpoints(keystone, internal_address, public_address,
-        admin_address, config)
+    def _create_internal_roles_and_permissions(keystone):
+        # Default internal application
+        idm_app = keystone.oauth2.consumers.create(
+            settings.IDM_USER_CREDENTIALS['username'], 
+            description='',
+            grant_type='authorization_code', 
+            client_type='confidential', 
+            is_default=True)
 
-    keystone_roles = create_keystone_roles(keystone)
+        # Default Permissions and roles
+        created_permissions = []
+        for permission in settings.INTERNAL_PERMISSIONS:
+            created_permissions.append(
+                keystone.fiware_roles.permissions.create(
+                    name=permission, application=idm_app, is_internal=True))
+        created_roles = []
+        for role in settings.INTERNAL_ROLES:
+            created_role = keystone.fiware_roles.roles.create(
+                name=role, application=idm_app, is_internal=True)
+            created_roles.append(created_role)
+            # Link roles with permissions
+            for index in settings.INTERNAL_ROLES[role]:
+                keystone.fiware_roles.permissions.add_to_role(
+                    created_role, created_permissions[index])
 
-    idm_user = create_idm_user_and_project(keystone, keystone_roles)
-    
-    idm_app = create_internal_roles_and_permissions(keystone)
+        print ('Created default fiware roles and permissions.')
+        return idm_app
 
-    # Make the idm user administrator
-    grant_administrator(keystone, idm_app, [idm_user])
+    def _grant_administrator(keystone, idm_app, users):
+        provider_role = next(r for r
+                        in keystone.fiware_roles.roles.list()
+                        if r.name == 'provider')
+        for user in users:
+            keystone.fiware_roles.roles.add_to_user(
+                role=provider_role,
+                user=user,
+                application=idm_app,
+                organization=user.default_project_id)
+
+instance = PopulateTask()
+
 
 
 def _register_user(keystone, name, activate=True):
@@ -261,6 +278,7 @@ def _register_user(keystone, name, activate=True):
             activation_key=user.activation_key)
     return user
 
+@task
 def test_data(keystone_path, keystone=None):
     """Populate the database with some users, organizations and applications
     for convenience"""
