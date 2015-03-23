@@ -19,22 +19,9 @@ from conf import settings
 from fabric.state import env
 
 @task
-def deploy(dev):
-    """Fully installs the IdM frontend"""
-    # TODO(garcianavalon) PARAMETERS!!!
-    install(dev=dev)
-    if dev:
-        dev_server()
-    else:
-        # TODO(garcianavalon) production server!
-        pass
-
-@task
 def install(horizon_path=settings.HORIZON_ROOT,
             dev=False):
     """Download and install Horizon and its dependencies."""
-    print 'Installing frontend (Horizon)'
-
     if os.path.isdir(horizon_path[:-1]):
         print 'already downloaded'
     else:
@@ -44,7 +31,8 @@ def install(horizon_path=settings.HORIZON_ROOT,
     with env.cd(horizon_path):
         if dev:
             env.run('git checkout development')
-
+        dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['horizon'])
+        env.run('sudo apt-get install {0}'.format(dependencies))
         env.run('sudo python tools/install_venv.py')
         env.run('cp openstack_dashboard/local/local_settings.py.example \
             openstack_dashboard/local/local_settings.py')
