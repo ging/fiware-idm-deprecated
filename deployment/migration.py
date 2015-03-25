@@ -54,7 +54,7 @@ class MigratePopulateTask(PopulateTask):
         # Make the idm user administrator
         self._grant_administrator(keystone, idm_app, [idm_user])
 
-    def _create_internal_roles_and_permissions(keystone):
+    def _create_internal_roles_and_permissions(self, keystone):
         # Default internal application
         idm_app = keystone.oauth2.consumers.create(
             settings.IDM_USER_CREDENTIALS['username'], 

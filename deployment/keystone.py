@@ -71,6 +71,7 @@ def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True,
         # TODO(garcianavalon) this is not executing inside mysql shell
         env.run('CREATE DATABASE {0};'.format(settings.KEYSTONE_PROD_DATABASE))
         # TODO(garcianavalon) grant all privileges!
+        # TODO(garcianavlaon) connection string!!
 
     add_verbose = '-v' if verbose else ''
     with env.cd(keystone_path):
