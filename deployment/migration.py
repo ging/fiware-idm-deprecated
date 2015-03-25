@@ -17,6 +17,18 @@ import uuid
 from deployment.keystone import PopulateTask
 from conf import settings
 
+
+# This dictinary holds the old ids for permissions and roles. Only used
+# for migration purposes.
+MIGRATION_OLD_IDS = {
+    'Manage the application': '4',
+    'Manage roles': '5',
+    'Get and assign all application roles': '8',
+    'Manage Authorizations': '6',
+    'provider': '106',
+    'purchaser': '191',
+}
+
 class MigratePopulateTask(PopulateTask):
     """Populates the database with migration specifics from the old idm."""
     name = "populate"
@@ -54,14 +66,14 @@ class MigratePopulateTask(PopulateTask):
         # Default Permissions and roles
         created_permissions = []
         for permission in settings.INTERNAL_PERMISSIONS:
-            old_id = settings.MIGRATION_OLD_IDS.get(permission, uuid.uuid4().hex)
+            old_id = MIGRATION_OLD_IDS.get(permission, uuid.uuid4().hex)
             created_permissions.append(
                 keystone.fiware_roles.permissions.create(
                     id=old_id, name=permission, application=idm_app, is_internal=True))
         
         created_roles = []
         for role in settings.INTERNAL_ROLES:
-            old_id = settings.MIGRATION_OLD_IDS.get(role, uuid.uuid4().hex)
+            old_id = MIGRATION_OLD_IDS.get(role, uuid.uuid4().hex)
             created_role = keystone.fiware_roles.roles.create(
                 id=old_id, name=role, application=idm_app, is_internal=True)
             created_roles.append(created_role)

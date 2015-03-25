@@ -57,3 +57,6 @@ target/
 horizon/
 keystone/
 fiwareclient/
+
+# Settings
+conf/settings.py
