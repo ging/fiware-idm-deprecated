@@ -12,14 +12,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
+
 from deployment import keystone
 from deployment import horizon
 from deployment import migration
 from conf import settings
 
-from fabric.operations import local as lrun, run
-from fabric.context_managers import lcd, cd
 from fabric.api import task
+from fabric.context_managers import lcd, cd
+from fabric.contrib.files import exists
+from fabric.operations import local as lrun, run
 from fabric.state import env
 
 @task
@@ -28,6 +31,7 @@ def localhost():
     env.cd = lcd
     env.run = lrun
     env.hosts = ['localhost']
+    env.exists = os.path.isdir
 
 @task
 def keystonehost():
@@ -37,6 +41,7 @@ def keystonehost():
     env.cd = cd
     env.run = run
     env.hosts = settings.HOSTS['keystone']
+    env.exists = exists
 
 @task
 def horizonhost():
@@ -46,6 +51,7 @@ def horizonhost():
     env.cd = cd
     env.run = run
     env.hosts = settings.HOSTS['horizon']
+    env.exists = exists
 
 def set_up(dev=False):
     """Install system and python dependencies."""

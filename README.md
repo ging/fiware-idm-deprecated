@@ -7,10 +7,13 @@ The IdM is made out of two components, the web-based front-end and the restful b
 [ging/keystone](https:/github.com/ging/keystone)
 [ging/horizon](https:/github.com/ging/horizon)
 
-### Set up
+### Installation
+Create a settings file
+```
+cp conf/settings.py.example conf/settings.py
+```
+Install dependencies.
 Please, check the project wikis for specific documentation and dependencies. This section only covers the tools dependencies.
-
-Before you can run any command you must install the following dependencies:
 
 #### virtualenvwrapper
 Follow the instructions here https://virtualenvwrapper.readthedocs.org/en/latest/index.html
@@ -25,7 +28,7 @@ pip install -r requirements.txt
 ```
 
 ### Configuration
-There is a configuration file in /conf/settings.py. Check the wiki for the details about each option.
+There is a configuration file in /conf/settings.py.example. Check the wiki for the details about each option.
 
 ### Usage
 To see all available commands use 
@@ -45,3 +48,9 @@ For example:
 fab localhost keystone.deploy:dev=True
 ```
 
+Use the -p option to prevent Fabric from asking you for your password on every command when executing tasks on remote hosts:
+```
+-p PASSWORD, --password=PASSWORD
+
+Sets env.password to the given string; it will then be used as the default password when making SSH connections or calling the sudo program.
+```

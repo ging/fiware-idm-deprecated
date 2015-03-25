@@ -29,10 +29,11 @@ from fabric.tasks import Task
 from fabric.state import env
 from fabric.api import execute
 
+
 @task
 def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
     """Download and install the Back-end and its dependencies."""
-    if os.path.isdir(keystone_path[:-1]):
+    if env.exists(keystone_path[:-1]):
         print 'already downloaded'
     else:
         env.run('git clone https://github.com/ging/keystone.git \
