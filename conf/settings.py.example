@@ -78,6 +78,7 @@ UBUNTU_DEPENDENCIES = {
         'libsqlite3-dev',
     ],
     'mysql': [
+        'libmysqlclient-dev',
         'python-mysqldb',
     ],
     'sqlite': [
