@@ -112,7 +112,7 @@ def database_reset(keystone_path=settings.KEYSTONE_ROOT, mysql_user=False):
 def service_create(absolute_keystone_path=None):
     if not absolute_keystone_path:
         absolute_keystone_path = os.getcwd() + '/' + settings.KEYSTONE_ROOT
-    in_file = open('../conf/keystone_idm.conf')
+    in_file = open('conf/keystone_idm.conf')
     src = string.Template(in_file.read())
     out_file = open("tmp_keystone_idm.conf", "w")
     out_file.write(src.substitute({

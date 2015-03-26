@@ -21,12 +21,12 @@ from conf import settings
 # This dictinary holds the old ids for permissions and roles. Only used
 # for migration purposes.
 MIGRATION_OLD_IDS = {
-    'Manage the application': '4',
-    'Manage roles': '5',
-    'Get and assign all application roles': '8',
-    'Manage Authorizations': '6',
-    'provider': '106',
-    'purchaser': '191',
+    'Manage the application': '5',
+    'Manage roles': '6',
+    'Get and assign all application roles': '7',
+    'Manage Authorizations': '8',
+    'provider': '285',
+    'purchaser': '288',
 }
 
 class MigratePopulateTask(PopulateTask):
