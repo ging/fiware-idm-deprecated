@@ -15,12 +15,11 @@
 import ConfigParser
 import string
 import os
+import random
 
 from collections import namedtuple
 
 from conf import settings
-
-from fabric.contrib import console
 
 from keystoneclient.v3 import client
 
@@ -211,7 +210,7 @@ class PopulateTask(Task):
         keystone_roles = {
             'member': keystone.roles.create(name='member'),
             'owner': keystone.roles.create(name='owner'),
-            'admin': keystone.roles.create(name='admin'),
+            'admin': keystone.roles.create(name='admin', is_default=True),
         }
         print 'created default keystone roles'
         return keystone_roles
@@ -317,8 +316,12 @@ def test_data(keystone_path=settings.KEYSTONE_ROOT, keystone=None):
 
     # Create 4 users
     users = []
-    for i in range(4):
-        users.append(_register_user(keystone, 'user' + str(i)))
+    for i in range(20):
+        username = 'us' + ''.join(
+            random.choice(string.ascii_lowercase) for i in range(1))
+        if i == 0:
+            username = 'user'
+        users.append(_register_user(keystone, username + str(i)))
 
     # Log as user0
     user0 = users[0]
