@@ -43,6 +43,9 @@ INTERNAL_PERMISSIONS = [
     'Get and assign only owned roles',
 ]
 
+# TODO(garcianavalon) sync with local_settings.py
+KEYSTONE_DEFAULT_DOMAIN = 'default'
+
 IDM_USER_CREDENTIALS = {
     'username': 'idm',
     'password': 'idm',
@@ -57,6 +60,14 @@ KEYSTONE_ADMIN_TOKEN = 'ADMIN'
 CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
 CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
 CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
+
+# For test_data
+FIWARE_DEFAULT_APPS = [
+    'Cloud',
+    'Mashup',
+    'Store',
+]
+
 
 UBUNTU_DEPENDENCIES = {
 	'horizon': [
