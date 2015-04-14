@@ -312,6 +312,14 @@ def test_data(keystone_path=settings.KEYSTONE_ROOT, keystone=None):
             project_name=settings.IDM_USER_CREDENTIALS['project'],
             auth_url=endpoint)
 
+    # Create some default apps to test
+    for app_name in settings.FIWARE_DEFAULT_APPS:
+        app = keystone.oauth2.consumers.create(
+                app_name, 
+                description='Default app in FIWARE',
+                grant_type='authorization_code', 
+                client_type='confidential')
+
     owner_role = keystone.roles.find(name='owner')
 
     # Create 4 users
