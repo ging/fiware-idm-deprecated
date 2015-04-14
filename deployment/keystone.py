@@ -220,14 +220,14 @@ class PopulateTask(Task):
             name=settings.IDM_USER_CREDENTIALS['project'],
             description='',
             is_default=True,
-            domain=settings.IDM_USER_CREDENTIALS['domain'])
+            domain=settings.KEYSTONE_DEFAULT_DOMAIN)
 
         idm_user = keystone.users.create(
             name=settings.IDM_USER_CREDENTIALS['username'],
             username=settings.IDM_USER_CREDENTIALS['username'],
             password=settings.IDM_USER_CREDENTIALS['password'],
             default_project=idm_project,
-            domain=settings.IDM_USER_CREDENTIALS['domain'])
+            domain=settings.KEYSTONE_DEFAULT_DOMAIN)
 
         keystone.roles.grant(user=idm_user,
                              role=keystone_roles['admin'],
@@ -287,7 +287,7 @@ def _register_user(keystone, name, activate=True):
         name=email,
         password='test',
         username=name,
-        domain='default')
+        domain=settings.KEYSTONE_DEFAULT_DOMAIN)
     if activate:
         user = keystone.user_registration.users.activate_user(
             user=user.id,
@@ -342,7 +342,7 @@ def test_data(keystone_path=settings.KEYSTONE_ROOT, keystone=None):
     test_org = keystone.projects.create(
         name='Test Organization',
         description='Testing data',
-        domain='default',
+        domain=settings.KEYSTONE_DEFAULT_DOMAIN,
         enabled=True,
         img='/static/dashboard/img/logos/small/group.png',
         city='',
