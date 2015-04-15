@@ -211,6 +211,8 @@ class PopulateTask(Task):
             'member': keystone.roles.create(name='member'),
             'owner': keystone.roles.create(name='owner'),
             'trial': keystone.roles.create(name='trial'),
+            'basic': keystone.roles.create(name='basic'),
+            'community': keystone.roles.create(name='community'),
             'admin': keystone.roles.create(name='admin', is_default=True),
         }
         print 'created default keystone roles'
@@ -394,9 +396,3 @@ def test_data(keystone_path=settings.KEYSTONE_ROOT, keystone=None):
         user=user1.id,
         application=test_app.id,
         organization=user1.default_project_id)
-
-    # make user1 a trial user
-    trial_role = keystone.roles.find(name='trial')
-    keystone.roles.grant(user=user1.id,
-                         role=trial_role.id,
-                         domain=settings.KEYSTONE_DEFAULT_DOMAIN)
