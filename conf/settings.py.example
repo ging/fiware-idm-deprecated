@@ -32,15 +32,16 @@ KEYSTONE_PROD_DATABASE = 'keystone'
 # TODO(garcianavalon) sync this with the extension,
 # see https://trello.com/c/rTsUMnjw
 INTERNAL_ROLES = {
-    'provider': [0, 1, 2, 3, 4],
-    'purchaser': [3],
+    'provider': [0, 1, 2, 3, 4, 5],
+    'purchaser': [2],
 }
 INTERNAL_PERMISSIONS = [
     'Manage the application',
     'Manage roles',
-    'Get and assign all application roles',
+    'Get and assign all public application roles',
     'Manage Authorizations',
-    'Get and assign only owned roles',
+    'Get and assign only public owned roles',
+    'Get and assign all internal application roles',
 ]
 
 # TODO(garcianavalon) sync with local_settings.py
@@ -50,7 +51,6 @@ IDM_USER_CREDENTIALS = {
     'username': 'idm',
     'password': 'idm',
     'project': 'idm',
-    'domain': 'default',
 }
 
 KEYSTONE_ADMIN_PORT = '35357'
@@ -62,12 +62,11 @@ CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
 CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
 
 # For test_data
-FIWARE_DEFAULT_APPS = [
-    'Cloud',
-    'Mashup',
-    'Store',
-]
-
+FIWARE_DEFAULT_APPS = {
+    'Cloud' : ['Member'],
+    'Mashup': [],
+    'Store':[],
+}
 
 UBUNTU_DEPENDENCIES = {
 	'horizon': [

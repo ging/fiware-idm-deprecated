@@ -322,6 +322,12 @@ def test_data(keystone_path=settings.KEYSTONE_ROOT, keystone=None):
                 description='Default app in FIWARE',
                 grant_type='authorization_code', 
                 client_type='confidential')
+        # Create default roles
+        for role_name in settings.FIWARE_DEFAULT_APPS[app_name]:
+            role = keystone.fiware_roles.roles.create(
+                name=role_name,
+                is_internal=False,
+                application=app.id)
 
     owner_role = keystone.roles.find(name='owner')
 
