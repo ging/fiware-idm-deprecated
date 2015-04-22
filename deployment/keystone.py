@@ -41,9 +41,11 @@ def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['keystone'])
         if dev:
             env.run('git checkout development')
-            dependencies += ' ' + ' '.join(settings.UBUNTU_DEPENDENCIES['sqlite'])
+            dependencies += ' ' + ' '.join(
+                settings.UBUNTU_DEPENDENCIES['sqlite'])
         else:
-            dependencies += ' ' + ' '.join(settings.UBUNTU_DEPENDENCIES['mysql'])
+            dependencies += ' ' + ' '.join(
+                settings.UBUNTU_DEPENDENCIES['mysql'])
         
         env.run('sudo apt-get install {0}'.format(dependencies))
         env.run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
@@ -68,20 +70,21 @@ def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True,
     if mysql_user:
         env.run('mysql -u {0} -p '.format(mysql_user))
         # TODO(garcianavalon) this is not executing inside mysql shell
-        env.run('CREATE DATABASE {0};'.format(settings.KEYSTONE_PROD_DATABASE))
+        env.run('CREATE DATABASE {0};'.format(
+            settings.KEYSTONE_PROD_DATABASE))
         # TODO(garcianavalon) grant all privileges!
         # TODO(garcianavlaon) connection string!!
 
     add_verbose = '-v' if verbose else ''
     with env.cd(keystone_path):
-        env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync'.format(
-            v=add_verbose))
-        env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
-            --extension=oauth2'.format(v=add_verbose))
-        env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
-            --extension=roles'.format(v=add_verbose))
-        env.run('sudo tools/with_venv.sh bin/keystone-manage {v} db_sync \
-            --extension=user_registration'.format(v=add_verbose))
+        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+            ' db_sync').format(v=add_verbose))
+        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+            ' db_sync --extension=oauth2').format(v=add_verbose))
+        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+            ' db_sync --extension=roles').format(v=add_verbose))
+        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+            ' db_sync --extension=user_registration').format(v=add_verbose))
 
 @task
 def database_delete(keystone_path=settings.KEYSTONE_ROOT,
@@ -169,8 +172,9 @@ class PopulateTask(Task):
             Endpoint('http://{admin_address}:{port}/v3'
                      .format(admin_address=admin_address, port=admin_port), 
                      'admin'),
-            Endpoint('http://{internal_address}:{port}/v3'
-                     .format(internal_address=internal_address, port=public_port), 
+            Endpoint('http://{internal_address}:{port}/v3'.format(
+                        internal_address=internal_address, 
+                        port=public_port), 
                      'internal')
         ]
         service = keystone.services.create(name='keystone', type='identity',
@@ -210,9 +214,10 @@ class PopulateTask(Task):
         keystone_roles = {
             'member': keystone.roles.create(name='member'),
             'owner': keystone.roles.create(name='owner'),
-            'trial': keystone.roles.create(name='trial'),
-            'basic': keystone.roles.create(name='basic'),
-            'community': keystone.roles.create(name='community'),
+            'trial': keystone.roles.create(name='trial', is_default=True),
+            'basic': keystone.roles.create(name='basic', is_default=True),
+            'community': keystone.roles.create(name='community', 
+                                               is_default=True),
             'admin': keystone.roles.create(name='admin', is_default=True),
         }
         print 'created default keystone roles'
