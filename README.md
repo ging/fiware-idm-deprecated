@@ -31,6 +31,7 @@ pip install -r requirements.txt
 There is a configuration file in /conf/settings.py.example. Check the wiki for the details about each option.
 
 ### Usage
+**right now only localhost command works, dont use keystonehost or horizonhost**  
 To see all available commands use 
 ```
 fab --list
