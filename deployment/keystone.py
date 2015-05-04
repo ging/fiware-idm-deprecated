@@ -62,6 +62,10 @@ def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
             env.run(("sudo sed -i "
                 "'s/#public_port=5000/public_port={0}/g' "
                 "keystone.conf").format(settings.KEYSTONE_PUBLIC_PORT))
+    # TODO(garcianavalon) add the endpoint filter extension to pipeline
+    # and the driver in the [catalog] section
+    # driver = keystone.contrib.endpoint_filter.backends.
+    # catalog_sql.EndpointFilterCatalog 
     print 'Done!'
 
 @task
@@ -79,6 +83,8 @@ def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True,
     with env.cd(keystone_path):
         env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync').format(v=add_verbose))
+        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+            ' db_sync --extension endpoint_filter').format(v=add_verbose))
         env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync --extension=oauth2').format(v=add_verbose))
         env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
@@ -338,11 +344,8 @@ def test_data(keystone_path=settings.KEYSTONE_ROOT, keystone=None):
 
     # Create 4 users
     users = []
-    for i in range(20):
-        username = 'us' + ''.join(
-            random.choice(string.ascii_lowercase) for i in range(1))
-        if i == 0 or i == 1:
-            username = 'user'
+    for i in range(10):
+        username = 'user'
         users.append(_register_user(keystone, username + str(i)))
 
     # Log as user0
