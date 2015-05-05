@@ -13,9 +13,8 @@
 # under the License.
 
 import ConfigParser
-import string
 import os
-import random
+import string
 
 from collections import namedtuple
 
@@ -187,10 +186,11 @@ class PopulateTask(Task):
             description='Keystone Identity Service')
 
         for endpoint in endpoints:
-            keystone.endpoints.create(region='RegionOne',
-                                      service=service,
-                                      url=endpoint.url,
-                                      interface=endpoint.interface)
+            keystone.endpoints.create(
+                region=settings.IDENTITY_SERVICE_REGION,
+                service=service,
+                url=endpoint.url,
+                interface=endpoint.interface)
 
         print 'Created Identity Service and Endpoints'    
 

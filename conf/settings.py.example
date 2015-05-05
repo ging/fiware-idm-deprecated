@@ -68,6 +68,10 @@ FIWARE_DEFAULT_APPS = {
     'Store':[],
 }
 
+REGIONS = [
+]
+IDENTITY_SERVICE_REGION = 'Spain2'
+
 UBUNTU_DEPENDENCIES = {
 	'horizon': [
 		'python-dev',
