@@ -155,7 +155,9 @@ class PopulateTask(Task):
         keystone = self._admin_token_connection()
 
         # Keystone services
-        self._create_endpoints(keystone)
+        self._create_services_and_endpoints(keystone)
+        # Enpoint groups
+        self._create_endpoint_group_filters(keystone)
 
         keystone_roles = self._create_keystone_roles(keystone)
 
@@ -166,7 +168,7 @@ class PopulateTask(Task):
         # Make the idm user administrator
         self._grant_administrator(keystone, idm_app, [idm_user])
 
-    def _create_endpoints(self, keystone):
+    def _create_services_and_endpoints(self, keystone):
         for service_data in service_catalog.CATALOG:
             service = keystone.services.create(
                 name=service_data['name'],
@@ -186,7 +188,29 @@ class PopulateTask(Task):
                         url=url,
                         interface=interface)
 
-        print 'Created Services and Endpoints'    
+        print 'Created Services and Endpoints'
+
+    def _create_endpoint_group_filters(self, keystone):
+        """Create an endpoint group that filters for each region and one
+        that filters for identity service.
+        """
+        regions = keystone.regions.list()
+        for region in regions:
+            keystone.endpoint_groups.create(
+                name=region.id + ' Region Group',
+                filters={
+                    'region_id': region.id
+                })
+        identity_services = [service for service 
+                             in keystone.services.list(type='identity')
+                             if service.type == 'identity']
+
+        for service in identity_services:
+            keystone.endpoint_groups.create(
+                name=service.name + ' Identity Group',
+                filters={
+                    'service_id': service.id
+                })
 
     def _admin_token_connection(self):
         admin_port = settings.KEYSTONE_ADMIN_PORT
