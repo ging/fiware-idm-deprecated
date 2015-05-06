@@ -146,12 +146,6 @@ def dev_server(keystone_path=settings.KEYSTONE_ROOT):
 class PopulateTask(Task):
     name = "populate"
     def run(self, keystone_path=settings.KEYSTONE_ROOT):
-
-        internal_address = settings.CONTROLLER_INTERNAL_ADDRESS,
-        public_address = settings.CONTROLLER_PUBLIC_ADDRESS,
-        admin_address = settings.CONTROLLER_ADMIN_ADDRESS
-
-        config = self._get_keystone_config(keystone_path)
         keystone = self._admin_token_connection()
 
         # Keystone services

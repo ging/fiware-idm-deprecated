@@ -32,18 +32,14 @@ MIGRATION_OLD_IDS = {
 class MigratePopulateTask(PopulateTask):
     """Populates the database with migration specifics from the old idm."""
     name = "populate"
-    def run(self, keystone_path=settings.KEYSTONE_ROOT,
-            internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
-            public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
-            admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
-
-        config = self._get_keystone_config(keystone_path)
-        keystone = self._admin_token_connection(config)
+    def run(self, keystone_path=settings.KEYSTONE_ROOT):
+        keystone = self._admin_token_connection()
 
         # Keystone services
-        self._create_endpoints(keystone, internal_address, public_address,
-            admin_address, config)
-
+        self._create_services_and_endpoints(keystone)
+        # Enpoint groups
+        self._create_endpoint_group_filters(keystone)
+        
         keystone_roles = self._create_keystone_roles(keystone)
 
         idm_user = self._create_idm_user_and_project(keystone, keystone_roles)
