@@ -19,6 +19,7 @@ import string
 from collections import namedtuple
 
 from conf import settings
+from conf import service_catalog
 
 from keystoneclient.v3 import client
 
@@ -144,10 +145,11 @@ def dev_server(keystone_path=settings.KEYSTONE_ROOT):
 
 class PopulateTask(Task):
     name = "populate"
-    def run(self, keystone_path=settings.KEYSTONE_ROOT,
-            internal_address=settings.CONTROLLER_INTERNAL_ADDRESS,
-            public_address=settings.CONTROLLER_PUBLIC_ADDRESS,
-            admin_address=settings.CONTROLLER_ADMIN_ADDRESS):
+    def run(self, keystone_path=settings.KEYSTONE_ROOT):
+
+        internal_address = settings.CONTROLLER_INTERNAL_ADDRESS,
+        public_address = settings.CONTROLLER_PUBLIC_ADDRESS,
+        admin_address = settings.CONTROLLER_ADMIN_ADDRESS
 
         config = self._get_keystone_config(keystone_path)
         keystone = self._admin_token_connection(config)
@@ -165,44 +167,35 @@ class PopulateTask(Task):
         # Make the idm user administrator
         self._grant_administrator(keystone, idm_app, [idm_user])
 
-    def _create_endpoints(self, keystone, internal_address, public_address,
-                          admin_address, config):
-        public_port = config.get('DEFAULT', 'public_port')
-        admin_port = config.get('DEFAULT', 'admin_port')
-        Endpoint = namedtuple('Endpoint', 'url interface')
-        endpoints = [
-            Endpoint('http://{public_address}:{port}/v3'
-                     .format(public_address=public_address, port=public_port), 
-                     'public'),
-            Endpoint('http://{admin_address}:{port}/v3'
-                     .format(admin_address=admin_address, port=admin_port), 
-                     'admin'),
-            Endpoint('http://{internal_address}:{port}/v3'.format(
-                        internal_address=internal_address, 
-                        port=public_port), 
-                     'internal')
-        ]
-        service = keystone.services.create(name='keystone', type='identity',
-            description='Keystone Identity Service')
+    def _create_endpoints(self, keystone):
+        for service_data in service_catalog.CATALOG:
+            service = keystone.services.create(
+                name=service_data['name'],
+                type=service_data['type'],
+                description=service_data.get('description', None))
 
-        for endpoint in endpoints:
-            keystone.endpoints.create(
-                region=settings.IDENTITY_SERVICE_REGION,
-                service=service,
-                url=endpoint.url,
-                interface=endpoint.interface)
+            for endpoint in service_data['endpoints']:
+                interfaces = [
+                    ('public', endpoint['publicURL']),
+                    ('admin', endpoint['adminURL']),
+                    ('internal', endpoint['internalURL']),
+                ]
+                for interface, url in interfaces:
+                    keystone.endpoints.create(
+                        region=endpoint['region'],
+                        service=service,
+                        url=url,
+                        interface=interface)
 
-        print 'Created Identity Service and Endpoints'    
+        print 'Created Services and Endpoints'    
 
-    def _admin_token_connection(self, config):
-        
-        admin_port = config.get('DEFAULT', 'admin_port')
-        token = config.get('DEFAULT', 'admin_token')
+    def _admin_token_connection(self):
+        admin_port = settings.KEYSTONE_ADMIN_PORT
+        token = settings.KEYSTONE_ADMIN_TOKEN
 
         endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
                                                   port=admin_port)
         keystone = client.Client(token=token, endpoint=endpoint)
-        print 'Connected to keystone using token'
 
         return keystone
 
@@ -222,8 +215,7 @@ class PopulateTask(Task):
             'owner': keystone.roles.create(name='owner'),
             'trial': keystone.roles.create(name='trial', is_default=True),
             'basic': keystone.roles.create(name='basic', is_default=True),
-            'community': keystone.roles.create(name='community', 
-                                               is_default=True),
+            'community': keystone.roles.create(name='community', is_default=True),
             'admin': keystone.roles.create(name='admin', is_default=True),
         }
         print 'created default keystone roles'
