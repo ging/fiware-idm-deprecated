@@ -60,3 +60,4 @@ fiwareclient/
 
 # Settings
 conf/settings.py
+conf/service_catalog.py
