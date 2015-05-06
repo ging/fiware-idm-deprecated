@@ -152,11 +152,10 @@ class PopulateTask(Task):
         admin_address = settings.CONTROLLER_ADMIN_ADDRESS
 
         config = self._get_keystone_config(keystone_path)
-        keystone = self._admin_token_connection(config)
+        keystone = self._admin_token_connection()
 
         # Keystone services
-        self._create_endpoints(keystone, internal_address, public_address,
-            admin_address, config)
+        self._create_endpoints(keystone)
 
         keystone_roles = self._create_keystone_roles(keystone)
 

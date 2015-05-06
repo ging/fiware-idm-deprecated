@@ -1088,16 +1088,16 @@ CATALOG = [
   {
     "endpoints": [
       {
-        "adminURL": "puppet-master.lab.fi-ware.org",
+        "adminURL": "http://puppet-master.lab.fi-ware.org",
         "region": "Spain",
-        "internalURL": "puppet-master.lab.fi-ware.org",
-        "publicURL": "puppet-master.lab.fi-ware.org"
+        "internalURL": "http://puppet-master.lab.fi-ware.org",
+        "publicURL": "http://puppet-master.lab.fi-ware.org"
       },
       {
-        "adminURL": "puppet-master.lab.fi-ware.org",
+        "adminURL": "http://puppet-master.lab.fi-ware.org",
         "region": "Spain2",
-        "internalURL": "puppet-master.lab.fi-ware.org",
-        "publicURL": "puppet-master.lab.fi-ware.org"
+        "internalURL": "http://puppet-master.lab.fi-ware.org",
+        "publicURL": "http://puppet-master.lab.fi-ware.org"
       },
       {
         "adminURL": "http://puppet-master.lab.fi-ware.org",
