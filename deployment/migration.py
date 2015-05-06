@@ -23,7 +23,7 @@ from conf import settings
 MIGRATION_OLD_IDS = {
     'Manage the application': '5',
     'Manage roles': '6',
-    'Get and assign all application roles': '7',
+    'Get and assign all public application roles': '7',
     'Manage Authorizations': '8',
     'provider': '285',
     'purchaser': '288',
@@ -39,7 +39,7 @@ class MigratePopulateTask(PopulateTask):
         self._create_services_and_endpoints(keystone)
         # Enpoint groups
         self._create_endpoint_group_filters(keystone)
-        
+
         keystone_roles = self._create_keystone_roles(keystone)
 
         idm_user = self._create_idm_user_and_project(keystone, keystone_roles)
