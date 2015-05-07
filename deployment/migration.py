@@ -166,7 +166,7 @@ class MigrateCategoriesTask(PopulateTask):
             endpoint_group=region_group)
 
         # done!
-        print ('OK: {0}'.format('user_id'))
+        print ('OK: {0}'.format(user_id))
 
     def _activate_cloud(self, keystone, user_id, cloud_project_id):
         # grant purchaser in cloud app to cloud org
