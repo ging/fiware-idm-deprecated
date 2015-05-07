@@ -20,7 +20,7 @@ import uuid
 from deployment.keystone import PopulateTask
 from conf import settings
 
-from keystone_client import exceptions
+from keystoneclient import exceptions
 
 
 # This dictinary holds the old ids for permissions and roles. Only used
