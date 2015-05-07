@@ -12,6 +12,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import datetime
+import json
+import os
 import uuid
 
 from deployment.keystone import PopulateTask
@@ -26,8 +29,11 @@ MIGRATION_OLD_IDS = {
     'Get and assign all public application roles': '7',
     'Manage Authorizations': '8',
     'provider': '285',
-    'purchaser': '288',
+    'purchaser': '6453fc41aa9d404b984d9da0566a1f7e',
 }
+
+CLOUD_APP_ID = 'f8999e1ee0884195997b63280c2b0264'
+CLOUD_ROLE_ID = 'd38d9cd4fa524b87a87feb45904480f7'
 
 class MigratePopulateTask(PopulateTask):
     """Populates the database with migration specifics from the old idm."""
@@ -82,3 +88,100 @@ class MigratePopulateTask(PopulateTask):
         return idm_app
 
 instance = MigratePopulateTask()
+
+
+class MigrateCategoriesTask(PopulateTask):
+    """Assignates a category to the old users."""
+    name = "user_categories"
+
+    def run(self, keystone_path=settings.KEYSTONE_ROOT):
+        __location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        categories = json.load(open(os.path.join(__location__, 'categories.json')))
+
+        keystone = self._admin_token_connection()
+
+        self.trial_role = keystone.roles.find(name='trial')
+        self.community_role = keystone.roles.find(name='community')
+        self.basic_role = keystone.roles.find(name='basic')
+
+        for data in categories:
+            user_id = data['user_id']
+            role_id = data['role_id']
+            region_id = data.get('region_id', None)
+
+            if (role_id == self.trial_role.id
+                and not region_id):
+
+                region_id = 'Spain2'
+
+            if role_id == self.community_role.id and not region_id:
+
+                print ('ERROR: {0} community with no region'.format(user_id))
+                continue
+
+            if role_id == self.basic_role.id and region_id:
+
+                region_id = None
+                
+                print ('WARNING: {0} basic with region, ignoring it'.format(user_id))
+
+            if role_id not in [self.trial_role.id, self.basic_role.id, self.community_role.id]:
+                print ('ERROR: {0} invalid role_id {1}'.format(user_id, role_id))
+                continue
+
+            self.update_account(keystone, user_id, role_id, region_id)
+
+
+    def update_account(self, keystone, user_id, role_id, region_id=None):
+        user = keystone.users.get(user_id)
+
+        # grant the selected role
+        keystone.roles.grant(user=user_id, role=role_id, domain='default')
+
+        date = str(datetime.date.today())
+        if role_id == self.trial_role.id:
+
+            keystone.users.update(user=user, trial_started_at=date)
+        elif role_id == self.community_role.id:
+            keystone.users.update(user=user, community_started_at=date)
+
+        # cloud
+        if role_id != self.basic_role.id:
+            self._activate_cloud(keystone, user_id, user.cloud_project_id)
+        
+        # assign endpoint group for the selected region
+        if not region_id:
+            return
+
+        endpoint_groups = keystone.endpoint_groups.list()
+        region_group = next(group for group in endpoint_groups
+            if group.filters.get('region_id', None) == region_id)
+
+        if not region_group:
+            print ('There is no endpoint group defined for {0}'.format(region_id))
+        
+        keystone.endpoint_groups.add_endpoint_group_to_project(
+            project=user.cloud_project_id,
+            endpoint_group=region_group)
+
+        # done!
+        print ('OK: {0}'.format('user_id'))
+
+    def _activate_cloud(self, keystone, user_id, cloud_project_id):
+        # grant purchaser in cloud app to cloud org
+        # and Member to the user
+
+        keystone.fiware_roles.roles.add_to_organization(
+            role=MIGRATION_OLD_IDS['purchaser'],
+            organization=cloud_project_id,
+            application=CLOUD_APP_ID)
+
+        keystone.fiware_roles.roles.add_to_user(
+            role=CLOUD_ROLE_ID,
+            user=user_id,
+            organization=cloud_project_id,
+            application=CLOUD_APP_ID)
+
+
+instance2 = MigrateCategoriesTask()
