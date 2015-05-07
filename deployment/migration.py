@@ -20,6 +20,8 @@ import uuid
 from deployment.keystone import PopulateTask
 from conf import settings
 
+from keystone_client import exceptions
+
 
 # This dictinary holds the old ids for permissions and roles. Only used
 # for migration purposes.
@@ -202,12 +204,17 @@ class AllRegionsForAllUsersTask(PopulateTask):
             if not hasattr(user, 'cloud_project_id'):
                 print 'Skip {0}, no cloud project id'.format(user.name)
                 continue
+            try:
+                keystone.endpoint_groups.add_endpoint_group_to_project(
+                    project=user.cloud_project_id,
+                    endpoint_group=NO_FILTER_ENDPOINT_GROUP_ID)
 
-            keystone.endpoint_groups.add_endpoint_group_to_project(
-                project=user.cloud_project_id,
-                endpoint_group=NO_FILTER_ENDPOINT_GROUP_ID)
-
-            print 'OK {}'.format(user.name)
+                print '200 OK {0}'.format(user.name)
+            except exceptions.Conflict:
+                print '409 User {0} already has it'.format(user.name)
+            except exceptions.NotFound:
+                print '404 Not found project {0} for user {1}'.format(
+                    user.cloud_project_id, user.name)
 
         print 'Done.'
 
