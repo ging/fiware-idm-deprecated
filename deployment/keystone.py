@@ -143,6 +143,33 @@ def dev_server(keystone_path=settings.KEYSTONE_ROOT):
     with env.cd(keystone_path):
         env.run('sudo tools/with_venv.sh bin/keystone-all -v')
 
+@task
+def delete_region_and_endpoints(region):
+    """Deletes a region and all its associated endpoints and endpoint_groups."""
+    admin_port = settings.KEYSTONE_ADMIN_PORT
+    token = settings.KEYSTONE_ADMIN_TOKEN
+
+    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
+                                              port=admin_port)
+    keystone = client.Client(token=token, endpoint=endpoint)
+
+    # check region exists
+    keystone.regions.get(region)
+
+    # delete all region endpoints
+    for endpoint in keystone.endpoints.list():
+        if endpoint.region == region:
+            keystone.endpoints.delete(endpoint)
+
+    # delete all endpoint groups that filter for region
+    for endpoint_group in keystone.endpoint_groups.list():
+        if endpoint_group.filters.get('region_id', None) == region:
+            keystone.endpoint_groups.delete(endpoint_group)
+
+    # delete region
+    keystone.regions.delete(region)
+
+
 class PopulateTask(Task):
     name = "populate"
     def run(self, keystone_path=settings.KEYSTONE_ROOT):
