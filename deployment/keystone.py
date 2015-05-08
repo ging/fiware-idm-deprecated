@@ -13,6 +13,7 @@
 # under the License.
 
 import ConfigParser
+import json
 import os
 import string
 
@@ -168,6 +169,67 @@ def delete_region_and_endpoints(region):
 
     # delete region
     keystone.regions.delete(region)
+
+@task
+def create_new_endpoints(endpoints_file):
+    """Creates all the endpoints in a json file, adding an endpoint group
+    filter for each region (if there is not currently one created). The service
+    must be already created.
+    """
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+    f = open(os.path.join(__location__, endpoints_file))
+    catalog = json.load(f)
+
+    admin_port = settings.KEYSTONE_ADMIN_PORT
+    token = settings.KEYSTONE_ADMIN_TOKEN
+
+    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
+                                              port=admin_port)
+    keystone = client.Client(token=token, endpoint=endpoint)
+
+    endpoint_groups = keystone.endpoint_groups.list()
+    services = keystone.services.list()
+
+    regions = set()
+    for service_data in catalog:
+        service = next((s for s in services if s.type == service_data['type']), None)
+
+        if not service:
+            print ('Service {0} type {1} is not created,'
+                   ' skipping these endpoints').format(service_data['name'],
+                                                       service_data['type'])
+            continue
+
+        for endpoint in service_data['endpoints']:
+            interfaces = [
+                ('public', endpoint['publicURL']),
+                ('admin', endpoint['adminURL']),
+                ('internal', endpoint['internalURL']),
+            ]
+            for interface, url in interfaces:
+                keystone.endpoints.create(
+                    region=endpoint['region'],
+                    service=service,
+                    url=url,
+                    interface=interface)
+
+            regions.add(endpoint['region'])
+
+    # create endpoint group for region if it doesnt exists
+    for region in regions:
+        
+        endpoint_group_for_region = [eg for eg in endpoint_groups
+            if eg.filters.get('region_id', None) == region]
+
+        if not endpoint_group_for_region:
+            print 'Creating endpoint_group for region {0}'.format(region)
+            keystone.endpoint_groups.create(
+                name=region + ' Region Group',
+                filters={
+                    'region_id': region
+                })
 
 
 class PopulateTask(Task):
