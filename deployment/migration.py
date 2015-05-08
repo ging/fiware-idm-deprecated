@@ -20,6 +20,8 @@ import uuid
 from deployment.keystone import PopulateTask
 from conf import settings
 
+from keystoneclient import exceptions
+
 
 # This dictinary holds the old ids for permissions and roles. Only used
 # for migration purposes.
@@ -34,6 +36,8 @@ MIGRATION_OLD_IDS = {
 
 CLOUD_APP_ID = 'f8999e1ee0884195997b63280c2b0264'
 CLOUD_ROLE_ID = 'd38d9cd4fa524b87a87feb45904480f7'
+
+NO_FILTER_ENDPOINT_GROUP_ID = '628912b79e5540b8a08d33e5eb60c233'
 
 class MigratePopulateTask(PopulateTask):
     """Populates the database with migration specifics from the old idm."""
@@ -185,3 +189,34 @@ class MigrateCategoriesTask(PopulateTask):
 
 
 instance2 = MigrateCategoriesTask()
+
+
+class AllRegionsForAllUsersTask(PopulateTask):
+    """Assignates the no-filter endpoint group to all users"""
+    name = "all_regions_to_all_users"
+
+    def run(self, keystone_path=settings.KEYSTONE_ROOT):
+        keystone = self._admin_token_connection()
+
+        all_users = keystone.users.list()
+
+        for user in all_users:
+            if not hasattr(user, 'cloud_project_id'):
+                print 'Skip {0}, no cloud project id'.format(user.name)
+                continue
+            try:
+                keystone.endpoint_groups.add_endpoint_group_to_project(
+                    project=user.cloud_project_id,
+                    endpoint_group=NO_FILTER_ENDPOINT_GROUP_ID)
+
+                print '200 OK {0}'.format(user.name)
+            except exceptions.Conflict:
+                print '409 User {0} already has it'.format(user.name)
+            except exceptions.NotFound:
+                print '404 Not found project {0} for user {1}'.format(
+                    user.cloud_project_id, user.name)
+
+        print 'Done.'
+
+
+instance3 = AllRegionsForAllUsersTask()
