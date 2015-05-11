@@ -220,3 +220,28 @@ class AllRegionsForAllUsersTask(PopulateTask):
 
 
 instance3 = AllRegionsForAllUsersTask()
+
+
+class AssignDefaultProjectTask(PopulateTask):
+    """Assigns a default project to a list of users defined in a file."""
+    name = "default_project_to_admins"
+
+    def run(self, keystone_path=settings.KEYSTONE_ROOT):
+        __location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        admins = json.load(open(os.path.join(__location__, 'keystone_admins.json')))
+
+        keystone = self._admin_token_connection()
+
+        admin_project = keystone.projects.find(name='admin')
+
+        for user_name in admins:
+            user = keystone.users.find(name=user_name)
+            res = keystone.user.update(user, default_project=admin_project)
+            print user_name, res
+        
+
+        print 'Done.'
+
+
+instance4 = AssignDefaultProjectTask()
