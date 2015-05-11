@@ -44,7 +44,8 @@ class MigratePopulateTask(PopulateTask):
     name = "populate"
     def run(self, keystone_path=settings.KEYSTONE_ROOT):
         keystone = self._admin_token_connection()
-
+	# migration old ids not configured
+	raise Exception()
         # Keystone services
         self._create_services_and_endpoints(keystone)
         # Enpoint groups
