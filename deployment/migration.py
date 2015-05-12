@@ -246,3 +246,26 @@ class AssignDefaultProjectTask(PopulateTask):
 
 
 instance4 = AssignDefaultProjectTask()
+
+
+class SetNameAsUsernameTask(PopulateTask):
+    """Sets username to name to a list of users defined in a file."""
+    name = "set_username"
+
+    def run(self, users_file):
+        __location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        admins = json.load(open(os.path.join(__location__, users_file)))
+
+        keystone = self._admin_token_connection()
+
+        for user_name in admins:
+            user = keystone.users.find(name=user_name)
+            res = keystone.users.update(user, username=user_name)
+            print user_name, res
+        
+
+        print 'Done.'
+
+
+instance5 = SetNameAsUsernameTask()
