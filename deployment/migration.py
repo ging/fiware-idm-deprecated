@@ -235,10 +235,11 @@ class AssignDefaultProjectTask(PopulateTask):
         keystone = self._admin_token_connection()
 
         admin_project = keystone.projects.find(name='admin')
+        import pdb; pdb.set_trace()
 
         for user_name in admins:
             user = keystone.users.find(name=user_name)
-            res = keystone.user.update(user, default_project=admin_project)
+            res = keystone.users.update(user, default_project=admin_project)
             print user_name, res
         
 
