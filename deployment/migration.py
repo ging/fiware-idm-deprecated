@@ -260,7 +260,7 @@ class SetNameAsUsernameTask(PopulateTask):
 
         for user_name in admins:
             user = keystone.users.find(name=user_name)
-            res = keystone.user.update(user, username=user_name)
+            res = keystone.users.update(user, username=user_name)
             print user_name, res
         
 
