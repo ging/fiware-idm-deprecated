@@ -33,8 +33,8 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
     if env.exists(keystone_path[:-1]):
         print 'Already downloaded.'
     else:
-        env.run('git clone https://github.com/ging/keystone.git \
-            {0}'.format(keystone_path))
+        env.run(('git clone https://github.com/ging/keystone.git '
+                 '{0}').format(keystone_path))
     with env.cd(keystone_path):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['keystone'])
         
@@ -53,10 +53,6 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
             env.run(("sudo sed -i "
                 "'s/#public_port=5000/public_port={0}/g' "
                 "keystone.conf").format(settings.KEYSTONE_PUBLIC_PORT))
-    # TODO(garcianavalon) add the endpoint filter extension to pipeline
-    # and the driver in the [catalog] section
-    # driver = keystone.contrib.endpoint_filter.backends.
-    # catalog_sql.EndpointFilterCatalog 
     print 'Done!'
 
 @task
