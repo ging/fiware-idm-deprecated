@@ -32,19 +32,19 @@ def install(horizon_path=settings.HORIZON_ROOT):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['horizon'])
         env.run('sudo apt-get install {0}'.format(dependencies))
         env.run('sudo python tools/install_venv.py')
-        
-    with env.cd(horizon_path + '/openstack_dashboard/local'):
-        template_settings = string.Template(open('local_settings.py.example').read())
-        out_file = open("local_settings.py", "w")
-        out_file.write(
-            template_settings.substitute({
-                'IDM_NAME': settings.IDM_USER_CREDENTIALS['username'],
-                'IDM_PASS': settings.IDM_USER_CREDENTIALS['password'],
-                'IDM_PROJECT': settings.IDM_USER_CREDENTIALS['project'],
-                'KEYSTONE_ADDRESS': settings.CONTROLLER_INTERNAL_ADDRESS,
-                'KEYSTONE_PUBLIC_PORT':settings.KEYSTONE_PUBLIC_PORT,
-            }))
-        out_file.close()
+
+    path = horizon_path + '/openstack_dashboard/local/'
+    template_settings = string.Template(open(path + 'local_settings.py.example').read())
+    out_file = open(path + "local_settings.py", "w")
+    out_file.write(
+        template_settings.substitute({
+            'IDM_NAME': settings.IDM_USER_CREDENTIALS['username'],
+            'IDM_PASS': settings.IDM_USER_CREDENTIALS['password'],
+            'IDM_PROJECT': settings.IDM_USER_CREDENTIALS['project'],
+            'KEYSTONE_ADDRESS': settings.CONTROLLER_INTERNAL_ADDRESS,
+            'KEYSTONE_PUBLIC_PORT':settings.KEYSTONE_PUBLIC_PORT,
+        }))
+    out_file.close()
 
     print 'Done!'
 
