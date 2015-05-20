@@ -19,23 +19,20 @@ from conf import settings
 from fabric.state import env
 
 @task
-def install(horizon_path=settings.HORIZON_ROOT,
-            dev=False):
+def install(horizon_path=settings.HORIZON_ROOT):
     """Download and install the Front-end and its dependencies."""
     if os.path.isdir(horizon_path[:-1]):
-        print 'already downloaded'
+        print 'Already downloaded.'
     else:
         env.run('git clone https://github.com/ging/horizon.git \
             {0}'.format(horizon_path))
 
     with env.cd(horizon_path):
-        if dev:
-            env.run('git checkout development')
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['horizon'])
         env.run('sudo apt-get install {0}'.format(dependencies))
         env.run('sudo python tools/install_venv.py')
-        env.run('cp openstack_dashboard/local/local_settings.py.example \
-            openstack_dashboard/local/local_settings.py')
+        env.run(('cp openstack_dashboard/local/local_settings.py.example '
+                 'openstack_dashboard/local/local_settings.py'))
     print 'Done!'
 
 @task
@@ -43,5 +40,6 @@ def dev_server(address=settings.HORIZON_DEV_ADDRESS,
                horizon_path=settings.HORIZON_ROOT):
     """Run horizon server for development purposes"""
     with env.cd(horizon_path):
-        env.run('sudo tools/with_venv.sh python manage.py runserver \
-            {0}'.format(address))
+        env.run(('sudo tools/with_venv.sh python manage.py runserver '
+                 '{0}').format(address))
+        

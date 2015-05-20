@@ -17,8 +17,6 @@ import json
 import os
 import string
 
-from collections import namedtuple
-
 from conf import settings
 from conf import service_catalog
 
@@ -31,22 +29,15 @@ from fabric.api import execute
 
 
 @task
-def install(keystone_path=settings.KEYSTONE_ROOT, dev=False):
+def install(keystone_path=settings.KEYSTONE_ROOT):
     """Download and install the Back-end and its dependencies."""
     if env.exists(keystone_path[:-1]):
-        print 'already downloaded'
+        print 'Already downloaded.'
     else:
         env.run('git clone https://github.com/ging/keystone.git \
             {0}'.format(keystone_path))
     with env.cd(keystone_path):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['keystone'])
-        if dev:
-            env.run('git checkout development')
-            dependencies += ' ' + ' '.join(
-                settings.UBUNTU_DEPENDENCIES['sqlite'])
-        else:
-            dependencies += ' ' + ' '.join(
-                settings.UBUNTU_DEPENDENCIES['mysql'])
         
         env.run('sudo apt-get install {0}'.format(dependencies))
         env.run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
@@ -110,10 +101,10 @@ def database_reset(keystone_path=settings.KEYSTONE_ROOT, mysql_user=False):
     """Deletes keystone's database and create a new one, populated with
     the base data needed by the IdM. Requires a keystone instance running.
     """
-    execute(database_delete, keystone_path=keystone_path, 
-        mysql_user=mysql_user)
-    execute(database_create, keystone_path=keystone_path, 
-        mysql_user=mysql_user)
+    execute(database_delete, keystone_path=keystone_path,
+            mysql_user=mysql_user)
+    execute(database_create, keystone_path=keystone_path,
+            mysql_user=mysql_user)
     execute('keystone.populate', keystone_path=keystone_path)
 
 
@@ -219,9 +210,11 @@ def create_new_endpoints(endpoints_file):
 
     # create endpoint group for region if it doesnt exists
     for region in regions:
-        
-        endpoint_group_for_region = [eg for eg in endpoint_groups
-            if eg.filters.get('region_id', None) == region]
+
+        endpoint_group_for_region = [
+            eg for eg in endpoint_groups
+            if eg.filters.get('region_id', None) == region
+        ]
 
         if not endpoint_group_for_region:
             print 'Creating endpoint_group for region {0}'.format(region)
@@ -245,7 +238,7 @@ class PopulateTask(Task):
         keystone_roles = self._create_keystone_roles(keystone)
 
         idm_user = self._create_idm_user_and_project(keystone, keystone_roles)
-        
+
         idm_app = self._create_internal_roles_and_permissions(keystone)
 
         # Make the idm user administrator
@@ -354,10 +347,10 @@ class PopulateTask(Task):
     def _create_internal_roles_and_permissions(self, keystone):
         # Default internal application
         idm_app = keystone.oauth2.consumers.create(
-            settings.IDM_USER_CREDENTIALS['username'], 
+            settings.IDM_USER_CREDENTIALS['username'],
             description='',
-            grant_type='authorization_code', 
-            client_type='confidential', 
+            grant_type='authorization_code',
+            client_type='confidential',
             is_default=True)
 
         # Default Permissions and roles
@@ -376,13 +369,14 @@ class PopulateTask(Task):
                 keystone.fiware_roles.permissions.add_to_role(
                     created_role, created_permissions[index])
 
-        print ('Created default fiware roles and permissions.')
+        print 'Created default fiware roles and permissions.'
         return idm_app
 
     def _grant_administrator(self, keystone, idm_app, users):
-        provider_role = next(r for r
-                        in keystone.fiware_roles.roles.list()
-                        if r.name == 'provider')
+        provider_role = next(
+            r for r in keystone.fiware_roles.roles.list()
+            if r.name == 'provider')
+
         for user in users:
             keystone.fiware_roles.roles.add_to_user(
                 role=provider_role,
@@ -407,33 +401,32 @@ def _register_user(keystone, name, activate=True):
     return user
 
 @task
-def test_data(keystone_path=settings.KEYSTONE_ROOT, keystone=None):
+def test_data(keystone_path=settings.KEYSTONE_ROOT):
     """Populate the database with some users, organizations and applications
     for convenience"""
 
-    if not keystone:
-        # Log as idm
-        config = ConfigParser.ConfigParser()
-        config.read(keystone_path + 'etc/keystone.conf')
-        admin_port = config.get('DEFAULT', 'admin_port')
-        endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
-                                                  port=admin_port)
-        keystone = client.Client(
-            username=settings.IDM_USER_CREDENTIALS['username'],
-            password=settings.IDM_USER_CREDENTIALS['password'],
-            project_name=settings.IDM_USER_CREDENTIALS['project'],
-            auth_url=endpoint)
+    # Log as idm
+    config = ConfigParser.ConfigParser()
+    config.read(keystone_path + 'etc/keystone.conf')
+    admin_port = config.get('DEFAULT', 'admin_port')
+    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
+                                              port=admin_port)
+    keystone = client.Client(
+        username=settings.IDM_USER_CREDENTIALS['username'],
+        password=settings.IDM_USER_CREDENTIALS['password'],
+        project_name=settings.IDM_USER_CREDENTIALS['project'],
+        auth_url=endpoint)
 
     # Create some default apps to test
     for app_name in settings.FIWARE_DEFAULT_APPS:
         app = keystone.oauth2.consumers.create(
-                app_name, 
-                description='Default app in FIWARE',
-                grant_type='authorization_code', 
-                client_type='confidential')
+            app_name,
+            description='Default app in FIWARE',
+            grant_type='authorization_code',
+            client_type='confidential')
         # Create default roles
         for role_name in settings.FIWARE_DEFAULT_APPS[app_name]:
-            role = keystone.fiware_roles.roles.create(
+            keystone.fiware_roles.roles.create(
                 name=role_name,
                 is_internal=False,
                 application=app.id)

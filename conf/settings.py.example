@@ -61,25 +61,14 @@ CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
 CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
 CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
 
-# For test_data
-FIWARE_DEFAULT_APPS = {
-    'Cloud' : ['Member'],
-    'Mashup': [],
-    'Store':[],
-}
-
-REGIONS = [
-]
-IDENTITY_SERVICE_REGION = 'Spain2'
-
 UBUNTU_DEPENDENCIES = {
-	'horizon': [
-		'python-dev',
+    'horizon': [
+        'python-dev',
         'python-virtualenv',
         'libssl-dev',
         'libffi-dev',
         'libjpeg8-dev',
-	],
+    ],
     'keystone': [
         'python-dev',
         'python-virtualenv',
@@ -90,12 +79,15 @@ UBUNTU_DEPENDENCIES = {
         'libldap2-dev',
         'libffi-dev',
         'libsqlite3-dev',
-    ],
-    'mysql': [
         'libmysqlclient-dev',
         'python-mysqldb',
-    ],
-    'sqlite': [
         'libsqlite3-dev',
     ],
+}
+
+# For test_data
+FIWARE_DEFAULT_APPS = {
+    'Cloud' : ['Member'],
+    'Mashup': [],
+    'Store':[],
 }
