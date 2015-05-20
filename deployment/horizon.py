@@ -34,7 +34,9 @@ def install(horizon_path=settings.HORIZON_ROOT):
         env.run('sudo python tools/install_venv.py')
 
     path = horizon_path + '/openstack_dashboard/local/'
-    template_settings = string.Template(open(path + 'local_settings.py.example').read())
+    class Template(string.Template):
+        delimiter = '$$'
+    template_settings = Template(open(path + 'local_settings.py.example').read())
     out_file = open(path + "local_settings.py", "w")
     out_file.write(
         template_settings.substitute({
