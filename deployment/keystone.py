@@ -84,26 +84,18 @@ def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True,
             ' db_sync --extension=user_registration').format(v=add_verbose))
 
 @task
-def database_delete(keystone_path=settings.KEYSTONE_ROOT,
-                    keystone_db=settings.KEYSTONE_DEV_DATABASE,
-                    mysql_user=False):
-    if mysql_user:
-        env.run('mysql -u {0} -p '.format(mysql_user))
-        env.run('DROP DATABASE {0};'.format(settings.KEYSTONE_PROD_DATABASE))
-    else:
-        db_path = keystone_path + keystone_db
-        if os.path.isfile(db_path):
-            env.run('sudo rm ' + db_path)
+def database_delete(keystone_path=settings.KEYSTONE_ROOT):
+    db_path = keystone_path + settings.KEYSTONE_DEV_DATABASE
+    if os.path.isfile(db_path):
+        env.run('sudo rm ' + db_path)
 
 @task
-def database_reset(keystone_path=settings.KEYSTONE_ROOT, mysql_user=False):
+def database_reset(keystone_path=settings.KEYSTONE_ROOT):
     """Deletes keystone's database and create a new one, populated with
     the base data needed by the IdM. Requires a keystone instance running.
     """
-    execute(database_delete, keystone_path=keystone_path,
-            mysql_user=mysql_user)
-    execute(database_create, keystone_path=keystone_path,
-            mysql_user=mysql_user)
+    execute('keystone.database_delete', keystone_path=keystone_path)
+    execute('keystone.database_create', keystone_path=keystone_path)
     execute('keystone.populate', keystone_path=keystone_path)
 
 
