@@ -108,7 +108,7 @@ def database_reset(keystone_path=settings.KEYSTONE_ROOT, mysql_user=False):
 
 
 @task
-def service_create(absolute_keystone_path=None):
+def set_up_as_service(absolute_keystone_path=None):
     if not absolute_keystone_path:
         absolute_keystone_path = os.getcwd() + '/' + settings.KEYSTONE_ROOT
     in_file = open('conf/keystone_idm.conf')
@@ -121,12 +121,19 @@ def service_create(absolute_keystone_path=None):
     env.run('sudo rm tmp_keystone_idm.conf')
 
 @task
-def service_start():
+def start():
+    """Runs the service."""
     env.run('sudo service keystone_idm start')
 
 @task
-def service_stop():
+def stop():
+    """Stops the service."""
     env.run('sudo service keystone_idm stop')
+
+@task
+def restart():
+    """Restarts the service."""
+    env.run('sudo service keystone_idm restart')
 
 @task
 def dev_server(keystone_path=settings.KEYSTONE_ROOT):
