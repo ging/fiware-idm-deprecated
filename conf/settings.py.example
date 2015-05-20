@@ -61,6 +61,24 @@ CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
 CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
 CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
 
+SERVICE_CATALOG = [
+  {
+    "endpoints": [
+      {
+        "region": "Spain2",
+        "adminURL": "http://{url}:{port}/v3/".format(
+          url=CONTROLLER_ADMIN_ADDRESS, port=KEYSTONE_ADMIN_PORT),
+        "internalURL": "http://{url}:{port}/v3/".format(
+          url=CONTROLLER_INTERNAL_ADDRESS, port=KEYSTONE_ADMIN_PORT),
+        "publicURL": "http://{url}:{port}/v3/".format(
+          url=CONTROLLER_PUBLIC_ADDRESS, port=KEYSTONE_PUBLIC_PORT)
+      }
+    ],
+    "type": "identity",
+    "name": "keystone"
+  }
+]
+
 UBUNTU_DEPENDENCIES = {
     'horizon': [
         'python-dev',

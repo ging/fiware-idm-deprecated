@@ -18,7 +18,6 @@ import os
 import string
 
 from conf import settings
-from conf import service_catalog
 
 from keystoneclient.v3 import client
 
@@ -245,7 +244,7 @@ class PopulateTask(Task):
         self._grant_administrator(keystone, idm_app, [idm_user])
 
     def _create_services_and_endpoints(self, keystone):
-        for service_data in service_catalog.CATALOG:
+        for service_data in settings.SERVICE_CATALOG:
             service = keystone.services.create(
                 name=service_data['name'],
                 type=service_data['type'],
