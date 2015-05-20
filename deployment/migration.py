@@ -12,6 +12,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+"""This module holds task used to migrate from old releases. Regular users shouldn't
+need any of this tasks.
+"""
+
 import datetime
 import json
 import os
