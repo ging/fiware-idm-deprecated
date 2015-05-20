@@ -26,9 +26,6 @@ HOSTS = {
 KEYSTONE_DEV_DATABASE = 'keystone.db'
 HORIZON_DEV_ADDRESS = '127.0.0.1:8000'
 
-# Production settings
-KEYSTONE_PROD_DATABASE = 'keystone'
-
 # TODO(garcianavalon) sync this with the extension,
 # see https://trello.com/c/rTsUMnjw
 INTERNAL_ROLES = {
