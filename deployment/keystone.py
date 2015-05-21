@@ -426,10 +426,6 @@ def test_data(keystone_path=settings.KEYSTONE_ROOT):
 
     # Log as user0
     user0 = users[0]
-    keystone = client.Client(username=user0.name,
-                             password='test',
-                             project_name=user0.username,
-                             auth_url=endpoint)
 
     # Create 1 organization for user0 and give him owner role in it
     test_org = keystone.projects.create(

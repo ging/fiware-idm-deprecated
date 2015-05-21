@@ -48,8 +48,6 @@ def install(horizon_path=settings.HORIZON_ROOT):
         }))
     out_file.close()
 
-    print 'Done!'
-
 @task
 def dev_server(address=settings.HORIZON_DEV_ADDRESS,
                horizon_path=settings.HORIZON_ROOT):
