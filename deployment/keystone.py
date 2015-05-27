@@ -191,7 +191,7 @@ def create_new_endpoints(endpoints_file):
                     url=url,
                     interface=interface)
                 print 'Created {0} for service {1} and region {2}'.format(
-                    url, service, endpoint['region'])
+                    url, service.id, endpoint['region'])
 
             regions.add(endpoint['region'])
 
