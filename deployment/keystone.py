@@ -16,6 +16,9 @@ import ConfigParser
 import json
 import os
 import string
+import code
+import readline
+import rlcompleter
 
 from conf import settings
 
@@ -26,6 +29,19 @@ from fabric.tasks import Task
 from fabric.state import env
 from fabric.api import execute
 
+@task
+def console():
+    """Opens an interactive python console with a connection to Keystone using 
+    the ADMIN_TOKEN.
+    """
+    keystone = _admin_token_connection()
+
+    vars = globals()
+    vars.update(locals())
+    readline.set_completer(rlcompleter.Completer(vars).complete)
+    readline.parse_and_bind("tab: complete")
+    shell = code.InteractiveConsole(vars)
+    shell.interact()
 
 @task
 def install(keystone_path=settings.KEYSTONE_ROOT):
@@ -211,11 +227,20 @@ def create_new_endpoints(endpoints_file):
                     'region_id': region
                 })
 
+def _admin_token_connection():
+    admin_port = settings.KEYSTONE_ADMIN_PORT
+    token = settings.KEYSTONE_ADMIN_TOKEN
+
+    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
+                                              port=admin_port)
+    keystone = client.Client(token=token, endpoint=endpoint)
+
+    return keystone
 
 class PopulateTask(Task):
     name = "populate"
     def run(self, keystone_path=settings.KEYSTONE_ROOT):
-        keystone = self._admin_token_connection()
+        keystone = _admin_token_connection()
 
         # Keystone services
         self._create_services_and_endpoints(keystone)
@@ -274,16 +299,6 @@ class PopulateTask(Task):
                 filters={
                     'service_id': service.id
                 })
-
-    def _admin_token_connection(self):
-        admin_port = settings.KEYSTONE_ADMIN_PORT
-        token = settings.KEYSTONE_ADMIN_TOKEN
-
-        endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
-                                                  port=admin_port)
-        keystone = client.Client(token=token, endpoint=endpoint)
-
-        return keystone
 
     def _get_keystone_config(self, keystone_path):
         config = ConfigParser.ConfigParser()

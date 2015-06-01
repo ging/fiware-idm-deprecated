@@ -21,7 +21,7 @@ import json
 import os
 import uuid
 
-from deployment.keystone import PopulateTask
+from deployment.keystone import PopulateTask, _admin_token_connection
 from conf import settings
 
 from keystoneclient import exceptions
@@ -47,7 +47,7 @@ class MigratePopulateTask(PopulateTask):
     """Populates the database with migration specifics from the old idm."""
     name = "populate"
     def run(self, keystone_path=settings.KEYSTONE_ROOT):
-        keystone = self._admin_token_connection()
+        keystone = _admin_token_connection()
 	# migration old ids not configured
 	raise Exception()
         # Keystone services
@@ -108,7 +108,7 @@ class MigrateCategoriesTask(PopulateTask):
             os.path.join(os.getcwd(), os.path.dirname(__file__)))
         categories = json.load(open(os.path.join(__location__, 'categories.json')))
 
-        keystone = self._admin_token_connection()
+        keystone = _admin_token_connection()
 
         self.trial_role = keystone.roles.find(name='trial')
         self.community_role = keystone.roles.find(name='community')
@@ -201,7 +201,7 @@ class AllRegionsForAllUsersTask(PopulateTask):
     name = "all_regions_to_all_users"
 
     def run(self, keystone_path=settings.KEYSTONE_ROOT):
-        keystone = self._admin_token_connection()
+        keystone = _admin_token_connection()
 
         all_users = keystone.users.list()
 
@@ -236,7 +236,7 @@ class AssignDefaultProjectTask(PopulateTask):
             os.path.join(os.getcwd(), os.path.dirname(__file__)))
         admins = json.load(open(os.path.join(__location__, 'keystone_admins.json')))
 
-        keystone = self._admin_token_connection()
+        keystone = _admin_token_connection()
 
         admin_project = keystone.projects.find(name='admin')
         import pdb; pdb.set_trace()
@@ -262,7 +262,7 @@ class SetNameAsUsernameTask(PopulateTask):
             os.path.join(os.getcwd(), os.path.dirname(__file__)))
         admins = json.load(open(os.path.join(__location__, users_file)))
 
-        keystone = self._admin_token_connection()
+        keystone = _admin_token_connection()
 
         for user_name in admins:
             user = keystone.users.find(name=user_name)
