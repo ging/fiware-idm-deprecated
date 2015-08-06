@@ -16,12 +16,6 @@ IDM_ROOT = './'
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'
 HORIZON_ROOT = IDM_ROOT + 'horizon/'
 
-# Hosts
-HOSTS = {
-    'keystone': ['user@host'],
-    'horizon': ['user@host'],
-}
-
 # Development settings
 KEYSTONE_DEV_DATABASE = 'keystone.db'
 HORIZON_DEV_ADDRESS = '127.0.0.1:8000'

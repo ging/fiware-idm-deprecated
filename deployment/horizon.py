@@ -17,7 +17,8 @@ import os
 
 from fabric.api import task
 from conf import settings
-from fabric.state import env
+from fabric.context_managers import lcd
+from fabric.operations import local as lrun
 
 @task
 def install(horizon_path=settings.HORIZON_ROOT):
@@ -25,13 +26,13 @@ def install(horizon_path=settings.HORIZON_ROOT):
     if os.path.isdir(horizon_path[:-1]):
         print 'Already downloaded.'
     else:
-        env.run('git clone https://github.com/ging/horizon.git \
+        lrun('git clone https://github.com/ging/horizon.git \
             {0}'.format(horizon_path))
 
-    with env.cd(horizon_path):
+    with lcd(horizon_path):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['horizon'])
-        env.run('sudo apt-get install {0}'.format(dependencies))
-        env.run('sudo python tools/install_venv.py')
+        lrun('sudo apt-get install {0}'.format(dependencies))
+        lrun('sudo python tools/install_venv.py')
 
     path = horizon_path + '/openstack_dashboard/local/'
     class Template(string.Template):
@@ -52,7 +53,7 @@ def install(horizon_path=settings.HORIZON_ROOT):
 def dev_server(address=settings.HORIZON_DEV_ADDRESS,
                horizon_path=settings.HORIZON_ROOT):
     """Run horizon server for development purposes"""
-    with env.cd(horizon_path):
-        env.run(('sudo tools/with_venv.sh python manage.py runserver '
+    with lcd(horizon_path):
+        lrun(('sudo tools/with_venv.sh python manage.py runserver '
                  '{0}').format(address))
         

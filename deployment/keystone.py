@@ -25,9 +25,12 @@ from conf import settings
 from keystoneclient.v3 import client
 
 from fabric.api import task
-from fabric.tasks import Task
-from fabric.state import env
 from fabric.api import execute
+from fabric.context_managers import lcd
+from fabric.contrib.files import exists
+from fabric.tasks import Task
+from fabric.operations import local as lrun
+
 
 @task
 def console():
@@ -46,27 +49,27 @@ def console():
 @task
 def install(keystone_path=settings.KEYSTONE_ROOT):
     """Download and install the Back-end and its dependencies."""
-    if env.exists(keystone_path[:-1]):
+    if os.path.isdir(keystone_path[:-1]):
         print 'Already downloaded.'
     else:
-        env.run(('git clone https://github.com/ging/keystone.git '
+        lrun(('git clone https://github.com/ging/keystone.git '
                  '{0}').format(keystone_path))
-    with env.cd(keystone_path):
+    with lcd(keystone_path):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['keystone'])
         
-        env.run('sudo apt-get install {0}'.format(dependencies))
-        env.run('sudo cp etc/keystone.conf.sample etc/keystone.conf')
-        env.run('sudo python tools/install_venv.py')
+        lrun('sudo apt-get install {0}'.format(dependencies))
+        lrun('sudo cp etc/keystone.conf.sample etc/keystone.conf')
+        lrun('sudo python tools/install_venv.py')
 
         # Uncomment config file
-        with env.cd('etc/'):
-            env.run(("sudo sed -i "
+        with lcd('etc/'):
+            lrun(("sudo sed -i "
                 "'s/#admin_token=ADMIN/admin_token={0}/g' " 
                 "keystone.conf").format(settings.KEYSTONE_ADMIN_TOKEN))
-            env.run(("sudo sed -i "
+            lrun(("sudo sed -i "
                 "'s/#admin_port=35357/admin_port={0}/g' "
                 "keystone.conf").format(settings.KEYSTONE_ADMIN_PORT))
-            env.run(("sudo sed -i "
+            lrun(("sudo sed -i "
                 "'s/#public_port=5000/public_port={0}/g' "
                 "keystone.conf").format(settings.KEYSTONE_PUBLIC_PORT))
     print 'Done!'
@@ -74,23 +77,23 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
 @task
 def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
     add_verbose = '-v' if verbose else ''
-    with env.cd(keystone_path):
-        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+    with lcd(keystone_path):
+        lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync').format(v=add_verbose))
-        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+        lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync --extension endpoint_filter').format(v=add_verbose))
-        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+        lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync --extension=oauth2').format(v=add_verbose))
-        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+        lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync --extension=roles').format(v=add_verbose))
-        env.run(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+        lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync --extension=user_registration').format(v=add_verbose))
 
 @task
 def database_delete(keystone_path=settings.KEYSTONE_ROOT):
     db_path = keystone_path + settings.KEYSTONE_DEV_DATABASE
     if os.path.isfile(db_path):
-        env.run('sudo rm ' + db_path)
+        lrun('sudo rm ' + db_path)
 
 @task
 def database_reset(keystone_path=settings.KEYSTONE_ROOT):
@@ -112,29 +115,29 @@ def set_up_as_service(absolute_keystone_path=None):
     out_file.write(src.substitute({
         'absolute_keystone_path': absolute_keystone_path}))
     out_file.close()
-    env.run('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
-    env.run('sudo rm tmp_keystone_idm.conf')
+    lrun('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
+    lrun('sudo rm tmp_keystone_idm.conf')
 
 @task
 def start():
     """Runs the service."""
-    env.run('sudo service keystone_idm start')
+    lrun('sudo service keystone_idm start')
 
 @task
 def stop():
     """Stops the service."""
-    env.run('sudo service keystone_idm stop')
+    lrun('sudo service keystone_idm stop')
 
 @task
 def restart():
     """Restarts the service."""
-    env.run('sudo service keystone_idm restart')
+    lrun('sudo service keystone_idm restart')
 
 @task
 def dev_server(keystone_path=settings.KEYSTONE_ROOT):
     """Runs the server in dev mode."""
-    with env.cd(keystone_path):
-        env.run('sudo tools/with_venv.sh bin/keystone-all -v')
+    with lcd(keystone_path):
+        lrun('sudo tools/with_venv.sh bin/keystone-all -v')
 
 @task
 def delete_region_and_endpoints(region):

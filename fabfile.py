@@ -12,46 +12,21 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
-
 from deployment import keystone
 from deployment import horizon
 from deployment import migration
 from conf import settings
 
 from fabric.api import task
-from fabric.context_managers import lcd, cd
-from fabric.contrib.files import exists
-from fabric.operations import local as lrun, run
-from fabric.state import env
+from fabric.operations import local as lrun
+
 
 @task
 def localhost():
-    """Run the task in local machine."""
-    env.cd = lcd
-    env.run = lrun
-    env.hosts = ['localhost']
-    env.exists = os.path.isdir
+    """DEPRECATED. Executing tasks in remote hosts is no longer supported.
+    Therefore, localhost task is no longer required. Call the tasks directly."""
+    print localhost.__doc__
 
-@task
-def keystonehost():
-    """Run the task in the keystone machine.
-    To change it, modify deployment:conf:settings.py
-    """
-    env.cd = cd
-    env.run = run
-    env.hosts = settings.HOSTS['keystone']
-    env.exists = exists
-
-@task
-def horizonhost():
-    """Run the task in the horizon machine.
-    To change it, modify deployment:conf:settings.py
-    """
-    env.cd = cd
-    env.run = run
-    env.hosts = settings.HOSTS['horizon']
-    env.exists = exists
 
 def set_up(dev=False):
     """Install system and python dependencies."""
@@ -60,6 +35,6 @@ def set_up(dev=False):
 def _install_dependencies():
     command = settings.UBUNTU_DEPENDENCIES['install_command']
     dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['dependencies'])
-    env.run('{command} {dependencies}'.format(command=command, 
+    lrun('{command} {dependencies}'.format(command=command, 
         dependencies=dependencies))
     print 'Dependencies correctly installed'
