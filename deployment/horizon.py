@@ -44,7 +44,7 @@ def install(horizon_path=settings.HORIZON_ROOT):
             'IDM_NAME': settings.IDM_USER_CREDENTIALS['username'],
             'IDM_PASS': settings.IDM_USER_CREDENTIALS['password'],
             'IDM_PROJECT': settings.IDM_USER_CREDENTIALS['project'],
-            'KEYSTONE_ADDRESS': settings.CONTROLLER_INTERNAL_ADDRESS,
+            'KEYSTONE_ADDRESS': settings.KEYSTONE_INTERNAL_ADDRESS,
             'KEYSTONE_PUBLIC_PORT':settings.KEYSTONE_PUBLIC_PORT,
         }))
     out_file.close()

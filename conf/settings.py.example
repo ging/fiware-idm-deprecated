@@ -48,9 +48,9 @@ KEYSTONE_ADMIN_PORT = '35357'
 KEYSTONE_PUBLIC_PORT = '5000'
 KEYSTONE_ADMIN_TOKEN = 'ADMIN'
 
-CONTROLLER_PUBLIC_ADDRESS = '127.0.0.1'
-CONTROLLER_ADMIN_ADDRESS = '127.0.0.1'
-CONTROLLER_INTERNAL_ADDRESS = '127.0.0.1'
+KEYSTONE_PUBLIC_ADDRESS = '127.0.0.1'
+KEYSTONE_ADMIN_ADDRESS = '127.0.0.1'
+KEYSTONE_INTERNAL_ADDRESS = '127.0.0.1'
 
 SERVICE_CATALOG = [
   {
@@ -58,11 +58,11 @@ SERVICE_CATALOG = [
       {
         "region": "Spain2",
         "adminURL": "http://{url}:{port}/v3/".format(
-          url=CONTROLLER_ADMIN_ADDRESS, port=KEYSTONE_ADMIN_PORT),
+          url=KEYSTONE_ADMIN_ADDRESS, port=KEYSTONE_ADMIN_PORT),
         "internalURL": "http://{url}:{port}/v3/".format(
-          url=CONTROLLER_INTERNAL_ADDRESS, port=KEYSTONE_ADMIN_PORT),
+          url=KEYSTONE_INTERNAL_ADDRESS, port=KEYSTONE_ADMIN_PORT),
         "publicURL": "http://{url}:{port}/v3/".format(
-          url=CONTROLLER_PUBLIC_ADDRESS, port=KEYSTONE_PUBLIC_PORT)
+          url=KEYSTONE_PUBLIC_ADDRESS, port=KEYSTONE_PUBLIC_PORT)
       }
     ],
     "type": "identity",
