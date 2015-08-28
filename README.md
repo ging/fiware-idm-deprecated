@@ -37,6 +37,6 @@ You will find the API description [here](http://docs.keyrock.apiary.io/#)
 <a name="def-api"></a>
 ## Advanced Documentation
 
-- [How to run tests](https://github.com/ging/fi-ware-pep-proxy/tree/master/docs/)
-- [User & Programmers Manual](https://github.com/ging/fi-ware-pep-proxy/tree/master/docs/)
-- [Installation & Administration Guide](https://github.com/ging/fi-ware-pep-proxy/tree/master/docs/)
+- [How to run tests](https://github.com/ging/fi-ware-idm/tree/master/docs/)
+- [User & Programmers Manual](https://github.com/ging/fi-ware-idm/tree/master/docs/)
+- [Installation & Administration Guide](https://github.com/ging/fi-ware-idm/tree/master/docs/)
