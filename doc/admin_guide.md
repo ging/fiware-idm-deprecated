@@ -1,4 +1,4 @@
-# Identity Manager - Keyrock - Installation and Administration Guide
+# Installation and Administration Guide
 
 - [Introduction](#introduction)
  - [Requirements](#requirements)

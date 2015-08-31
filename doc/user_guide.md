@@ -1,22 +1,22 @@
-# Identity Management - KeyRock - User and Programmers Guide
+# User and Programmers Guide
 
-- [Introduction](#)
- - [Background and Detail](#)
-- [User Guide](#)
- - [Using the web portal of KeyRock](#)
-  - [Logging in](#)
-  - [Registering an application](#)
-  - [Managing roles](#)
-  - [Managing organizations](#)
-- [Programmer Guide](#)
- - [Users](#)
-  - [Get a single user](#)
-  - [Get authenticated user](#)
- - [Applications](#)
-  - [Get applications from actor (user or organization)](#)
- - [SCIM 2.0](#)
-  - [Get service provider configuration](#)
-- [Further information](#)
+- [Introduction](#introduction)
+ - [Background and Detail](#background-and-detail)
+- [User Guide](#user-guide)
+ - [Using the web portal of KeyRock](#using-the-web-portal-of-keyrock)
+  - [Logging in](#logging-in)
+  - [Registering an application](#registering-an-application)
+  - [Managing roles](#managing-roles)
+  - [Managing organizations](#managing-organizations)
+- [Programmer Guide](#programmer-guide)
+ - [Users](#users)
+  - [Get a single user](#get-a-single-user)
+  - [Get authenticated user](#get-authenticated-user)
+ - [Applications](#applications)
+  - [Get applications from actor (user or organization)](#get-applications-from-actor-user-or-organization)
+ - [SCIM 2.0](#scim-20)
+  - [Get service provider configuration](#get-service-provider-configuration)
+- [Further information](#further-information)
 
 ## Introduction
 
@@ -24,7 +24,7 @@ This document describes the user and programming guide for Keyrock Identity Mana
 
 ### Background and Detail
 
-This User and Programmers Guide relates to the [https://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/Identity_Management_Generic_Enabler_API_Specification Identity Management GE].
+This User and Programmers Guide relates to the [Identity Management GE](https://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/Identity_Management_Generic_Enabler_API_Specification).
 
 
 ## User Guide
@@ -35,34 +35,36 @@ Although every user of KeyRock will access the web portal with individual creden
 
 #### Logging in
 
-Go to "Sign in" if you heave previously created an account, otherwise "Sign up" to create a new account, [[#KeyRock Login Page|Figure 1]]. 
+Go to "Sign in" if you heave previously created an account, otherwise "Sign up" to create a new account: 
 
-<br><center>[[File:KeyRock.png|600px]]   [[File:KeyRock_signup.png|600px]] </center>
-<center>**Figure 1: KeyRock Login Page**</center><br>
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock.png)
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_signup.png)
+**Figure 1: KeyRock Login Page**
 
-[[#KeyRock Home Page|Figure 2]] shows the homepage after you log in successfully. 
+Figure 2 shows the homepage after you log in successfully. 
 
 There are two main sections, Applications and Organizations. 
 In the Applications section you can register new application by clicking on "Register".
 
 #### Registering an application
 
-<br><center>[[File:KeyRock_homepage.png|600px]] </center>
-<center>**Figure 2: KeyRock Home Page**</center><br>
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_homepage.png)
+**Figure 2: KeyRock Home Page**
 
 In the next step you have to give the application a name, description, URL and callback URL - required by the OAuth 2.0 Protocol. 
 
-Click on "Next" ([[#KeyRock Register Application|Figure 3]]).
+Click on "Next" (Figure 3).
 
-<br><center>[[File:KeyRock_register_app.png|600px]] </center>
-<center>**Figure 3: KeyRock Register Application**</center><br>
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_register_app.png)
+**Figure 3: KeyRock Register Application**
 
 In the second step the application's logo will be loaded by selecting a valid file type. You have the option to re-frame the chosen image. 
 
 Click on "Crop Image" when you complete this process and then click "Next" as shown on [[#KeyRock Edit Application Logo|Figure 4]]. 
 
-<br><center>[[File:KeyRock_upload_logo.png|600px]] [[File:KeyRock_reframe_logo.png|600px]] </center>
-<center>**Figure 4: KeyRock Edit Application Logo**</center><br>
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_upload_logo.png)
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_reframe_logo.png)
+**Figure 4: KeyRock Edit Application Logo**
 
 In the third step we set up the roles and permissions of the application. You will find the two possible roles: Provider and Purchaser.
 
@@ -74,12 +76,13 @@ You are also permitted to add up new permissions by clicking on "New Permission"
 
 Click "Create Permission" and "Finish" to finalize with creating the application. 
 
-<br><center>[[File:KeyRock_new_role.png|600px]] [[File:KeyRock_new_permission.png|600px]] </center>
-<center>**Figure 5: KeyRock New Roles and Permissions**</center><br>
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_new_role.png)
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_new_permission.png)
+**Figure 5: KeyRock New Roles and Permissions**
 
 #### Managing roles
 
-Look at the vertical menu on the left ([[#KeyRock Add Members to Application|Figure 6]]). You went from Home to Applications. Here you can see the application you've just created. 
+Look at the vertical menu on the left (Figure 6). You went from Home to Applications. Here you can see the application you've just created. 
 
 At the bottom you can manage the roles of the users. You can add new users on the "Add" button. 
 
@@ -87,10 +90,11 @@ It shows a modal where you can manage Users and Groups. You can see the users an
 
 Choose users and groups to add to the application, then choose their initial role. Click "Add". 
 
-Note that you can assign roles a poteriori after the users have been added, by clicking on the roles drop down menu - below the user's icon, as shown on [[#KeyRock Add Members to Application|Figure 6]].
+Note that you can assign roles a poteriori after the users have been added, by clicking on the roles drop down menu - below the user's icon, as shown on Figure 6.
 
-<br><center>[[File:KeyRock_application_summary.png|600px]] [[File:KeyRock_add_members.png|600px]]</center>
-<center>**Figure 6: KeyRock Add Members to Application**</center><br>
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_application_summary.png)
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_add_members.png|600px]]</center>
+**Figure 6: KeyRock Add Members to Application**
 
 #### Managing organizations
 
@@ -100,15 +104,15 @@ Add the name, choose the owner and write the description of the organization. Cl
 
 You are now redirected to the Home menu on behalf of the newly created organization. Any new application created now, will belong to the organization.
 
-To return to the home of the user go up in the header and click on the name of the organization. Select "Switch session", [[#KeyRock Create Organization|Figure 7]].
+To return to the home of the user go up in the header and click on the name of the organization. Select "Switch session", Figure 7.
 
-<br><center>[[File:KeyRock_create_organization.png|600px]] [[File:KeyRock_switch_session.png|600px]]</center>
-<center>**Figure 7: KeyRock Create Organization**</center><br>
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_create_organization.png)
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_switch_session.png|600px]]</center>
+**Figure 7: KeyRock Create Organization**
 
 ## Programmer Guide
 
-Documentation on KeyRock APIs can be found at [https://github.com/ging/fi-ware-idm/wiki KeyRock's wiki]
-
+Documentation on KeyRock APIs can be found at [API Overiview section](https://github.com/ging/fi-ware-idm#api-overview)
 
 ### Users
 
@@ -163,14 +167,14 @@ Documentation on KeyRock APIs can be found at [https://github.com/ging/fi-ware-i
   GET /applications.json?actor_id=1&access_token=2YotnFZFEjr1zCsicMWpAA
 </pre>
 
+<pre>
   {
     id: 1,
     name: "Dummy",
     description: "FI-WARE demo application",
     url:"http://dummy.fi-ware.eu/"
   }
-
-
+</pre>
 
 ### SCIM 2.0
 
@@ -191,7 +195,7 @@ Documentation on KeyRock APIs can be found at [https://github.com/ging/fi-ware-i
 ## Further information
 
 For further information on KeyRock, please refer to the step-by-step video at: http://help.lab.fi-ware.org/
-clicking on "Help&Info" and choosing "Account", as [[#KeyRock Screencast|Figure 8]] shows.
+clicking on "Help&Info" and choosing "Account", as Figure 8 shows.
 
-<br><center>[[File:KeyRock_screencast.png|800px]] </center>
-<center>**Figure 3: KeyRock Screencast**</center><br>
+![](https://github.com/ging/fi-ware-idm/blob/master/doc/resources/KeyRock_screencast.png)
+**Figure 3: KeyRock Screencast**
