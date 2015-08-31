@@ -134,6 +134,8 @@ You will find the full API description [here](http://docs.keyrock.apiary.io/)
 <a name="def-advanced"></a>
 ## Advanced Documentation
 
+You can read this advanced documentation in [Read the Docs Keyrock project](http://fi-ware-idm.readthedocs.org/) 
+
 - [User & Programmers Manual](https://github.com/ging/fi-ware-idm/tree/master/doc/user_guide.md)
 - [Installation & Administration Guide](https://github.com/ging/fi-ware-idm/tree/master/doc/admin_guide.md)
 - [Production set-up guide](https://github.com/ging/fi-ware-idm/blob/master/doc/setup.md)
