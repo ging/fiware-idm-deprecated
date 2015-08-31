@@ -131,7 +131,7 @@ Finally, one of the main uses of Keyrock is to allow developers to add identity 
 
 You will find the full API description [here](http://docs.keyrock.apiary.io/)
 
-<a name="def-api"></a>
+<a name="def-advanced"></a>
 ## Advanced Documentation
 
 - [User & Programmers Manual](https://github.com/ging/fi-ware-idm/tree/master/docs/user_guide.md)
