@@ -6,8 +6,8 @@ Identity Management covers a number of aspects involving users' access to networ
 
 ## Documentation  
 
-  - [User & Programmers Manual](https://github.com/ging/fi-ware-idm/tree/master/doc/user_guide.md)
-  - [Installation & Administration Guide](https://github.com/ging/fi-ware-idm/tree/master/doc/admin_guide.md)
-  - [Production set-up guide](https://github.com/ging/fi-ware-idm/blob/master/doc/setup.md)
-  - [How to run tests](https://github.com/ging/fi-ware-idm/blob/master/doc/admin_guide.md#end-to-end-testing)
-  - [Using the FIWARE LAB instance (OAuth2)](https://github.com/ging/fi-ware-idm/blob/master/doc/oauth2.md)
+  - [User & Programmers Manual](user_guide.md)
+  - [Installation & Administration Guide](admin_guide.md)
+  - [Production set-up guide](setup.md)
+  - [How to run tests](admin_guide.md#end-to-end-testing)
+  - [Using the FIWARE LAB instance (OAuth2)](oauth2.md)
