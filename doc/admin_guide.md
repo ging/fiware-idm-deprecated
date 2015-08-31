@@ -6,6 +6,7 @@
  - [Installing Horizon](#installing-horizon)
  - [Installing Keystone](#installing-keystone)
 - [System Administration](#system-administration)
+ - [White and black lists](#white-and-black-lists)
 - [Sanity Check Procedures](#sanity-check-procedures)
  - [End to End testing](#end-to-end-testing)
  - [List of Running Processes](#list-of-running-processes)
@@ -34,7 +35,7 @@ Both Horizon, for the front-end, and Keystone, for the back-end, must be install
 
 ### Installing Horizon
 
-Note: To be able to log into the IdM, you will need a working Keystone backend. Please complete the steps in this page in order to have a complete and working IdM.
+**Note:** To be able to log into the IdM, you will need a working Keystone backend. Please complete the steps in this page in order to have a complete and working IdM.
 
 #### 1. Install Ubuntu dependencies and repository
 
@@ -164,8 +165,7 @@ You can also explicitly run:
  $ sudo tools/with_venv.sh python manage.py runserver IP:8000
 </pre>
 
-For more documentation about this server, head to 
-https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runserver)
+For more documentation about this server, head to [django docs](https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runserver)
 
 **IMPORTANT NOTE**: From the Django-runserver documentation: DO NOT USE THIS SERVER IN A PRODUCTION SETTING. It has not gone through security audits or performance tests.
 
@@ -209,8 +209,9 @@ https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runserver)
 
 **Note:** If you want to use a mysql database you will need to run the following command, as python mysql library is not included by default in keystone:
 
+<pre>
  $ sudo tools/with_venv.sh pip install mysql-python 
-
+</pre>
 
 #### **2. Keystone configuration**
 
@@ -319,7 +320,7 @@ Debugging the extensions is not possible, therefore we must run the keystone ser
 
 ## System Administration
 
-- **White and black lists**
+### White and black lists
 
 As administrator of IdM KeyRock you can manage white and black lists in order to allow and deny access to users by their email domains.
 
@@ -340,9 +341,7 @@ The Sanity Check Procedures are the steps that a System Administrator will take 
 
 1. Verify that the host address of IdM can be reached. By default, web access will show a Login Page.
 
-2. Acquire a valid username and password and access with those credentials.
-
-The resulting web page is the landing page of the IdM KeyRock Portal.
+2. Acquire a valid username and password and access with those credentials. The resulting web page is the landing page of the IdM KeyRock Portal.
 
 3. Verify that you can view the list of applications, organizations, etc.
 
