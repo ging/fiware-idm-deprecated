@@ -124,7 +124,7 @@ fab keystone.set_up_as_service
 We also provide a Docker image to facilitate you the building of this GE.
 
 - [Here](https://github.com/ging/fi-ware-idm/tree/master/docker) you will find the Dockerfile and the documentation explaining how to use it.
-- In [Docker Hub](https://hub.docker.com/r/aalonsog/fi-ware-idm/) you will find the public image.
+- In [Docker Hub](https://hub.docker.com/r/ging/fi-ware-idm/) you will find the public image.
 
 <a name="def-api"></a>
 ## API Overview

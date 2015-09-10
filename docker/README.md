@@ -58,9 +58,9 @@ To stop the container:
 
 ## Run the container from the last release in Docker Hub
 
-You can also run the container from the [image we provide](https://hub.docker.com/r/aalonsog/idm/) in Docker Hub. In this case you have only to execute the run command. But now the image name is aalonsog/idm:*version* where `version` is the release you want to use:
+You can also run the container from the [image we provide](https://hub.docker.com/r/ging/idm/) in Docker Hub. In this case you have only to execute the run command. But now the image name is ging/idm:*version* where `version` is the release you want to use:
 <!---
-	sudo docker run -d --name idm-container -v [host_config_file]:/opt/fi-ware-idm/config.js -p [host_port]:[container_port] aalonsog/idm
+	sudo docker run -d --name idm-container -v [host_config_file]:/opt/fi-ware-idm/config.js -p [host_port]:[container_port] ging/idm
 -->
 > **Note**
 > If you do not specify a version you are pulling from `latest` by default.
