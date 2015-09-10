@@ -139,15 +139,15 @@ Finally, one of the main uses of Keyrock is to allow developers to add identity 
  - [Keystone API](http://developer.openstack.org/api-ref-identity-v3.html)
  - [Keyrock extensions API](http://docs.keyrock.apiary.io/#reference/keystone-extensions)
  - [SCIM 2.0 API](http://docs.keyrock.apiary.io/#reference/scim-2.0)
- - [OAuth2 API](doc/oauth2.md)
+ - [OAuth2 API](http://fiware-idm.readthedocs.org/en/latest/oauth2/)
 
 You will find the full API description [here](http://docs.keyrock.apiary.io/)
 
 <a name="def-advanced"></a>
 ## Advanced Documentation
 
-  - [User & Programmers Manual](doc/user_guide.md)
-  - [Installation & Administration Guide](doc/admin_guide.md)
-  - [Production set-up guide](doc/setup.md)
-  - [How to run tests](doc/admin_guide.md#end-to-end-testing)
-  - [Using the FIWARE LAB instance (OAuth2)](doc/oauth2.md)
+  - [User & Programmers Manual](http://fiware-idm.readthedocs.org/en/latest/user_guide/)
+  - [Installation & Administration Guide](http://fiware-idm.readthedocs.org/en/latest/admin_guide/)
+  - [Production set-up guide](http://fiware-idm.readthedocs.org/en/latest/setup/)
+  - [How to run tests](http://fiware-idm.readthedocs.org/en/latest/admin_guide#end-to-end-testing)
+  - [Using the FIWARE LAB instance (OAuth2)](http://fiware-idm.readthedocs.org/en/latest/oauth2/)
