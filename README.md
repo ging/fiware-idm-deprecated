@@ -15,7 +15,7 @@
 
 This project is part of [FIWARE](http://fiware.org). You will find more information abour this FIWARE GE [here](http://catalogue.fiware.org/enablers/identity-management-keyrock).
 
-Wellcome to the main repository for the UPM's implementation of the FIWARE Identity Manager Generic Enabler. This repository acts as an entry point and holds the [wiki](https://github.com/ging/fi-ware-idm/wiki) and some automated tools for installation and management. If you want to see the code for each of the components of the IdM and more specific documentation please head to each component's repository:  
+Wellcome to the main repository for the UPM's implementation of the FIWARE Identity Manager Generic Enabler. This repository acts as an entry point and holds the [wiki](https://github.com/ging/fiware-idm/wiki) and some automated tools for installation and management. If you want to see the code for each of the components of the IdM and more specific documentation please head to each component's repository:  
 
 Horizon based front-end https://github.com/ging/horizon  
 Keystone based back-end https://github.com/ging/keystone  
@@ -42,7 +42,7 @@ Install python and python-dev
 
 Clone the tools in your machine  
 ```
-git clone https://github.com/ging/fi-ware-idm idm && cd idm
+git clone https://github.com/ging/fiware-idm idm && cd idm
 ```
 
 Create a settings file
@@ -123,8 +123,8 @@ fab keystone.set_up_as_service
 
 We also provide a Docker image to facilitate you the building of this GE.
 
-- [Here](https://github.com/ging/fi-ware-idm/tree/master/docker) you will find the Dockerfile and the documentation explaining how to use it.
-- In [Docker Hub](https://hub.docker.com/r/ging/fi-ware-idm/) you will find the public image.
+- [Here](https://github.com/ging/fiware-idm/tree/master/docker) you will find the Dockerfile and the documentation explaining how to use it.
+- In [Docker Hub](https://hub.docker.com/r/ging/fiware-idm/) you will find the public image.
 
 <a name="def-api"></a>
 ## API Overview
@@ -136,17 +136,17 @@ Finally, one of the main uses of Keyrock is to allow developers to add identity 
  - [Keystone API](http://developer.openstack.org/api-ref-identity-v3.html)
  - [Keyrock extensions API](http://docs.keyrock.apiary.io/#reference/keystone-extensions)
  - [SCIM 2.0 API](http://docs.keyrock.apiary.io/#reference/scim-2.0)
- - [OAuth2 API](https://github.com/ging/fi-ware-idm/blob/master/doc/oauth2.md)
+ - [OAuth2 API](https://github.com/ging/fiware-idm/blob/master/doc/oauth2.md)
 
 You will find the full API description [here](http://docs.keyrock.apiary.io/)
 
 <a name="def-advanced"></a>
 ## Advanced Documentation
 
-You can read this advanced documentation in [Read the Docs Keyrock project](http://fi-ware-idm.readthedocs.org/) 
+You can read this advanced documentation in [Read the Docs Keyrock project](http://fiware-idm.readthedocs.org/) 
 
-- [User & Programmers Manual](https://github.com/ging/fi-ware-idm/tree/master/doc/user_guide.md)
-- [Installation & Administration Guide](https://github.com/ging/fi-ware-idm/tree/master/doc/admin_guide.md)
-- [Production set-up guide](https://github.com/ging/fi-ware-idm/blob/master/doc/setup.md)
-- [How to run tests](https://github.com/ging/fi-ware-idm/blob/master/doc/admin_guide.md#end-to-end-testing)
-- [Using the FIWARE LAB instance (OAuth2)](https://github.com/ging/fi-ware-idm/blob/master/doc/oauth2.md)
+- [User & Programmers Manual](https://github.com/ging/fiware-idm/tree/master/doc/user_guide.md)
+- [Installation & Administration Guide](https://github.com/ging/fiware-idm/tree/master/doc/admin_guide.md)
+- [Production set-up guide](https://github.com/ging/fiware-idm/blob/master/doc/setup.md)
+- [How to run tests](https://github.com/ging/fiware-idm/blob/master/doc/admin_guide.md#end-to-end-testing)
+- [Using the FIWARE LAB instance (OAuth2)](https://github.com/ging/fiware-idm/blob/master/doc/oauth2.md)

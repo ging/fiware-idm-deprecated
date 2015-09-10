@@ -6,7 +6,7 @@ Identity Management covers a number of aspects involving users' access to networ
 
 ## Source code
 
-You can find the source code of this project and the basic documentation in [GitHub](https://github.com/ging/fi-ware-idm)
+You can find the source code of this project and the basic documentation in [GitHub](https://github.com/ging/fiware-idm)
 
 ## Documentation  
 

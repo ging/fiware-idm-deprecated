@@ -22,7 +22,7 @@
 
 Welcome to the Installation and Administration Guide for the Identity Management - KeyRock Generic Enabler. This generic enabler is built on an Open Source project, and so where possible this guide points to the appropriate online content that has been created for this project. The online documents are being continuously updated and improved, and so they will be the most appropriate place to get the most up to date information on installation and administration.
 
-An alternative to installing each of the components (Horizon and Keystone) individually for KeyRock, an automated installation script can be found [here](https://github.com/ging/fi-ware-idm#def-build) which uses fabric.
+An alternative to installing each of the components (Horizon and Keystone) individually for KeyRock, an automated installation script can be found [here](https://github.com/ging/fiware-idm#def-build) which uses fabric.
  
 
 ### Requirements
