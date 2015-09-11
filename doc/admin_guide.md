@@ -20,9 +20,9 @@
 
 ## Introduction
 
-Welcome to the Installation and Administration Guide for the Identity Management - KeyRock Generic Enabler. This generic enabler is built on an Open Source project, and so where possible this guide points to the appropriate online content that has been created for this project. The online documents are being continuously updated and improved, and so they will be the most appropriate place to get the most up to date information on installation and administration.
+Welcome to the Installation and Administration Guide for the Identity Management - KeyRock Generic Enabler. This generic enabler has been developed as an Open Source project, therefor this guide points to the appropriate online content that has been created for this it.
 
-An alternative to installing each of the components (Horizon and Keystone) individually for KeyRock, an automated installation script can be found [here](https://github.com/ging/fiware-idm#def-build) which uses fabric.
+The recommended way of intalling the IdM is through the installation tools. You can find the documentation on how to use this tools [here](https://github.com/ging/fiware-idm#def-build). This guide will cover all the steps required to successfully install the IdM, in case you would rather install it step by step and as a reference of the installation scripts tasks.
  
 
 ### Requirements
@@ -57,26 +57,17 @@ Create a basic configuration file:
 
 #### **2. Configuring Horizon**
 
-To configure Horizon, the configuration file can be found in **openstack_dashboard/local/local_settings.py**
+To configure Horizon, the configuration file can be found in **openstack_dashboard/local/local_settings.py**. This file holds sensible defaults for a common installation but you might need to tweek them to fit your use case.
 
-- We need to activate the OPENSTACK_API_VERSIONS to use the Identity API v3 in our Keystone. Only the identity value matters to us. For example:
 
-<pre>
-  OPENSTACK_API_VERSIONS = {
-   "data_processing": 1.1,
-   "identity": 3,
-   "volume": 2,
-  }
-</pre>
-
-If you are running keystone on your own machine the address will be 'http://localhost:5000/v3'
+If you are running Keystone on your own machine the address will be 'http://localhost:5000/v3'. If Keystone is configured to run on a different port and/or address you should set this acordingly.
 
 <pre>
  OPENSTACK_HOST = "Keystone server IP address"
  OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
 </pre>
 
-- Configure these for your outgoing email host or leave the default values for the console email backend
+- Configure these for your outgoing email host or leave the default values for the console email backend. More details on how to configure this can be found [in the Django docs](https://docs.djangoproject.com/en/1.8/topics/email/)
 
 <pre>
  EMAIL_HOST = 'smtp.my-company.com'
@@ -85,8 +76,6 @@ If you are running keystone on your own machine the address will be 'http://loca
  EMAIL_HOST_PASSWORD = 'top-secret!'
  EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 </pre>
-
-#### **3. IdM-specific settings**
 
 - Keystone Account for the IdM to perform tasks like user registration.
 
@@ -106,30 +95,28 @@ If you are running keystone on your own machine the address will be 'http://loca
 
 This settings allows for email domain filtering on user registration. Set to 'whitelist', 'blacklist' or comment it out for no filtering.
 
-- reCAPTCHA (this settings are an example, please use your own!)
+- noCAPTCHA reCAPTCHA. Get your keys [here](https://www.google.com/recaptcha/admin#createsite). More documentation in [the package repository](https://github.com/ImaginaryLandscape/django-nocaptcha-recaptcha)
 
 <pre>
- RECAPTCHA_PUBLIC_KEY = '6LcgXvwSAAHJKES48096Gr2KKc6cjWlVWtIcDAfa'
- RECAPTCHA_PRIVATE_KEY = '6LcgXvwSAAHJKFmlOhj1bsGzT8P6vmPpVq5KYjkA'
- RECAPTCHA_USE_SSL = False
+ USE_CAPTCHA = False
+ NORECAPTCHA_SITE_KEY   = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+ NORECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
 </pre>
 
-You can get your keys at: https://www.google.com/recaptcha/admin#createsite
 
-More documentation on this at:  https://github.com/praekelt/django-recaptcha
-
-- FIWARE Applications and Roles. These settings map applications used in the FIWARE-Lab environment and are needed for automated tasks, for example granting the **Purchaser** role in the **Store** to any created organization. Depending on your use case you might need or want to modifiy them, but normal installations in a *fiware-like* environment won't need to change the following code. Keep in mind that if your use case differs too much you might need to change the code to prevent some of these operations. 
+- FIWARE Applications and Roles. These settings map applications used in the FIWARE-Lab environment and are needed for automated tasks, for example granting the **Purchaser** role in the **Store** to any created organization. Depending on your use case you might need or want to modifiy them, but normal installations in a *fiware-like* environment won't need to change the following code. Keep in mind that if your use case differs too much you might need to change the code to prevent some of these operations. If you are not using the scripts you will need to check the ids in through the API or in the database yourself.
 
 <pre>
- FIWARE_PURCHASER_ROLE = 'purchaser'
- FIWARE_PROVIDER_ROLE = 'provider'
+ FIWARE_PURCHASER_ROLE_ID = 'id'
+ FIWARE_PROVIDER_ROLE_ID = 'id'
  FIWARE_IDM_ADMIN_APP = 'idm'
  FIWARE_CLOUD_APP = 'Cloud'
- FIWARE_DEFAULT_CLOUD_ROLE = 'Member'
+ FIWARE_DEFAULT_CLOUD_ROLE_ID = 'id'
  FIWARE_DEFAULT_APPS = [
   'Store',
  ]
 </pre>
+
 
 - Keystone roles. These settings map to normal keystone roles that are used by the IdM. As with the FIWARE Applications and Roles settings, they depend on your use case.
 
@@ -145,13 +132,13 @@ More documentation on this at:  https://github.com/praekelt/django-recaptcha
  ]
 </pre>
  
-#### **4. Django settings**
+#### **3. Django settings**
 
 The settings for all the Django configuration are located at **horizon/openstack_dashboard/settings.py**
 
 Here we added some django apps, middleware, etc. You can check the file for reference but there is no configuration to be done here.
 
-#### **5. Running a development server**
+#### **4. Running a development server**
 
 To run a simple server to try out and check the IdM installation or for developping purpuses you can use Django's development server that comes with the IdM installation, which will automatically run in port 8000:
 

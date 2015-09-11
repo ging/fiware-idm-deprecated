@@ -18,10 +18,10 @@ This project is part of [FIWARE](http://fiware.org). You will find more informat
 - You will find the source code of this project in GitHub [here](https://github.com/ging/fiware-idm)
 - You will find the documentation of this project in Read the Docs [here](http://fiware-idm.readthedocs.org/)
 
-Wellcome to the main repository for the UPM's implementation of the FIWARE Identity Manager Generic Enabler. This repository acts as an entry point and holds the [wiki](https://github.com/ging/fiware-idm/wiki) and some automated tools for installation and management. If you want to see the code for each of the components of the IdM and more specific documentation please head to each component's repository:  
+Wellcome to the main repository for the UPM's implementation of the FIWARE Identity Manager Generic Enabler. This repository acts as an entry point and holds the documentation and some automated tools for installation and management. The IdM is composed of two independent components, a RESTful back-end and web front-end. If you want to see the code for each of the components of the IdM and more specific documentation please head to each component's repository:  
 
-Horizon based front-end https://github.com/ging/horizon  
-Keystone based back-end https://github.com/ging/keystone  
+Horizon based front-end [ging/horizon](https://github.com/ging/horizon)  
+Keystone based back-end [ging/keystone](https://github.com/ging/keystone)    
 
 You can see a working installation in the FIWARE Lab sandbox environment https://account.lab.fiware.org/ 
 
@@ -29,13 +29,10 @@ You can see a working installation in the FIWARE Lab sandbox environment https:/
 <a name="def-build"></a>
 ## How to Build & Install
 
-In this repository you can find a et of tools to help in developing, deploying and testing FIWARE's IdM KeyRock using [Fabric](http://www.fabfile.org/). If you rather install it step by step on your own, please head to each component repository and follow their installation steps.
+In this repository you can find a set of tools to help in developing, deploying and testing FIWARE's IdM KeyRock using [Fabric](http://www.fabfile.org/). This is the recomended way to install the IdM but if you rather install it step by step on your own, please head to the advanced documentation.
 
 The IdM is made out of two components, the web-based front-end and the restful back-end. You can check specific documentation in their repos.
 
-Back-end [ging/keystone](https://github.com/ging/keystone)  
-
-Front-end [ging/horizon](https://github.com/ging/horizon)  
 
 ### Tools installation
 For the instructions on how to install the IdM using the tools scroll down to the next section. This section covers the tools installation.
@@ -64,11 +61,6 @@ Install python dependencies
 pip install -r requirements.txt
 ```
 
-**Configuration**  
-There is a configuration file template in /conf/settings.py.example. This provides as a good base configuration file that should be enough for a test/development installation. Some options you might have to pay some attention to are:
-* IDM_ROOT: if the location of the keystone and horizon components in your system is not directly inside the folder where you have cloned the tools you will have to set this accordingly.
-* HORIZON_DEV_ADDRESS: sets the address and port where the frontend will listen to. Default is localhost:8000, you might want to tweak it based on your set up.
-* KEYSTONE_ADMIN_PORT and KEYSTONE_PUBLIC_PORT: if you need to use different ports for the keystone back-end
 
 **Usage**  
 To see all available commands use 
@@ -89,14 +81,13 @@ fab keystone.task:one_arg='this',another='that'
 ```
 
 ### Steps to install the IdM using the tools
-*Front-end*  
-```
-fab horizon.install
-```
-You can check everything went OK running the development server, but you wont be able to log in until you install the backend.
-```
-fab horizon.dev_server
-```
+
+**Configuration**  
+There is a configuration file template in /conf/settings.py.example. This provides as a good base configuration file that should be enough for a test/development installation. Some options you might have to pay some attention to are:
+* IDM_ROOT: if the location of the keystone and horizon components in your system is not directly inside the folder where you have cloned the tools you will have to set this accordingly.
+* HORIZON_DEV_ADDRESS: sets the address and port where the frontend will listen to. Default is localhost:8000, you might want to tweak it based on your set up.
+* KEYSTONE_ADMIN_PORT and KEYSTONE_PUBLIC_PORT: if you need to use different ports for the keystone back-end
+
 *Back-end*  
 ```
 fab keystone.install
@@ -121,6 +112,15 @@ Finally, if you want to run the keystone backend in the backgroud you can instal
 fab keystone.set_up_as_service
 ```
 
+*Front-end*  
+```
+fab horizon.install
+```
+You can check everything went OK running the development server, but you wont be able to log in until you install the backend.
+```
+fab horizon.dev_server
+```
+
 <a name="def-docker"></a>
 ### Docker
 
@@ -132,7 +132,7 @@ We also provide a Docker image to facilitate you the building of this GE.
 <a name="def-api"></a>
 ## API Overview
 
-Keyrock is based on Openstack [Keystone](http://docs.openstack.org/developer/keystone/) project. So it exports all the Keystone API. However, Keyrock implements some custom extensions that have their own REST APIs. Furthermore, to facilitate the access to some identity resources we have enabled an [SCIM 2.0](http://www.simplecloud.info/) API. 
+Keyrock back-end is based on Openstack [Keystone](http://docs.openstack.org/developer/keystone/) project, so it exports all the Keystone API. However, Keyrock implements some custom extensions that have their own REST APIs. Furthermore, to facilitate the access to some identity resources we have enabled an [SCIM 2.0](http://www.simplecloud.info/) API. 
 
 Finally, one of the main uses of Keyrock is to allow developers to add identity management (authentication and authorization) to their applications based on FIWARE identity. This is posible thanks to [OAuth2](http://oauth.net/2/) protocol.
 
