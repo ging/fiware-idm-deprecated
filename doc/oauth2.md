@@ -12,10 +12,18 @@ The next step is [registering you own application](https://account.lab.fiware.or
 
 ## OAuth2 Authentication
 
-The FIWARE IdM complies with the OAuth2 standard described in [RFC 6749](http://tools.ietf.org/html/rfc6749). Currently we support two grant types, the [Authorization Code Grant](https://tools.ietf.org/html/rfc6749#section-4.1) and the [Resource Owner Password Credentials Grant](https://tools.ietf.org/html/rfc6749#section-4.3).
+The FIWARE IdM complies with the OAuth2 standard described in [RFC 6749](http://tools.ietf.org/html/rfc6749) and supports all four grant types defined there.
+
+The `Authorization Basic` header is built with the `Client ID` and `Client Secret` credentials provided by the FIWARE IdM following the [standard](http://tools.ietf.org/html/rfc2617). So the string will be 
+
+```
+base64(client_id:client_secret)
+```
+
+The `redirect_uri` parameter must match the `Callback URL` attribute provided in the application registration.
 
 ### Authorization Code Grant
-The authorization code is obtained by using an authorization server (the IdM) as an intermediary between the client (the registrered application) and resource owner (the user). Instead of requesting authorization directly from the resource owner, the client directs the resource owner to an authorization server (via its user-agent as defined in [RFC2616]), which in turn directs the resource owner back to the client with the authorization code.
+The authorization code is obtained by using an authorization server (the IdM) as an intermediary between the client (the registrered application) and resource owner (the user). Instead of requesting authorization directly from the resource owner, the client directs the resource owner to an authorization server (via its user-agent as defined in [RFC2616](http://tools.ietf.org/html/rfc2616)), which in turn directs the resource owner back to the client with the authorization code.
 
 **Authorization Request**
 
@@ -45,14 +53,6 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA
 &redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcallback_url
 ```
-
-The `Authorization Basic` header is built with the `Client ID` and `Client Secret` credentials provided by the FIWARE IdM following the [standard](http://tools.ietf.org/html/rfc2617). So the string will be 
-
-```
-base64(client_id:client_secret)
-```
-
-The `redirect_uri` parameter must match the `Callback URL` attribute provided in the application registration.
 
 **Access Token Response** 
 
