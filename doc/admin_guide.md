@@ -95,7 +95,7 @@ If you are running Keystone on your own machine the address will be 'http://loca
 
 This settings allows for email domain filtering on user registration. Set to 'whitelist', 'blacklist' or comment it out for no filtering.
 
-- noCAPTCHA reCAPTCHA. Get your keys [here](https://www.google.com/recaptcha/admin#createsite). More documentation in [the package repository](https://github.com/ImaginaryLandscape/django-nocaptcha-recaptcha)
+- noCAPTCHA reCAPTCHA. Get your keys [here](https://www.google.com/recaptcha/admin#createsite). More documentation in [the package repository](https://github.com/ImaginaryLandscape/django-nocaptcha-recaptcha). If you want to disable the captcha, set USE_CAPTCHA to False.
 
 <pre>
  USE_CAPTCHA = False
@@ -118,7 +118,7 @@ This settings allows for email domain filtering on user registration. Set to 'wh
 </pre>
 
 
-- Keystone roles. These settings map to normal keystone roles that are used by the IdM. As with the FIWARE Applications and Roles settings, they depend on your use case.
+- Keystone roles. These settings map to normal keystone roles that are used by the IdM. As with the FIWARE Applications and Roles settings, they depend on your use case and , if you are not using the installation scripts, you will have to create them yourself.
 
 <pre>
  KEYSTONE_OWNER_ROLE = 'owner'
@@ -149,12 +149,12 @@ To run a simple server to try out and check the IdM installation or for developp
 You can also explicitly run:
 
 <pre>
- $ sudo tools/with_venv.sh python manage.py runserver IP:8000
+ $ sudo tools/with_venv.sh python manage.py runserver IP:PORT
 </pre>
 
 For more documentation about this server, head to [django docs](https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runserver)
 
-**IMPORTANT NOTE**: From the Django-runserver documentation: DO NOT USE THIS SERVER IN A PRODUCTION SETTING. It has not gone through security audits or performance tests.
+**IMPORTANT NOTE**: As the Django documentation states: DO NOT USE THIS SERVER IN A PRODUCTION SETTING. It has not gone through security audits or performance tests. For a production setting, follow the [production setup guide](doc/setup.md)
 
 ### Installing Keystone
 
@@ -170,7 +170,7 @@ For more documentation about this server, head to [django docs](https://docs.dja
 - Install the system dependencies:
 
 <pre>
- $ sudo apt-get install python-dev libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev
+ $ sudo apt-get install python-dev python-virtualenv libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev libmysqlclient-dev python-mysqldb
 </pre>
 
 - Python dependencies
@@ -178,6 +178,7 @@ For more documentation about this server, head to [django docs](https://docs.dja
 <pre>
   $ sudo python tools/install_venv.py
 </pre>
+
 
 - To verify that this has worked correctly:
 
@@ -194,15 +195,10 @@ For more documentation about this server, head to [django docs](https://docs.dja
  $ cp etc/keysonte.conf.sample etc/keystone.conf
 </pre>
 
-**Note:** If you want to use a mysql database you will need to run the following command, as python mysql library is not included by default in keystone:
-
-<pre>
- $ sudo tools/with_venv.sh pip install mysql-python 
-</pre>
 
 #### **2. Keystone configuration**
 
-After creating the default configuration file, the following lines must be uncommented:
+After creating the default configuration file, the following lines must be uncommented and set to your custom values.
 
 <pre>
   admin_token=ADMIN
@@ -210,7 +206,7 @@ After creating the default configuration file, the following lines must be uncom
   public_port=5000
 </pre>
 
-Run the following commands to create the database:
+Run the following commands to create the database. By default it will create a SQLite database. If you want to use a MySQL database (recommended for production) follow the configuration instructions in the [production setup guide](doc/setup.md)
 
 <pre>
  $ sudo tools/with_venv.sh bin/keystone-manage db_sync
@@ -242,13 +238,12 @@ To run Keystone, we must either run it as a service o with the given commands:
   $ sudo tools/with_venv.sh bin/keystone-all -v
 </pre>
 
-The last parameter (-v) is optional, but it will give you a more detailed view on what is happening with each call to the server.
-
-Configuring Keystone as a service will be shown later on.
 
 #### **4. Initial Data**
 
-For the Identity Manager to work, the database has to be populated with some initial data. To populate the database we provide a script in the official KeyRock repository, along with other management tools. Take a  look at the following project for the automatic installation, configuration and sample utilities at https://github.com/ging/idm_deployment. For this initial data, use the task keystone.populate. Additionally, there is a task called keystone.test_data that will create some sample data to start using the Identity Manager right away, for demo or test purposes.
+For the Identity Manager to work, the database has to be populated with some initial data. To populate the database we provide a script in the [official KeyRock repository](https://github.com/ging/fiware-idm), along with other management tools. For this initial data, use the task [keystone.populate](https://github.com/ging/fiware-idm/blob/master/deployment/keystone.py#L243). If you don't want to use this tools, you can create all the elements throught the API yourself. Please check the [populate script](https://github.com/ging/fiware-idm/blob/master/deployment/keystone.py#L245) for a detailed list of all elements to create.
+
+Additionally, there is a task called keystone.test_data that will create some sample data to start using the Identity Manager right away, for demo or test purposes.
 
 #### **5. Configuring Keystone as a service**
 
@@ -302,8 +297,6 @@ To debug during test, add the following to the command:
 <pre>
  -e debub
 </pre>
-
-Debugging the extensions is not possible, therefore we must run the keystone service (or with the keystone-all command) and making calls from another terminal
 
 ## System Administration
 
