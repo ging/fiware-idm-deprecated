@@ -2,9 +2,9 @@
 
 - [Introduction](#introduction)
 - [Horizon](#horizon)
-    - [Settings and Configuration]()
-        - [Local_settings] 
-        - [Django settings.py]
+    - [Settings and Configuration](#horizon_settings)
+        - [Local_settings](#local_settings)
+        - [Django settings.py](#django_settings)
 - [Keystone](#keystone)
 - [Keystoneclient](#keystoneclient)
 - [django_openstack_auth](#auth)
@@ -22,10 +22,12 @@ The intent of this guide is to cover more in-depth the implementation details, s
 
 This section covers all the Horizon related concepts.
 
+<a name="horizon_settings"></a>
 ## Settings and Configuration
 
 The base Horizon from OpenStack is a complex project and comes with lots of settings and several settings files. Some of them require configuration for the IdM to work, others are fine with the default values and a lot others are unused. In this section we are going to cover the ones we need to set, for further reference please take a look at the [official documentation](http://docs.openstack.org/developer/horizon/topics/settings.html)
 
+<a name="local_settings"></a>
 ### Local_settings
 At **openstack_dashboard/local/local_settings.py**
 * `OPENSTACK_API_VERSIONS` We need to activate it to use the Identity API v3 in our Keystone. Only matters to us the identity value. For example:  
@@ -83,6 +85,7 @@ More documentation at: https://github.com/praekelt/django-recaptcha
      `'admin',`  
    `]`  
 
+<a name="django_settings"></a>
 ### Django settings.py  
 At **openstack_dashboard/settings.py**
 
