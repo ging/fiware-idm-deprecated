@@ -22,7 +22,7 @@
 
 Welcome to the Installation and Administration Guide for the Identity Management - KeyRock Generic Enabler. This generic enabler has been developed as an Open Source project, therefore this guide points to the appropriate online content that has been created for this it.
 
-The recommended way of intalling the IdM is through the installation tools. You can find the documentation on how to use this tools [here](doc/README.md). This guide will cover all the steps required to successfully install the IdM, in case you would rather install it step by step and as a reference of the installation scripts tasks.
+The recommended way of intalling the IdM is through the installation tools. You can find the documentation on how to use this tools [here](README.md). This guide will cover all the steps required to successfully install the IdM, in case you would rather install it step by step and as a reference of the installation scripts tasks.
  
 
 ### Requirements
@@ -153,7 +153,7 @@ You can also explicitly run:
 
 For more documentation about this server, head to [django docs](https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runserver)
 
-**IMPORTANT NOTE**: As the Django documentation states: DO NOT USE THIS SERVER IN A PRODUCTION SETTING. It has not gone through security audits or performance tests. For a production setting, follow the [production setup guide](doc/setup.md)
+**IMPORTANT NOTE**: As the Django documentation states: DO NOT USE THIS SERVER IN A PRODUCTION SETTING. It has not gone through security audits or performance tests. For a production setting, follow the [production setup guide](setup.md)
 
 ### Installing Keystone
 
@@ -205,7 +205,7 @@ After creating the default configuration file, the following lines must be uncom
   public_port=5000
 </pre>
 
-Run the following commands to create the database. By default it will create a SQLite database. If you want to use a MySQL database (recommended for production) follow the configuration instructions in the [production setup guide](doc/setup.md)
+Run the following commands to create the database. By default it will create a SQLite database. If you want to use a MySQL database (recommended for production) follow the configuration instructions in the [production setup guide](setup.md)
 
 <pre>
  $ sudo tools/with_venv.sh bin/keystone-manage db_sync

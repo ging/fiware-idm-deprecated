@@ -83,7 +83,7 @@ SECRET_KEY = 'somethingsecret'
 ```
 
 ### NO CAPTCHA reCAPTCHA
-You can find how to set up the reCAPTCHA field for user registration in the [installation and administration guide](doc/admin_guide.md)
+You can find how to set up the reCAPTCHA field for user registration in the [installation and administration guide](admin_guide.md)
 
 ### EMAIL
 The IdM can't send emails by itself, you must set up a SMTP server to send it. This section covers how to set up a mail server using [POSTFIX](http://www.postfix.org/) and connect the front-end to it. Further information can be found in the [Django documentation](https://docs.djangoproject.com/en/1.8/topics/email/#email-backends).

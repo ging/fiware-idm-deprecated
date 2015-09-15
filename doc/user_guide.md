@@ -119,7 +119,7 @@ To return to the home of the user go up in the header and click on the name of t
 
 ## Programmer Guide
 
-Documentation on KeyRock APIs can be found at [API Overiview section](doc/README.md#api-overview)
+Documentation on KeyRock APIs can be found at [API Overiview section](README.md#api-overview)
 
 ### Users
 
