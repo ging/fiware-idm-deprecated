@@ -85,9 +85,9 @@ fab keystone.task:one_arg='this',another='that'
 
 **Configuration**  
 There is a configuration file template in /conf/settings.py.example. This provides as a good base configuration file that should be enough for a test/development installation. Some options you might have to pay some attention to are:
-* IDM_ROOT: if the location of the keystone and horizon components in your system is not directly inside the folder where you have cloned the tools you will have to set this accordingly.
-* HORIZON_DEV_ADDRESS: sets the address and port where the frontend will listen to. Default is localhost:8000, you might want to tweak it based on your set up.
-* KEYSTONE_ADMIN_PORT and KEYSTONE_PUBLIC_PORT: if you need to use different ports for the keystone back-end
+- IDM_ROOT: if the location of the keystone and horizon components in your system is not directly inside the folder where you have cloned the tools you will have to set this accordingly.
+- HORIZON_DEV_ADDRESS: sets the address and port where the frontend will listen to. Default is localhost:8000, you might want to tweak it based on your set up.
+- KEYSTONE_ADMIN_PORT and KEYSTONE_PUBLIC_PORT: if you need to use different ports for the keystone back-end
 
 *Back-end*  
 ```
