@@ -18,7 +18,7 @@ This project is part of [FIWARE](http://fiware.org). You will find more informat
 - You will find the source code of this project in GitHub [here](https://github.com/ging/fiware-idm)
 - You will find the documentation of this project in Read the Docs [here](http://fiware-idm.readthedocs.org/)
 
-Wellcome to the main repository for the UPM's implementation of the FIWARE Identity Manager Generic Enabler. This repository acts as an entry point and holds the documentation and some automated tools for installation and management. The IdM is composed of two independent components, a RESTful back-end and web front-end. If you want to see the code for each of the components of the IdM and more specific documentation please head to each component's repository:  
+Welcome to the main repository for the UPM's implementation of the FIWARE Identity Manager Generic Enabler. This repository acts as an entry point and holds the documentation and some automated tools for installation and management. The IdM is composed of two independent components, a RESTful back-end and web front-end. If you want to see the code for each of the components of the IdM and more specific documentation please head to each component's repository:  
 
 Horizon based front-end [ging/horizon](https://github.com/ging/horizon)  
 Keystone based back-end [ging/keystone](https://github.com/ging/keystone)    
@@ -50,7 +50,7 @@ Create a settings file
 cp conf/settings.py.example conf/settings.py
 ```
 
-Install virtualenvwrapper. Follow the instructions here https://virtualenvwrapper.readthedocs.org/en/latest/index.html
+Install [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/index.html)
 
 Create a virtualenv and activate it
 ```
@@ -74,7 +74,8 @@ For example:
 fab keystone.populate
 ```
 
-Some tasks accept arguments that override the defaults from conf/settings.py. It is recommended to use settings.py to configure the tasks but you can use this arguments in a per-task basis if you find you need it. Other tasks might need explicit arguments like the path to a file. The way to pass arguments to tasks is simple and documented [here](http://docs.fabfile.org/en/1.10/tutorial.html#task-arguments)
+Some tasks accept arguments that override the defaults from conf/settings.py. It is recommended to use settings.py to configure the tasks but you can use this arguments in a per-task basis if you find you need it. Other tasks might need explicit arguments like the path to a file. The way to pass arguments to tasks is simple and documented [here](http://docs.fabfile.org/en/1.10/tutorial.html#task-arguments).
+
 For example: 
 ```
 fab keystone.task:one_arg='this',another='that'
@@ -116,7 +117,7 @@ fab keystone.set_up_as_service
 ```
 fab horizon.install
 ```
-You can check everything went OK running the development server, but you wont be able to log in until you install the backend.
+You can check everything went OK running the development server, but you won't be able to log in until you install the backend.
 ```
 fab horizon.dev_server
 ```

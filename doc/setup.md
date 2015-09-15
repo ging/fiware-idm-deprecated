@@ -1,7 +1,7 @@
 Production Set Up Guide
 =================
 
-This section covers how to set up the IdM for production, covering topics like email sending, reCAPTCHA support or how to serve static and media files. Some topics, for example HTTPS, are beyond the scope of this documentation and only some pointers to related documentation are provided as a starting point.
+This section covers how to set up the IdM for production, covering topics like email sending, No CAPTCHA reCAPTCHA support or how to serve static and media files. Some topics, for example HTTPS, are beyond the scope of this documentation and only some pointers to related documentation are provided as a starting point.
 
 Make sure to also check the wikis for the respective parts of the IdM for more in-depth information of the components.
 
@@ -39,7 +39,7 @@ fab localhost keystone.database_create
 fab localhost keystone.populate
 ```
 
-You can find aditional help for setting up Keystone + MySQL [here](http://docs.openstack.org/havana/install-guide/install/apt/content/keystone-install.html)
+You can find aditional help for setting up Keystone + MySQL [here](http://docs.openstack.org/havana/install-guide/install/apt/content/keystone-install.html).
 
 ### Web Server (Apache + mod_wsgi)
 The web server used by the tools is a development server that should NOT be used for a production setting. There are several servers and configurations to serve a Django (Python) web application but only Apache + mod_wsgi will be covered here. Take a look at the [oficial Django documentation](https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/) for other options available and further information on this topic.
@@ -82,13 +82,13 @@ ALLOWED_HOSTS = [
 SECRET_KEY = 'somethingsecret'
 ```
 
-### reCAPTCHA
-You can find how to set up the reCAPTCHA field for user registration in the [front-end wiki](https://github.com/ging/horizon/wiki/Configuration-guide#local_settings-1)
+### NO CAPTCHA reCAPTCHA
+You can find how to set up the reCAPTCHA field for user registration in the [installation and administration guide](doc/admin_guide.md)
 
 ### EMAIL
-The IdM can't send emails by itself, you must set up a SMTP server to send it. This section covers how to set up a mail server using [POSTFIX](http://www.postfix.org/) and connect the front-end to it. Further information can be found in the (Django documentation)[https://docs.djangoproject.com/en/1.8/topics/email/#email-backends]
+The IdM can't send emails by itself, you must set up a SMTP server to send it. This section covers how to set up a mail server using [POSTFIX](http://www.postfix.org/) and connect the front-end to it. Further information can be found in the [Django documentation](https://docs.djangoproject.com/en/1.8/topics/email/#email-backends).
 
-Install and configure [POSTFIX](http://www.postfix.org/) https://help.ubuntu.com/lts/serverguide/postfix.html
+Install and configure [POSTFIX](http://www.postfix.org/), [Ubuntu guide](https://help.ubuntu.com/lts/serverguide/postfix.html).
 ```
 sudo apt-get install postfix
 ```

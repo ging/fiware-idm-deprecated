@@ -20,16 +20,16 @@
 
 ## Introduction
 
-Welcome to the Installation and Administration Guide for the Identity Management - KeyRock Generic Enabler. This generic enabler has been developed as an Open Source project, therefor this guide points to the appropriate online content that has been created for this it.
+Welcome to the Installation and Administration Guide for the Identity Management - KeyRock Generic Enabler. This generic enabler has been developed as an Open Source project, therefore this guide points to the appropriate online content that has been created for this it.
 
-The recommended way of intalling the IdM is through the installation tools. You can find the documentation on how to use this tools [here](https://github.com/ging/fiware-idm#def-build). This guide will cover all the steps required to successfully install the IdM, in case you would rather install it step by step and as a reference of the installation scripts tasks.
+The recommended way of intalling the IdM is through the installation tools. You can find the documentation on how to use this tools [here](doc/README.md). This guide will cover all the steps required to successfully install the IdM, in case you would rather install it step by step and as a reference of the installation scripts tasks.
  
 
 ### Requirements
 
 This installation guide is made for the installation of Identity Management - KeyRock in a Ubuntu 12.04 (LTS) server.
 
-Both Horizon, for the front-end, and Keystone, for the back-end, must be installed in order for the the generic enabler to run correctly.
+Both Horizon, for the front-end, and Keystone, for the back-end, must be installed in order for the generic enabler to run correctly.
 
 ## System Installation
 
@@ -87,13 +87,12 @@ If you are running Keystone on your own machine the address will be 'http://loca
  }
 </pre>
 
-- User Registration settings
+- User Registration settings. This setting enables email domain filtering on user registration. Set to 'whitelist', 'blacklist' or comment it out for no filtering.
 
 <pre>
  EMAIL_LIST_TYPE
 </pre>
 
-This settings allows for email domain filtering on user registration. Set to 'whitelist', 'blacklist' or comment it out for no filtering.
 
 - noCAPTCHA reCAPTCHA. Get your keys [here](https://www.google.com/recaptcha/admin#createsite). More documentation in [the package repository](https://github.com/ImaginaryLandscape/django-nocaptcha-recaptcha). If you want to disable the captcha, set USE_CAPTCHA to False.
 
@@ -232,7 +231,7 @@ Create tables for the User Registration extension
 
 #### **3. Run Keystone**
 
-To run Keystone, we must either run it as a service o with the given commands:
+To run Keystone, we must either run it as a service or in a console with the following command:
 
 <pre>
   $ sudo tools/with_venv.sh bin/keystone-all -v
