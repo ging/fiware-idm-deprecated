@@ -19,6 +19,7 @@ from fabric.api import task
 from conf import settings
 from fabric.context_managers import lcd
 from fabric.operations import local as lrun
+from fabric.colors import red, green
 
 @task
 def install(horizon_path=settings.HORIZON_ROOT):
@@ -48,6 +49,42 @@ def install(horizon_path=settings.HORIZON_ROOT):
             'KEYSTONE_PUBLIC_PORT':settings.KEYSTONE_PUBLIC_PORT,
         }))
     out_file.close()
+
+@task
+def update(horizon_path=settings.HORIZON_ROOT):
+    """Update the Front-end and its dependencies."""
+    with lcd(horizon_path):
+        lrun('git pull origin')
+        lrun('sudo python tools/install_venv.py')
+
+@task
+def check(horizon_path=settings.HORIZON_ROOT):
+    """Checks for new settings in the template which don't exist in the current file"""
+
+    print 'Checking Horizon...',
+    path = horizon_path + 'openstack_dashboard/local/'
+    with open(path+'local_settings.py','r') as old_file, open(path+'local_settings.py.example','r') as new_file:
+        old = set(old_file)
+        new = set(new_file)
+    c1 = set()
+    c2 = set()
+
+    for s in new.difference(old):
+        if s.find('=') != -1:
+            c1.add(s[0:s.find('=')])
+    for s in old.difference(new):
+        if s.find('=') != -1:
+            c2.add(s[0:s.find('=')])
+
+    latest_settings = c1.difference(c2)
+    if not latest_settings:
+        print (green('Everything OK'))
+    else:
+        print red('Some errors were encountered:')
+        print red('The following settings couldn\'t be found in your local_settings.py module:')
+        for i in latest_settings:
+            print '\t'+red(i)
+        print red('Please edit the local_settings.py module manually so that it contains the settings above.')
 
 @task
 def dev_server(address=settings.HORIZON_DEV_ADDRESS,

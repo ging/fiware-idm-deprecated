@@ -30,6 +30,7 @@ from fabric.context_managers import lcd
 from fabric.contrib.files import exists
 from fabric.tasks import Task
 from fabric.operations import local as lrun
+from fabric.colors import red, green
 
 
 @task
@@ -73,6 +74,48 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
                 "'s/#public_port=5000/public_port={0}/g' "
                 "keystone.conf").format(settings.KEYSTONE_PUBLIC_PORT))
     print 'Done!'
+
+@task
+def update(keystone_path=settings.KEYSTONE_ROOT):
+    """Update the Back-end and its dependencies."""
+    with lcd(keystone_path):
+        lrun('git pull origin')
+        lrun('sudo python tools/install_venv.py')
+
+@task
+def check(keystone_path=settings.KEYSTONE_ROOT):
+    """Checks for new settings in the template which don't exist in the current file"""
+    
+    print 'Checking Keystone...',
+    path = keystone_path + 'etc/'
+    with open(path+'keystone.conf','r') as old_file,open(path+'keystone.conf.sample','r') as new_file:
+        old = set(old_file)
+        new = set(new_file)
+    c1 = set()
+    c2 = set()
+
+    for s in new.difference(old):
+        if s.find('=') != -1:
+            if s.find('#') != -1:
+                c1.add(s[s.find('#')+1:s.find('=')])
+            else:
+                c1.add(s[0:s.find('=')])
+    for s in old.difference(new):
+        if s.find('=') != -1:
+            if s.find('#') != -1:
+                c2.add(s[s.find('#')+1:s.find('=')])
+            else:
+                c2.add(s[0:s.find('=')])
+
+    latest_settings = c1.difference(c2)
+    if not latest_settings:
+        print (green('Everything OK'))
+    else:
+        print red('Some errors were encountered:')
+        print red('The following settings couldn\'t be found in your local_settings.py module:')
+        for i in latest_settings:
+            print '\t'+red(i)
+        print red('Please edit the local_settings.py module manually so that it contains the settings above.')
 
 @task
 def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
