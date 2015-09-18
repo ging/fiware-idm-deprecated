@@ -101,11 +101,17 @@ def check(horizon_path=settings.HORIZON_ROOT):
 
         if autofix == 'Y':
 
-            settings_to_write = set()
+            settings_to_write = list()
             for s in latest_settings:
-                for x in new.difference(old):
-                    if x.find(s) != -1:
-                        settings_to_write.add(x) # save name and value
+                with open(path+'local_settings.py.example','r') as template:
+                    block = 0
+                    for line in template.readlines():
+                        if line.find(s) != -1 or block>0:
+                            settings_to_write.append(line)
+                            if line.find('{') != -1:
+                                block=block+1
+                            if line.find('}') != -1:
+                                block=block-1
 
             with open(path+'local_settings.py','a') as output:
                 output.write('\n\n# --- NEW SETTINGS ADDED AUTOMATICALLY ---\n')
