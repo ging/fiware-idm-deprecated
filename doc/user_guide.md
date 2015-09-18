@@ -95,7 +95,7 @@ It shows a modal where you can manage Users and Groups. You can see the users an
 
 Choose users and groups to add to the application, then choose their initial role. Click "Add". 
 
-Note that you can assign roles a poteriori after the users have been added, by clicking on the roles drop down menu - below the user's icon, as shown on [Figure 6](#def-fig6).
+Note that you can assign roles after the users have been added, by clicking on the roles drop down menu - below the user's icon, as shown on [Figure 6](#def-fig6).
 
 <a name="def-fig6"></a>
 ![](https://raw.githubusercontent.com/ging/fiware-idm/master/doc/resources/KeyRock_application_summary.png)
@@ -119,7 +119,7 @@ To return to the home of the user go up in the header and click on the name of t
 
 ## Programmer Guide
 
-Documentation on KeyRock APIs can be found at [API Overiview section](https://github.com/ging/fiware-idm#api-overview)
+Documentation on KeyRock APIs can be found at [API Overiview section](http://fiware-idm.readthedocs.org/en/latest/#def-api)
 
 ### Users
 
