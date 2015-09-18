@@ -53,6 +53,8 @@ def install(horizon_path=settings.HORIZON_ROOT):
 @task
 def update(horizon_path=settings.HORIZON_ROOT):
     """Update the Front-end and its dependencies."""
+    # returns 1 if everything went OK, 0 otherwise
+
     print 'Updating Horizon...'
     with lcd(horizon_path):
         lrun('git pull origin')
@@ -66,33 +68,55 @@ def update(horizon_path=settings.HORIZON_ROOT):
 @task
 def check(horizon_path=settings.HORIZON_ROOT):
     """Checks for new settings in the template which don't exist in the current file"""
+    # returns 1 if everything went OK, 0 otherwise
 
     print 'Checking Horizon...',
     path = horizon_path + 'openstack_dashboard/local/'
     with open(path+'local_settings.py','r') as old_file, open(path+'local_settings.py.example','r') as new_file:
         old = set(old_file)
         new = set(new_file)
-    c1 = set()
-    c2 = set()
 
+    new_settings = set()
+    old_settings = set()
+
+    # remove values to have settings' names
     for s in new.difference(old):
         if s.find('=') != -1:
-            c1.add(s[0:s.find('=')])
+            new_settings.add(s[0:s.find('=')])
     for s in old.difference(new):
         if s.find('=') != -1:
-            c2.add(s[0:s.find('=')])
+            old_settings.add(s[0:s.find('=')])
 
-    latest_settings = c1.difference(c2)
+    latest_settings = new_settings.difference(old_settings)
+
     if not latest_settings:
         print (green('Everything OK'))
         return 1 # flag for the main task
     else:
         print red('Some errors were encountered:')
         print red('The following settings couldn\'t be found in your local_settings.py module:')
-        for i in latest_settings:
-            print '\t'+red(i)
-        print red('Please edit the local_settings.py module manually so that it contains the settings above.')
-        return 0 # flag for the main task
+        for s in latest_settings:
+            print '\t'+red(s)
+        autofix = raw_input(red('Would you like to add defaults for the missing settings? [Y/n]: '))
+
+        if autofix == 'Y':
+
+            settings_to_write = set()
+            for s in latest_settings:
+                for x in new.difference(old):
+                    if x.find(s) != -1:
+                        settings_to_write.add(x) # save name and value
+
+            with open(path+'local_settings.py','a') as output:
+                output.write('\n\n# --- NEW SETTINGS ADDED AUTOMATICALLY ---\n')
+                for s in settings_to_write:
+                    output.write(s)
+
+            print green('The missing settings were added.\nPlease check the local_settings.py module to make any necessary changes.')
+
+        else:
+            print red('Please edit the local_settings.py module manually so that it contains the settings above.')
+            return 0 # flag for the main task
 
 @task
 def dev_server(address=settings.HORIZON_DEV_ADDRESS,

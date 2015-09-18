@@ -78,6 +78,8 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
 @task
 def update(keystone_path=settings.KEYSTONE_ROOT):
     """Update the Back-end and its dependencies."""
+    # returns 1 if everything went OK, 0 otherwise
+
     print 'Updating Keystone...'
     with lcd(keystone_path):
         lrun('git pull origin')
@@ -91,37 +93,38 @@ def update(keystone_path=settings.KEYSTONE_ROOT):
 @task
 def check(keystone_path=settings.KEYSTONE_ROOT):
     """Checks for new settings in the template which don't exist in the current file"""
+    # returns 1 if everything went OK, 0 otherwise
     
     print 'Checking Keystone...',
     path = keystone_path + 'etc/'
     with open(path+'keystone.conf','r') as old_file,open(path+'keystone.conf.sample','r') as new_file:
         old = set(old_file)
         new = set(new_file)
-    c1 = set()
-    c2 = set()
+    new_settings = set()
+    old_settings = set()
 
     for s in new.difference(old):
         if s.find('=') != -1:
             if s.find('#') != -1:
-                c1.add(s[s.find('#')+1:s.find('=')])
+                new_settings.add(s[s.find('#')+1:s.find('=')])
             else:
-                c1.add(s[0:s.find('=')])
+                new_settings.add(s[0:s.find('=')])
     for s in old.difference(new):
         if s.find('=') != -1:
             if s.find('#') != -1:
-                c2.add(s[s.find('#')+1:s.find('=')])
+                old_settings.add(s[s.find('#')+1:s.find('=')])
             else:
-                c2.add(s[0:s.find('=')])
+                old_settings.add(s[0:s.find('=')])
 
-    latest_settings = c1.difference(c2)
+    latest_settings = new_settings.difference(old_settings)
     if not latest_settings:
         print (green('Everything OK'))
         return 1 # flag for the main task
     else:
         print red('Some errors were encountered:')
         print red('The following settings couldn\'t be found in your local_settings.py module:')
-        for i in latest_settings:
-            print '\t'+red(i)
+        for s in latest_settings:
+            print '\t'+red(s)
         print red('Please edit the local_settings.py module manually so that it contains the settings above.')
         return 0 # flag for the main task
 
