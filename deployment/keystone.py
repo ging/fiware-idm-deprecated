@@ -78,9 +78,15 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
 @task
 def update(keystone_path=settings.KEYSTONE_ROOT):
     """Update the Back-end and its dependencies."""
+    print 'Updating Keystone...'
     with lcd(keystone_path):
         lrun('git pull origin')
         lrun('sudo python tools/install_venv.py')
+    print green('Keystone updated.')
+    if not check(keystone_path):
+        return 0 # flag for the main task
+    else:
+        return 1 # flag for the main task
 
 @task
 def check(keystone_path=settings.KEYSTONE_ROOT):
@@ -110,12 +116,14 @@ def check(keystone_path=settings.KEYSTONE_ROOT):
     latest_settings = c1.difference(c2)
     if not latest_settings:
         print (green('Everything OK'))
+        return 1 # flag for the main task
     else:
         print red('Some errors were encountered:')
         print red('The following settings couldn\'t be found in your local_settings.py module:')
         for i in latest_settings:
             print '\t'+red(i)
         print red('Please edit the local_settings.py module manually so that it contains the settings above.')
+        return 0 # flag for the main task
 
 @task
 def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
