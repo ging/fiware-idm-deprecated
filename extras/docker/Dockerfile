@@ -44,5 +44,12 @@ RUN source /usr/local/bin/virtualenvwrapper.sh && \
 
 
 # Run IdM
-WORKDIR /opt/idm
-CMD ["sudo", "fab", "horizon.dev_server"]
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod 755 /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+### Exposed ports
+# - Keystone
+EXPOSE 5000
+# - Horizon (HTTP)
+EXPOSE 8000
