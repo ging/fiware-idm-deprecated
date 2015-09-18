@@ -57,7 +57,7 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
     with lcd(keystone_path):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['keystone'])
         
-        lrun('sudo apt-get install {0}'.format(dependencies))
+        lrun('sudo apt-get install -y {0}'.format(dependencies))
         lrun('sudo cp etc/keystone.conf.sample etc/keystone.conf')
         lrun('sudo python tools/install_venv.py')
 
