@@ -32,7 +32,7 @@ def install(horizon_path=settings.HORIZON_ROOT):
 
     with lcd(horizon_path):
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['horizon'])
-        lrun('sudo apt-get install {0}'.format(dependencies))
+        lrun('sudo apt-get install -y {0}'.format(dependencies))
         lrun('sudo python tools/install_venv.py')
 
     path = horizon_path + '/openstack_dashboard/local/'
