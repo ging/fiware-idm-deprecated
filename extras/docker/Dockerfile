@@ -34,8 +34,7 @@ RUN source /usr/local/bin/virtualenvwrapper.sh && \
 RUN source /usr/local/bin/virtualenvwrapper.sh && \
     workon idm_tools && \
     fab keystone.install && \
-    fab keystone.database_create && \
-    fab keystone.set_up_as_service
+    fab keystone.database_create
 
 # Install Horizon front-end
 RUN source /usr/local/bin/virtualenvwrapper.sh && \

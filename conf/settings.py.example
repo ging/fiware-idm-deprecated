@@ -18,7 +18,7 @@ HORIZON_ROOT = IDM_ROOT + 'horizon/'
 
 # Development settings
 KEYSTONE_DEV_DATABASE = 'keystone.db'
-HORIZON_DEV_ADDRESS = '127.0.0.1:8000'
+HORIZON_DEV_ADDRESS = '0.0.0.0:8000'
 
 # TODO(garcianavalon) sync this with the extension,
 # see https://trello.com/c/rTsUMnjw
