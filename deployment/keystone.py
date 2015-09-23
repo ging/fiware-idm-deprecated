@@ -75,6 +75,8 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
                 "keystone.conf").format(settings.KEYSTONE_PUBLIC_PORT))
     print 'Done!'
 
+    check(keystone_path) # perform check
+
 @task
 def update(keystone_path=settings.KEYSTONE_ROOT):
     """Update the Back-end and its dependencies."""

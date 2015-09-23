@@ -51,6 +51,8 @@ def install(horizon_path=settings.HORIZON_ROOT):
         }))
     out_file.close()
 
+    instance.run(horizon_path=horizon_path) # perform check task
+
 @task
 def update(horizon_path=settings.HORIZON_ROOT):
     """Update the Front-end and its dependencies."""
@@ -136,6 +138,10 @@ class CheckTask(Task):
 
     def _check_for_roles_ids(self, settings_path):
         # returns 1 if everything went OK, 0 otherwise
+
+        if not settings.INTERNAL_ROLES_IDS:
+            print red("INTERNAL_ROLES_IDS attribute could not be found. Please make sure you have completely installed Keystone before running this check")
+            return 0
 
         with open(settings_path+'local_settings.py', 'r') as local_settings:
             error = False
