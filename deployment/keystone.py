@@ -106,28 +106,27 @@ def check(keystone_path=settings.KEYSTONE_ROOT):
     old_settings = set()
 
     for s in new.difference(old):
-        if s.find('=') != -1:
-            if s.find('#') != -1:
+        if '=' in s:
+            if '#' in s:
                 new_settings.add(s[s.find('#')+1:s.find('=')])
             else:
                 new_settings.add(s[0:s.find('=')])
     for s in old.difference(new):
-        if s.find('=') != -1:
-            if s.find('#') != -1:
+        if '=' in s:
+            if '#' in s:
                 old_settings.add(s[s.find('#')+1:s.find('=')])
             else:
                 old_settings.add(s[0:s.find('=')])
-
     latest_settings = new_settings.difference(old_settings)
     if not latest_settings:
         print (green('Everything OK'))
         return 1 # flag for the main task
     else:
         print red('Some errors were encountered:')
-        print red('The following settings couldn\'t be found in your local_settings.py module:')
+        print red('The following settings couldn\'t be found in your keystone.conf file:')
         for s in latest_settings:
             print '\t'+red(s)
-        print red('Please edit the local_settings.py module manually so that it contains the settings above.')
+        print red('Please edit the keystone.conf file manually so that it contains the settings above.')
         return 0 # flag for the main task
 
 @task

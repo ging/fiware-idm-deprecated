@@ -53,4 +53,4 @@ def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZ
 @task
 def check_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT):
     keystone.check(keystone_path)
-    horizon.check(horizon_path)
+    horizon.instance.run(horizon_path=horizon_path)

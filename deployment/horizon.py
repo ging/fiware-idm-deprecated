@@ -61,7 +61,7 @@ def update(horizon_path=settings.HORIZON_ROOT):
         lrun('git pull origin')
         lrun('sudo python tools/install_venv.py')
     print green('Horizon updated.')
-    if not check(horizon_path):
+    if not instance.run(horizon_path=horizon_path):
         return 0 # flag for the main task
     else:
         return 1 # flag for the main task
@@ -79,7 +79,7 @@ class CheckTask(Task):
     name = "check"
     def run(self, horizon_path=settings.HORIZON_ROOT):
         #   returns 1 if everything went OK, 0 otherwise
-        print 'Checking Horizon...',
+        print 'Checking Horizon... ',
         self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/')
         self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/')
 
@@ -96,10 +96,10 @@ class CheckTask(Task):
 
         # remove values to have settings' names
         for s in new.difference(old):
-            if s.find('=') != -1:
+            if '=' in s:
                 new_settings.add(s[0:s.find('=')])
         for s in old.difference(new):
-            if s.find('=') != -1:
+            if '=' in s:
                 old_settings.add(s[0:s.find('=')])
 
         latest_settings = new_settings.difference(old_settings)
@@ -141,12 +141,10 @@ class CheckTask(Task):
             error = False
             for line in local_settings.readlines():
                 if 'FIWARE_PURCHASER_ROLE_ID' in line and\
-                line.split("FIWARE_PURCHASER_ROLE_ID = ")[1] !=\
-                settings.INTERNAL_ROLES_IDS['purchaser']:
+                settings.INTERNAL_ROLES_IDS['purchaser'] not in line:
                     error = True
                 elif 'FIWARE_PROVIDER_ROLE_ID' in line and\
-                line.split("FIWARE_PROVIDER_ROLE_ID = ")[1] !=\
-                settings.INTERNAL_ROLES_IDS['provider']:
+                settings.INTERNAL_ROLES_IDS['provider'] not in line:
                     error = True
                     break
         if not error:
