@@ -19,6 +19,7 @@ from conf import settings
 
 from fabric.api import task
 from fabric.operations import local as lrun
+from fabric.colors import red,green
 
 
 @task
@@ -38,3 +39,18 @@ def _install_dependencies():
     lrun('{command} {dependencies}'.format(command=command, 
         dependencies=dependencies))
     print 'Dependencies correctly installed'
+
+@task
+def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT):
+    update1_ok = keystone.update(keystone_path) 
+    update2_ok = horizon.update(horizon_path)
+
+    if not update1_ok or not update2_ok:
+        print red('\nUpdate finished, but some errors were found.\nPlease check the logs and make any necessary fixes.')
+    else:
+        print(green('Everything up to date!'))
+
+@task
+def check_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT):
+    keystone.check(keystone_path)
+    horizon.instance.run(horizon_path=horizon_path)
