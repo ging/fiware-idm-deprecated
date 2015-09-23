@@ -84,6 +84,8 @@ def update(keystone_path=settings.KEYSTONE_ROOT):
     with lcd(keystone_path):
         lrun('git pull origin')
         lrun('sudo python tools/install_venv.py')
+    print 'Syncing database...'
+    database_create(keystone_path, True)
     print green('Keystone updated.')
     if not check(keystone_path):
         return 0 # flag for the main task
@@ -429,6 +431,27 @@ class PopulateTask(Task):
                     created_role, created_permissions[index])
 
         print 'Created default fiware roles and permissions.'
+        
+        with open('conf/settings.py','r+') as settings_file:
+            flag_replace = False
+            lines = settings_file.readlines()
+            settings_file.seek(0)
+            settings_file.truncate()
+            for line in lines:
+                if 'ADDED AUTOMATICALLY' in line:
+                    flag_replace = True
+                if 'provider' in line and flag_replace:
+                    line = '\t\'provider\': \''+created_roles[0].id+'\',\n'
+                if 'purchaser' in line and flag_replace:
+                    line = '\t\'purchaser\': \''+created_roles[1].id+'\'\n'
+                settings_file.write(line)            
+            if not flag_replace:  
+                settings_file.write('\n\n# --- ADDED AUTOMATICALLY --- \n')
+                settings_file.write('INTERNAL_ROLES_IDS = {\n')
+                settings_file.write('\t\'provider\': \''+created_roles[0].id+'\',\n')
+                settings_file.write('\t\'purchaser\': \''+created_roles[1].id+'\'\n')
+                settings_file.write('}')
+
         return idm_app
 
     def _grant_administrator(self, keystone, idm_app, users):
