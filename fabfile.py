@@ -42,6 +42,7 @@ def _install_dependencies():
 
 @task
 def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT):
+    """Update both the Front and the Back-end, as well as their dependencies."""
     update1_ok = keystone.update(keystone_path) 
     update2_ok = horizon.update(horizon_path)
 
@@ -52,5 +53,6 @@ def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZ
 
 @task
 def check_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT):
+    """Run several checks both in the Front and in the Back-end."""
     keystone.check(keystone_path)
     horizon.instance.run(horizon_path=horizon_path)
