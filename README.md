@@ -3,6 +3,7 @@
 + [Introduction](#def-introduction)
 + [How to Build & Install](#def-build)
     - [Docker](#def-docker)
++ [How to Update](#def-update)
 + [API Overview](#def-api)
 + [Advanced documentation](#def-advanced)
 
@@ -129,6 +130,18 @@ We also provide a Docker image to facilitate you the building of this GE.
 
 - [Here](https://github.com/ging/fiware-idm/tree/master/extras/docker) you will find the Dockerfile and the documentation explaining how to use it.
 - In [Docker Hub](https://hub.docker.com/r/ging/fiware-idm/) you will find the public image.
+
+<a name="def-update"></a>
+## How to Update
+
+When either the Front-end ([ging/horizon](https://github.com/ging/horizon)) or the Back-end ([ging/keystone](https://github.com/ging/keystone)) are updated, you no longer need to install everything from start. Simply run the following with the virtualenv activated:
+```
+fab update_all
+```
+
+What's more, you can even update only the component you need, using the following:
+- Front-end: `fab horizon.update`
+- Back-end:  `fab keystone.update`
 
 <a name="def-api"></a>
 ## API Overview

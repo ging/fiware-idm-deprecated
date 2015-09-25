@@ -51,7 +51,7 @@ def install(horizon_path=settings.HORIZON_ROOT):
         }))
     out_file.close()
 
-    instance.run(horizon_path=horizon_path) # perform check task
+    instance.run(horizon_path=horizon_path) # run check task
 
 @task
 def update(horizon_path=settings.HORIZON_ROOT):
@@ -77,7 +77,7 @@ def dev_server(address=settings.HORIZON_DEV_ADDRESS,
               '{0}').format(address))      
 
 class CheckTask(Task):
-
+    """Run several checks in the Front-end settings file."""
     name = "check"
     def run(self, horizon_path=settings.HORIZON_ROOT):
         #   returns 1 if everything went OK, 0 otherwise
