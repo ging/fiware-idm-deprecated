@@ -36,8 +36,7 @@ bash :download_version do
 end
 
 # Install python dependecies
-bash :install_pydems do
-  apppath =  node['fiware-idm'][:app_dir]
+bash :install_pydeps do
   code <<-EOH
     cd #{node['fiware-idm'][:app_dir]}
     source /usr/local/bin/virtualenvwrapper.sh && \
