@@ -75,7 +75,7 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
                 "keystone.conf").format(settings.KEYSTONE_PUBLIC_PORT))
     print 'Done!'
 
-    check(keystone_path) # perform check
+    check(keystone_path) # run check
 
 @task
 def update(keystone_path=settings.KEYSTONE_ROOT):
@@ -96,7 +96,7 @@ def update(keystone_path=settings.KEYSTONE_ROOT):
 
 @task
 def check(keystone_path=settings.KEYSTONE_ROOT):
-    """Checks for new settings in the template which don't exist in the current file"""
+    """Check for missing settings in the settings file."""
     # returns 1 if everything went OK, 0 otherwise
     
     print 'Checking Keystone...',
