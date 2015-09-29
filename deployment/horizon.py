@@ -63,10 +63,7 @@ def update(horizon_path=settings.HORIZON_ROOT):
         lrun('git pull origin')
         lrun('sudo python tools/install_venv.py')
     print green('Horizon updated.')
-    if not instance.run(horizon_path=horizon_path):
-        return 0 # flag for the main task
-    else:
-        return 1 # flag for the main task
+    return instance.run(horizon_path=horizon_path) #flag for the main task
 
 @task
 def dev_server(address=settings.HORIZON_DEV_ADDRESS,
@@ -82,8 +79,9 @@ class CheckTask(Task):
     def run(self, horizon_path=settings.HORIZON_ROOT):
         #   returns 1 if everything went OK, 0 otherwise
         print 'Checking Horizon... ',
-        self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/')
-        self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/')
+        check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/')
+        check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/')
+        return check1 and check2
 
     def _check_for_new_settings(self, settings_path):
         """Checks for new settings in the template which don't exist in the current file"""
