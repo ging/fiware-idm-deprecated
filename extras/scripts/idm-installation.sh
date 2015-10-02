@@ -42,11 +42,11 @@ workon idm_tools
 fab keystone.install
 fab keystone.database_create
 fab keystone.set_up_as_service
-service start keystone
+service keystone_idm start
 fab keystone.populate
 
 # Install Horizon front-end and set-up service
 workon idm_tools
 fab horizon.install
 fab horizon.set_up_as_service
-service start horizon
+service horizon_idm start
