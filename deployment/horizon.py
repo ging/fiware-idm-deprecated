@@ -76,7 +76,20 @@ def dev_server(address=settings.HORIZON_DEV_ADDRESS,
     """Run horizon server for development purposes"""
     with lcd(horizon_path):
         lrun(('sudo tools/with_venv.sh python manage.py runserver '
-              '{0}').format(address))      
+              '{0}').format(address))  
+
+@task
+def set_up_as_service(absolute_horizon_path=None):
+    if not absolute_horizon_path:
+        absolute_horizon_path = os.getcwd() + '/' + settings.HORIZON_ROOT
+    in_file = open('conf/horizon_idm.conf')
+    src = string.Template(in_file.read())
+    out_file = open("tmp_horizon_idm.conf", "w")
+    out_file.write(src.substitute({
+        'absolute_horizon_path': absolute_horizon_path}))
+    out_file.close()
+    lrun('sudo cp tmp_horizon_idm.conf /etc/init/horizon_idm.conf')
+    lrun('sudo rm tmp_horizon_idm.conf')    
 
 class CheckTask(Task):
     """Run several checks in the Front-end settings file."""
