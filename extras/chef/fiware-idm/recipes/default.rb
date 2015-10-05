@@ -44,34 +44,3 @@ bash :install_pydeps do
     pip install -r requirements.txt
   EOH
 end
-
-
-# Install Keystone backend
-bash :install_keystone do
-  code <<-EOH
-    cd #{node['fiware-idm'][:app_dir]} && \
-    source /usr/local/bin/virtualenvwrapper.sh && \
-    workon idm_tools && \
-    fab keystone.install && \
-    fab keystone.database_create
-  EOH
-end
-
-# Install Horizon frontend
-bash :install_horizon do
-  code <<-EOH
-    cd #{node['fiware-idm'][:app_dir]} && \
-    source /usr/local/bin/virtualenvwrapper.sh && \
-    workon idm_tools && \
-    fab horizon.install
-  EOH
-end
-
-bash :run_entrypoint do
-  code <<-EOH
-    cd #{node['fiware-idm'][:app_dir]} && \
-    cp docker-entrypoint.sh /docker-entrypoint.sh && \
-    chmod 755 /docker-entrypoint.sh && \
-    /docker-entrypoint.sh &&
-  EOH
-end
