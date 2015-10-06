@@ -22,7 +22,7 @@
 
 Welcome to the Installation and Administration Guide for the Identity Management - KeyRock Generic Enabler. This generic enabler has been developed as an Open Source project, therefore this guide points to the appropriate online content that has been created for this it.
 
-The recommended way of intalling the IdM is through the installation tools. You can find the documentation on how to use this tools [here](http://fiware-idm.readthedocs.org/en/latest/#def-build). This guide will cover all the steps required to successfully install the IdM, in case you would rather install it step by step and as a reference of the installation scripts tasks.
+The recommended way of installing the IdM is through the installation tools. You can find the documentation on how to use this tools [here](http://fiware-idm.readthedocs.org/en/latest/#def-build). This guide will cover all the steps required to successfully install the IdM, in case you would rather install it step by step and as a reference of the installation scripts tasks.
  
 
 ### Requirements
