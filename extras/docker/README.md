@@ -1,8 +1,8 @@
+**This feature is experimental and it is still in a unstable state. We recommend you to install KeyRock on a VM directly or use the image on FIWARE-Lab.**
+
 # How to use this Dockerfile
 
-This Dockerfile builds an image with both the front-end (Horizon) and back-end (Keystone) of the IdM installed. However, this is not enough to run the IdM. You need the following requirements:
-
-- A
+This Dockerfile builds an image with both the front-end (Horizon) and back-end (Keystone) of the IdM installed.
 
 To run a Keyrock Docker container you have two options: 
 
