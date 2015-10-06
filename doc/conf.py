@@ -44,7 +44,7 @@ source_parsers = {
     '.md': CommonMarkParser,
 }
 
-source_suffix = ['.md']
+source_suffix = ['.rst', '.md']
 # source_suffix = '.rst'
 
 # The encoding of source files.
