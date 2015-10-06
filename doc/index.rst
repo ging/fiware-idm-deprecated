@@ -7,7 +7,7 @@ This project is part of `FIWARE`_. You will find more information about this FIW
 .. _Catalogue: http://catalogue.fiware.org/enablers/identity-management-keyrock
 
 .. toctree::
-   :maxdepth: 0
+   :maxdepth: 1
    :caption: Installation and Administration
 
    introduction
@@ -15,14 +15,14 @@ This project is part of `FIWARE`_. You will find more information about this FIW
    setup
 
 .. toctree::
-   :maxdepth: 0
+   :maxdepth: 1
    :caption: Usage
 
    oauth2
    user_guide
 
 .. toctree::
-   :maxdepth: 0
+   :maxdepth: 1
    :caption: Developer Documentation
 
    developer_guide
