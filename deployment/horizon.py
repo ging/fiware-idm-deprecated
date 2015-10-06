@@ -23,7 +23,7 @@ from fabric.colors import red, green
 from fabric.tasks import Task
 
 @task
-def install(horizon_path=settings.HORIZON_ROOT):
+def install(horizon_path=settings.HORIZON_ROOT, version=None):
     """Download and install the Front-end and its dependencies."""
     if os.path.isdir(horizon_path[:-1]):
         print 'Already downloaded.'
@@ -32,6 +32,11 @@ def install(horizon_path=settings.HORIZON_ROOT):
             {0}'.format(horizon_path))
 
     with lcd(horizon_path):
+        if not version:
+            version = settings.KEYROCK_VERSION
+        
+        lrun('git checkout tags/keyrock-{0}'.format(version))
+
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['horizon'])
         lrun('sudo apt-get install -y {0}'.format(dependencies))
         lrun('sudo python tools/install_venv.py')
@@ -71,7 +76,20 @@ def dev_server(address=settings.HORIZON_DEV_ADDRESS,
     """Run horizon server for development purposes"""
     with lcd(horizon_path):
         lrun(('sudo tools/with_venv.sh python manage.py runserver '
-              '{0}').format(address))      
+              '{0}').format(address))  
+
+@task
+def set_up_as_service(absolute_horizon_path=None):
+    if not absolute_horizon_path:
+        absolute_horizon_path = os.getcwd() + '/' + settings.HORIZON_ROOT
+    in_file = open('conf/horizon_idm.conf')
+    src = string.Template(in_file.read())
+    out_file = open("tmp_horizon_idm.conf", "w")
+    out_file.write(src.substitute({
+        'absolute_horizon_path': absolute_horizon_path}))
+    out_file.close()
+    lrun('sudo cp tmp_horizon_idm.conf /etc/init/horizon_idm.conf')
+    lrun('sudo rm tmp_horizon_idm.conf')    
 
 class CheckTask(Task):
     """Run several checks in the Front-end settings file."""

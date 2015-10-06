@@ -48,7 +48,7 @@ def console():
     shell.interact()
 
 @task
-def install(keystone_path=settings.KEYSTONE_ROOT):
+def install(keystone_path=settings.KEYSTONE_ROOT, version=None):
     """Download and install the Back-end and its dependencies."""
     if os.path.isdir(keystone_path[:-1]):
         print 'Already downloaded.'
@@ -56,6 +56,11 @@ def install(keystone_path=settings.KEYSTONE_ROOT):
         lrun(('git clone https://github.com/ging/keystone.git '
                  '{0}').format(keystone_path))
     with lcd(keystone_path):
+        if not version:
+            version = settings.KEYROCK_VERSION
+        
+        lrun('git checkout tags/keyrock-{0}'.format(version))
+
         dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['keystone'])
         
         lrun('sudo apt-get install -y {0}'.format(dependencies))
