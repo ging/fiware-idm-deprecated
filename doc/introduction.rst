@@ -1,45 +1,43 @@
+**************************
 Identity Manager - Keyrock
-==========================
+**************************
 
--  `Introduction <#def-introduction>`__
--  `How to Build & Install <#def-build>`__
+.. contents::
+   :local:
+   :depth: 3
 
-   -  `Docker <#def-docker>`__
+.. _introduction:
 
--  `How to Update <#def-update>`__
--  `API Overview <#def-api>`__
--  `Advanced documentation <#def-advanced>`__
-
---------------
-
- ## Introduction
+Introduction
+============
 
 This project is part of `FIWARE <http://fiware.org>`__. You will find
 more information about this FIWARE GE
 `here <http://catalogue.fiware.org/enablers/identity-management-keyrock>`__.
 
--  You will find the source code of this project in GitHub
-   `here <https://github.com/ging/fiware-idm>`__
--  You will find the documentation of this project in Read the Docs
-   `here <http://fiware-idm.readthedocs.org/>`__
+-  You will find the source code of this project in GitHub `here <https://github.com/ging/fiware-idm>`__
+-  You will find the documentation of this project in Read the Docs `here <http://fiware-idm.readthedocs.org/>`__
 
 Welcome to the main repository for the UPM's implementation of the
 FIWARE Identity Manager Generic Enabler. This repository acts as an
 entry point and holds the documentation and some automated tools for
 installation and management. The IdM is composed of two independent
-components, a RESTful back-end and web front-end. If you want to see the
+components, a RESTful back-end and web front-end.
+
+If you want to see the
 code for each of the components of the IdM and more specific
 documentation please head to each component's repository:
 
-| Horizon based front-end
-`ging/horizon <https://github.com/ging/horizon>`__
-| Keystone based back-end
-`ging/keystone <https://github.com/ging/keystone>`__
+-  Horizon based front-end `ging/horizon <https://github.com/ging/horizon>`__
+-  Keystone based back-end `ging/keystone <https://github.com/ging/keystone>`__
 
 You can see a working installation in the FIWARE Lab sandbox environment
 https://account.lab.fiware.org/
 
- ## How to Build & Install
+.. _build:
+
+How to Build & Install
+======================
 
 In this repository you can find a set of tools to help in developing,
 deploying and testing FIWARE's IdM KeyRock using
@@ -50,13 +48,18 @@ please head to the advanced documentation.
 The IdM is made out of two components, the web-based front-end and the
 restful back-end. You can check specific documentation in their repos.
 
+.. _tools-installation:
+
 Tools installation
-~~~~~~~~~~~~~~~~~~
+------------------
 
 For the instructions on how to install the IdM using the tools scroll
 down to the next section. This section covers the tools installation.
 
-Install python and python-dev ``sudo apt-get install python-dev``
+Install python and python-dev
+::
+
+  sudo apt-get install python python-dev
 
 Clone the tools in your machine
 
@@ -64,14 +67,14 @@ Clone the tools in your machine
 
     git clone https://github.com/ging/fiware-idm idm && cd idm
 
-Create a settings file
+Create a settings file from the template
 
 ::
 
     cp conf/settings.py.example conf/settings.py
 
-Install
-`virtualenvwrapper <https://virtualenvwrapper.readthedocs.org/en/latest/index.html>`__
+Install `virtualenvwrapper <https://virtualenvwrapper.readthedocs.org/en/latest/index.html>`__
+following the instructions at their page.
 
 Create a virtualenv and activate it
 
@@ -85,8 +88,10 @@ Install python dependencies
 
     pip install -r requirements.txt
 
-| **Usage**
-| To see all available commands use
+Tools Usage
+-----------
+
+To see all available commands use
 
 ::
 
@@ -114,22 +119,35 @@ For example:
     fab keystone.task:one_arg='this',another='that'
 
 Steps to install the IdM using the tools
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------
 
-| **Configuration**
-| There is a configuration file template in /conf/settings.py.example.
+Configuration
+^^^^^^^^^^^^^
+
+There is a configuration file template in /conf/settings.py.example.
 This provides as a good base configuration file that should be enough
-for a test/development installation. Some options you might have to pay
-some attention to are: - IDM\_ROOT: if the location of the keystone and
+for a test/development installation. 
+
+Some options you might have to pay attention to are: 
+
+- ``IDM\_ROOT``
+
+If the location of the keystone and
 horizon components in your system is not directly inside the folder
-where you have cloned the tools you will have to set this accordingly. -
-HORIZON\_DEV\_ADDRESS: sets the address and port where the frontend will
+where you have cloned the tools you will have to set this accordingly.
+
+- ``HORIZON\_DEV\_ADDRESS``
+
+Sets the address and port where the frontend will
 listen to. Default is localhost:8000, you might want to tweak it based
-on your set up. - KEYSTONE\_ADMIN\_PORT and KEYSTONE\_PUBLIC\_PORT: if
-you need to use different ports for the keystone back-end
+on your set up.
 
-*Back-end*
+- ``KEYSTONE\_ADMIN\_PORT`` and ``KEYSTONE\_PUBLIC\_PORT``
 
+If you need to use different ports for the keystone back-end
+
+Installing the back-end
+^^^^^^^^^^^^^^^^^^^^^^^
 ::
 
     fab keystone.install
@@ -167,7 +185,8 @@ can install it as a service
 
     fab keystone.set_up_as_service
 
-*Front-end*
+Installing the front-end
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
@@ -180,7 +199,19 @@ won't be able to log in until you install the backend.
 
     fab horizon.dev_server
 
- ### Docker
+.. _extras:
+
+Other Installation options
+--------------------------
+
+VM Image
+^^^^^^^^
+
+Chef
+^^^^
+
+Docker
+^^^^^^
 
 We also provide a Docker image to facilitate you the building of this
 GE.
@@ -191,7 +222,12 @@ GE.
 -  In `Docker Hub <https://hub.docker.com/r/ging/fiware-idm/>`__ you
    will find the public image.
 
- ## How to Update
+.. warning:: Docker support is still experimental.
+
+.. _update:
+
+How to Update
+==============
 
 When either the Front-end
 (`ging/horizon <https://github.com/ging/horizon>`__) or the Back-end
@@ -203,11 +239,15 @@ following with the virtualenv activated:
 
     fab update_all
 
-What's more, you can even update only the component you need, using the
-following: - Front-end: ``fab horizon.update`` - Back-end:
-``fab keystone.update``
+You can update each component separatly
 
- ## API Overview
+- Front-end: ``fab horizon.update`` 
+- Back-end: ``fab keystone.update``
+
+.. _api:
+
+API Overview
+=============
 
 Keyrock back-end is based on Openstack
 `Keystone <http://docs.openstack.org/developer/keystone/>`__ project, so
@@ -231,7 +271,11 @@ applications based on FIWARE identity. This is posible thanks to
 You will find the full API description
 `here <http://docs.keyrock.apiary.io/>`__
 
- ## Advanced Documentation
+
+.. _advanced:
+
+Advanced Documentation
+======================
 
 -  `User & Programmers
    Manual <http://fiware-idm.readthedocs.org/en/latest/user_guide/>`__
