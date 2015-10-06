@@ -34,6 +34,20 @@ documentation please head to each component's repository:
 You can see a working installation in the FIWARE Lab sandbox environment
 https://account.lab.fiware.org/
 
+.. begin-requirements
+
+Requirements
+------------
+
+Identity Manager - KeyRock requires Ubuntu 12.04 or greater.
+
+Both Horizon, for the front-end, and Keystone, for the back-end, must be
+installed in order for the generic enabler to run correctly. They can be installed
+in the same machine or in two separated ones. If you choose to separate them, the
+two machines must be able to communicate to each other through the network.
+
+.. end-requirements
+
 .. _build:
 
 How to Build & Install
@@ -47,6 +61,8 @@ please head to the advanced documentation.
 
 The IdM is made out of two components, the web-based front-end and the
 restful back-end. You can check specific documentation in their repos.
+
+.. begin-installation
 
 .. _tools-installation:
 
@@ -99,7 +115,7 @@ To see all available commands use
 
 With the virtualenv activated (use
 `workon <https://virtualenvwrapper.readthedocs.org/en/latest/command_ref.html?highlight=workon>`__)
-you can run the commands using fab task\_name. For example:
+you can run the commands using fab task_name. For example:
 
 ::
 
@@ -130,19 +146,19 @@ for a test/development installation.
 
 Some options you might have to pay attention to are: 
 
-- ``IDM\_ROOT``
+- ``IDM_ROOT``
 
 If the location of the keystone and
 horizon components in your system is not directly inside the folder
 where you have cloned the tools you will have to set this accordingly.
 
-- ``HORIZON\_DEV\_ADDRESS``
+- ``HORIZON_DEV_ADDRESS``
 
 Sets the address and port where the frontend will
 listen to. Default is localhost:8000, you might want to tweak it based
 on your set up.
 
-- ``KEYSTONE\_ADMIN\_PORT`` and ``KEYSTONE\_PUBLIC\_PORT``
+- ``KEYSTONE_ADMIN_PORT`` and ``KEYSTONE_PUBLIC_PORT``
 
 If you need to use different ports for the keystone back-end
 
@@ -163,7 +179,7 @@ to work properly. In another console and keeping the server on run
 
 You can now log into the web using the administrative account (by
 default user idm pass idm). If you want some more data to play around
-run keystone.test\_data. This will create some users and organizations
+run keystone.test_data. This will create some users and organizations
 to make it easier to try the IdM. Log in with user0@test.com (default
 password test).
 
@@ -171,7 +187,7 @@ password test).
 
     fab keystone.test_data
 
-If at some point you want to clean up, run keystone.database\_reset. It
+If at some point you want to clean up, run keystone.database_reset. It
 will delete the whole database, create it again and populate it.
 
 ::
@@ -198,6 +214,8 @@ won't be able to log in until you install the backend.
 ::
 
     fab horizon.dev_server
+
+.. end-installation
 
 .. _extras:
 

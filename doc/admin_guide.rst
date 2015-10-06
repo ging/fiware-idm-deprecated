@@ -1,66 +1,51 @@
+*************************************
 Installation and Administration Guide
-=====================================
+*************************************
 
--  `Introduction <#introduction>`__
-
-   -  `Requirements <#requirements>`__
-
--  `System Installation <#system-installation>`__
-
-   -  `Installing Horizon <#installing-horizon>`__
-   -  `Installing Keystone <#installing-keystone>`__
-
--  `System Administration <#system-administration>`__
-
-   -  `White and black lists <#white-and-black-lists>`__
-
--  `Sanity Check Procedures <#sanity-check-procedures>`__
-
-   -  `End to End testing <#end-to-end-testing>`__
-   -  `List of Running Processes <#list-of-running-processes>`__
-   -  `Network interfaces Up & Open <#network-interfaces-up--open>`__
-   -  `Databases <#databases>`__
-
--  `Diagnosis Procedures <#diagnosis-procedures>`__
-
-   -  `Resource availability <#resource-availability>`__
-   -  `Remote Service Access <#remote-service-access>`__
-   -  `Resource consumption <#resource-consumption>`__
-   -  `I/O flows <#io-flows>`__
+.. contents::
+   :local:
+   :depth: 3
 
 Introduction
-------------
+============
 
 Welcome to the Installation and Administration Guide for the Identity
 Management - KeyRock Generic Enabler. This generic enabler has been
 developed as an Open Source project, therefore this guide points to the
 appropriate online content that has been created for this it.
 
-The recommended way of installing the IdM is through the installation
-tools. You can find the documentation on how to use this tools :doc:`here </introduction>`.
+The recommended way of installing the IdM is through the :ref:`installation
+tools <automated-installation>`
 
-In case you would rather install it step by step, this guide will cover
-all the steps required to successfully install the IdM, and as a
-reference of the installation scripts tasks.
+In case you would rather install it step by step, you can follow 
+:ref:`this guide <step-installation>`
 
-Requirements
-~~~~~~~~~~~~
+.. include:: introduction.rst
+  :start-after: begin-requirements
+  :end-before: end-requirements
 
-This installation guide is made for the installation of Identity
-Management - KeyRock in a Ubuntu 12.04 (LTS) server.
+.. _automated-installation:
 
-Both Horizon, for the front-end, and Keystone, for the back-end, must be
-installed in order for the generic enabler to run correctly.
+Automated Installation (Recommended)
+====================================
 
-System Installation
--------------------
+.. include:: introduction.rst
+  :start-after: begin-installation
+  :end-before: end-installation
+
+.. _step-installation:
+
+Step by Step Installation
+=========================
 
 Installing Horizon
-~~~~~~~~~~~~~~~~~~
+------------------
 
-**Note:** To be able to log into the IdM, you will need a working
-Keystone backend. Please complete the steps in this page in order to
-have a complete and working IdM.
+.. note:: 
+
+  To be able to log into the IdM, you will need a working
+  Keystone backend. Please complete the steps in this page in order to
+  have a complete and working IdM.
 
 1. Install Ubuntu dependencies and repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -80,11 +65,11 @@ Create a basic configuration file.::
 
   $ cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py
 
-**2. Configuring Horizon**
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+2. Configuring Horizon
+^^^^^^^^^^^^^^^^^^^^^^
 
 To configure Horizon, the configuration file can be found in
-**openstack\_dashboard/local/local\_settings.py**. This file holds
+**openstack_dashboard/local/local_settings.py**. This file holds
 sensible defaults for a common installation but you might need to tweek
 them to fit your use case.
 
@@ -97,18 +82,13 @@ different port and/or address you should set this acordingly.
     OPENSTACK_HOST = "Keystone server IP address"
     OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
 
--  Configure these for your outgoing email host or leave the default
-   values for the console email backend. More details on how to
-   configure this can be found `in the Django
-   docs <https://docs.djangoproject.com/en/1.8/topics/email/>`__
+-  Email.
 
-.. code-block:: python
-
-    EMAIL_HOST = 'smtp.my-company.com'
-    EMAIL_PORT = 25
-    EMAIL_HOST_USER = 'djangomail'
-    EMAIL_HOST_PASSWORD = 'top-secret!'
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+Configure these for your outgoing email host or leave the default
+ values for the console email backend. More details on how to
+ configure this can be found `in the Django
+ docs <https://docs.djangoproject.com/en/1.8/topics/email/>`__ and
+ in the :ref:`Production Set up Guide <production-email>`.
 
 -  Keystone Account for the IdM to perform tasks like user registration.
 
@@ -120,18 +100,24 @@ different port and/or address you should set this acordingly.
      'PROJECT': 'the_projectname',
     }
 
--  User Registration settings. This setting enables email domain
-   filtering on user registration. Set to 'whitelist', 'blacklist' or
-   comment it out for no filtering.
+-  User Registration settings.
+
+This setting enables email domain
+filtering on user registration. Set to 'whitelist', 'blacklist' or
+comment it out for no filtering.
 
 .. code-block:: python
 
-    EMAIL_LIST_TYPE
+    EMAIL_LIST_TYPE = 'blacklist'
 
--  noCAPTCHA reCAPTCHA. Get your keys
-   `here <https://www.google.com/recaptcha/admin#createsite>`__. More
-   documentation in `the package
-   repository <https://github.com/ImaginaryLandscape/django-nocaptcha-recaptcha>`__.::
+.. _captcha:
+
+-  noCAPTCHA reCAPTCHA. 
+
+Get your keys
+`here <https://www.google.com/recaptcha/admin#createsite>`__. More
+documentation in `the package
+repository <https://github.com/ImaginaryLandscape/django-nocaptcha-recaptcha>`__.
 
 .. code-block:: python
 
@@ -139,18 +125,20 @@ different port and/or address you should set this acordingly.
     NORECAPTCHA_SITE_KEY   = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
     NORECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
 
-.. note:: If you want to disable the captcha, set USE\_CAPTCHA to False.
+.. note:: If you want to disable the captcha, set USE_CAPTCHA to False.
 
--  FIWARE Applications and Roles. These settings map applications used
-   in the FIWARE-Lab environment and are needed for automated tasks, for
-   example granting the **Purchaser** role in the **Store** to any
-   created organization. Depending on your use case you might need or
-   want to modifiy them, but normal installations in a *fiware-like*
-   environment won't need to change the following code. Keep in mind
-   that if your use case differs too much you might need to change the
-   code to prevent some of these operations. If you are not using the
-   scripts you will need to check the ids in through the API or in the
-   database yourself.
+-  FIWARE Applications and Roles. 
+
+These settings map applications used
+in the FIWARE-Lab environment and are needed for automated tasks, for
+example granting the **Purchaser** role in the **Store** to any
+created organization. Depending on your use case you might need or
+want to modifiy them, but normal installations in a *fiware-like*
+environment won't need to change the following code. Keep in mind
+that if your use case differs too much you might need to change the
+code to prevent some of these operations. If you are not using the
+scripts you will need to check the ids in through the API or in the
+database yourself.
 
 .. code-block:: python
 
@@ -163,10 +151,12 @@ different port and/or address you should set this acordingly.
      'Store',
     ]
 
--  Keystone roles. These settings map to normal keystone roles that are
-   used by the IdM. As with the FIWARE Applications and Roles settings,
-   they depend on your use case and , if you are not using the
-   installation scripts, you will have to create them yourself.
+-  Keystone roles. 
+
+These settings map to normal keystone roles that are
+used by the IdM. As with the FIWARE Applications and Roles settings,
+they depend on your use case and , if you are not using the
+installation scripts, you will have to create them yourself.
 
 .. code-block:: python
 
@@ -181,17 +171,17 @@ different port and/or address you should set this acordingly.
     ]
     
 
-**3. Django settings**
-^^^^^^^^^^^^^^^^^^^^^^
+3. Django settings
+^^^^^^^^^^^^^^^^^^
 
 The settings for all the Django configuration are located at
-**horizon/openstack\_dashboard/settings.py**
+**horizon/openstack_dashboard/settings.py**
 
 Here we added some django apps, middleware, etc. You can check the file
 for reference but there is no configuration to be done here.
 
-**4. Running a development server**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4. Running a development server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To run a simple server to try out and check the IdM installation or for
 developping purpuses you can use Django's development server that comes
@@ -213,10 +203,10 @@ docs <https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runse
   setup guide <http://fiware-idm.readthedocs.org/en/latest/setup>`__
 
 Installing Keystone
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
-**1. Install Ubuntu dependencies and repository**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Install Ubuntu dependencies and repository
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  Get the code::
 
@@ -245,8 +235,8 @@ Installing Keystone
 
     $ cp etc/keysonte.conf.sample etc/keystone.conf
 
-**2. Keystone configuration**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2. Keystone configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 After creating the default configuration file, the following lines must
 be uncommented and set to your custom values.
@@ -277,16 +267,16 @@ Create tables for the User Registration extension::
 
   $ sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=user_registration 
 
-**3. Run Keystone**
-^^^^^^^^^^^^^^^^^^^
+3. Run Keystone
+^^^^^^^^^^^^^^^
 
 To run Keystone, we must either run it as a service or in a console with
 the following command::
 
   $ sudo tools/with_venv.sh bin/keystone-all -v
 
-**4. Initial Data**
-^^^^^^^^^^^^^^^^^^^
+4. Initial Data
+^^^^^^^^^^^^^^^
 
 For the Identity Manager to work, the database has to be populated with
 some initial data. To populate the database we provide a script in the
@@ -300,19 +290,19 @@ for a detailed list of all elements to create.
 
 .. note::
   
-  Additionally, there is a task called keystone.test\_data that will
+  Additionally, there is a task called keystone.test_data that will
   create some sample data to start using the Identity Manager right away,
   for demo or test purposes.
 
-**5. Configuring Keystone as a service**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5. Configuring Keystone as a service
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to ad the keystone to init.d to run it as a service there
 are serveral possibilities. You can try to reuse the scripts provided
 with keystone or you can add a .conf file to **etc/init**. Here is a
 basic example:
 
-Create the following file at: **etc/init/keystone\_idm.conf**::
+Create the following file at: **etc/init/keystone_idm.conf**::
 
     # keystone_idm - keystone_idm job file
      description "Service conf file for the IdM backend based in Keystone"
@@ -334,8 +324,8 @@ To run keystone, you can now run it with the following command::
 
   $ sudo service keystone_idm start
 
-**6. Running tests**
-^^^^^^^^^^^^^^^^^^^^
+6. Running tests
+^^^^^^^^^^^^^^^^
 
 In order to test, we use the keystone built in system: **tox** and
 **testr**.
@@ -352,16 +342,16 @@ To Execute the extension tests (in this case for oauth2)::
     -e debub
 
 System Administration
----------------------
+=====================
 
 White and black lists
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 As administrator of IdM KeyRock you can manage white and black lists in
 order to allow and deny access to users by their email domains.
 
 There is a file for each of the list which you can find at
-**/horizon/openstack\_dashboard/fiware\_auth/blacklist.txt** or
+**/horizon/openstack_dashboard/fiware_auth/blacklist.txt** or
 **whitelist.txt**.
 
 -  Whitelist
@@ -375,7 +365,7 @@ Add a line for each of the domains that are not allowed. If a user has
 an email from this domain, they will not be able to register.
 
 Sanity Check Procedures
------------------------
+=======================
 
 The Sanity Check Procedures are the steps that a System Administrator
 will take to verify that an installation is ready to be tested. This is
@@ -384,7 +374,7 @@ malfunctioning is fixed before proceeding to unit tests, integration
 tests and user validation.
 
 End to End testing
-~~~~~~~~~~~~~~~~~~
+-------------------
 
 1. Verify that the host address of IdM can be reached. By default, web
    access will show a Login Page.
@@ -397,13 +387,13 @@ End to End testing
    etc.
 
 List of Running Processes
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 In you have run the Horizon and Keystone run commands without errors,
 the portal is up and running.
 
 Network interfaces Up & Open
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 -  TCP port 80 should be accessible to the web browsers in order to load
    the IdM Portal (8000 for development).
@@ -411,7 +401,7 @@ Network interfaces Up & Open
    respectively.
 
 Databases
-~~~~~~~~~
+=========
 
 If you have correctly populated the database when installing the GE, the
 connection with it is up and running.
@@ -456,7 +446,7 @@ The databases and tables needed are::
      +--------------------------------------+
 
 Diagnosis Procedures
---------------------
+====================
 
 The Diagnosis Procedures are the first steps that a System Administrator
 will take to locate the source of an error in a GE. Once the nature of
@@ -466,23 +456,23 @@ the exact point of error and a possible solution. Such specific testing
 is out of the scope of this section.
 
 Resource availability
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 -  Verify that 2.5MB of disk space is left using the UNIX command 'df'
 
 Remote Service Access
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 Please make sure port 80 is accessible (port 8000 in development mode).
 
 Resource consumption
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 Typical memory consumption is 100MB and it consumes almost the 1% of a
 CPU core of 2GHz, but it depends on user demand.
 
 I/O flows
-~~~~~~~~~
+---------
 
 Clients access the KeyRock Interface through the client's Web Browser.
 This is simple HTTP traffic. It makes requests to the local database.

@@ -1,17 +1,23 @@
+**************************************
 Using the FIWARE LAB instance (OAuth2)
-======================================
+**************************************
+
+.. contents::
+   :local:
+   :depth: 3
+
 
 There is already a deployed instance of the FIWARE IdM available at
 https://account.lab.fiware.org/
 
 Register your user account
---------------------------
+==========================
 
 In order to start using the FIWARE IdM, `you must first register your
 own account <https://account.lab.fiware.org/sign_up>`__.
 
 Register your application
--------------------------
+=========================
 
 The next step is `registering you own
 application <https://account.lab.fiware.org/idm/myApplications/create>`__.
@@ -20,7 +26,7 @@ authentication. The IdM provides you with a ``Client ID`` and a
 ``Client Secret`` which are used in OAuth2.
 
 OAuth2 Authentication
----------------------
+======================
 
 The FIWARE IdM complies with the OAuth2 standard described in `RFC
 6749 <http://tools.ietf.org/html/rfc6749>`__ and supports all four grant
@@ -38,7 +44,7 @@ The ``redirect_uri`` parameter must match the ``Callback URL`` attribute
 provided in the application registration.
 
 Authorization Code Grant
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 The authorization code is obtained by using an authorization server (the
 IdM) as an intermediary between the client (the registrered application)
@@ -48,7 +54,8 @@ to an authorization server (via its user-agent as defined in
 `RFC2616 <http://tools.ietf.org/html/rfc2616>`__), which in turn directs
 the resource owner back to the client with the authorization code.
 
-**Authorization Request**
+Authorization Request
+^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: http
 
@@ -63,14 +70,16 @@ match the ``Callback URL`` attribute provided to the IdM within the
 application registration. ``state`` is optional and for internal use of
 you application, if needed.
 
-**Authorization Response**
+Authorization Response
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: http
 
     HTTP/1.1 302 Found
     Location: https://client.example.com/callback_url?code=SplxlOBeZQQYbYS6WxSbIA&state=xyz
 
-**Access Token Request**
+Access Token Request
+^^^^^^^^^^^^^^^^^^^^
 
 .. code:: http
 
@@ -82,7 +91,10 @@ you application, if needed.
     grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA
     &redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcallback_url
 
-**Access Token Response**
+.. _access-token-response:
+
+Access Token Response
+^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: http
 
@@ -99,7 +111,7 @@ you application, if needed.
     }
 
 Implicit Grant
-~~~~~~~~~~~~~~
+--------------
 
 The implicit grant is a simplified authorization code flow optimized for
 clients implemented in a browser using a scripting language such as
@@ -109,7 +121,8 @@ the result of the resource owner authorization). The grant type is
 implicit, as no intermediate credentials (such as an authorization code)
 are issued (and later used to obtain an access token).
 
-**Authorization Request**
+Authorization Request
+^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: http
 
@@ -118,24 +131,32 @@ are issued (and later used to obtain an access token).
     Host: account.lab.fiware.org
 
 The ``response_type`` attribute is mandatory and must be set to
-``token``. The ``client_id`` attribute is the one provided by the FIWARE
-IdM upon application registration. The ``redirect_uri`` attribute must
+``token``.
+
+The ``client_id`` attribute is the one provided by the FIWARE
+IdM upon application registration. 
+
+The ``redirect_uri`` attribute must
 match the ``Callback URL`` attribute provided to the IdM within the
-application registration. ``state`` is optional and for internal use of
+application registration. 
+
+``state`` is optional and for internal use of
 you application, if needed.
 
-**Access Token Response**
+Access Token Response
+^^^^^^^^^^^^^^^^^^^^^
 
-See Authorization Code Grant
+See :ref:`Authorization Code Grant <access-token-response>`
 
 Resource Owner Password Credentials Grant
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------
 
 The resource owner password credentials (i.e., username and password)
 can be used directly as an authorization grant to obtain an access
 token.
 
-**Access Token Request**
+Access Token Request
+^^^^^^^^^^^^^^^^^^^^
 
 .. code:: http
 
@@ -146,17 +167,19 @@ token.
 
     grant_type=password&username=demo&password=123
 
-**Access Token Response**
+Access Token Response
+^^^^^^^^^^^^^^^^^^^^^
 
-See Authorization Code Grant
+See :ref:`Authorization Code Grant <access-token-response>`
 
 Client Credentials Grant
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 The client can request an access token using only its client
 credentials.
 
-**Access Token Request**
+Access Token Request
+^^^^^^^^^^^^^^^^^^^^
 
 .. code:: http
 
@@ -167,18 +190,22 @@ credentials.
 
     grant_type=client_credentials
 
-**Access Token Response**
+Access Token Response
+^^^^^^^^^^^^^^^^^^^^^
 
-See Authorization Code Grant
+See :ref:`Authorization Code Grant <access-token-response>`
 
 Get user information and roles
-------------------------------
+==============================
 
+Request:
 ::
 
     GET /user?access_token=2YotnFZFEjr1zCsicMWpAA
 
-::
+Example response:
+
+.. code-block:: json
 
     {
       id: 1,

@@ -1,5 +1,11 @@
+***********************
 Production Set Up Guide
-=======================
+***********************
+
+.. contents::
+   :local:
+   :depth: 3
+
 
 This section covers how to set up the IdM for production, covering
 topics like email sending, No CAPTCHA reCAPTCHA support or how to serve
@@ -7,15 +13,15 @@ static and media files. Some topics, for example HTTPS, are beyond the
 scope of this documentation and only some pointers to related
 documentation are provided as a starting point.
 
-Make sure to also check the wikis for the respective parts of the IdM
+Make sure to also check the documentation for the respective parts of the IdM
 for more in-depth information of the components.
 
-Back-end `ging/keystone <https:/github.com/ging/keystone>`__
+- Back-end `ging/keystone <https:/github.com/ging/keystone>`__
 
-Front-end `ging/horizon <https:/github.com/ging/horizon>`__
+- Front-end `ging/horizon <https:/github.com/ging/horizon>`__
 
 MySQL
-~~~~~
+=====
 
 If you have installed the IdM using the automated tools the back-end
 (Keystone) will be configured to use a SQLite database. This is NOT
@@ -25,12 +31,16 @@ but any other database compatible with
 `SQLAlchemy <http://www.sqlalchemy.org/>`__ would probably work too.
 
 Install MySQL
+-------------
 
 ::
 
     sudo apt-get install mysql-server
 
-Edit keystone/etc/keystone/keystone.conf and change the [database]
+Configure Keystone
+------------------
+
+Edit **keystone/etc/keystone/keystone.conf** and change the [database]
 section.
 
 ::
@@ -49,6 +59,9 @@ keystone database user:
     mysql> GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'KEYSTONE_DBPASS';     
     mysql> GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'KEYSTONE_DBPASS';  
 
+Populate Database
+-----------------
+
 You need to create the database tables and populate them with the
 initial data. Run the following fabric tasks (remember to activate the
 virtual environment)
@@ -61,24 +74,28 @@ virtual environment)
 You can find aditional help for setting up Keystone + MySQL
 `here <http://docs.openstack.org/havana/install-guide/install/apt/content/keystone-install.html>`__.
 
-Web Server (Apache + mod\_wsgi)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Web Server (Apache + mod_wsgi)
+===============================
 
 The web server used by the tools is a development server that should NOT
 be used for a production setting. There are several servers and
 configurations to serve a Django (Python) web application but only
-Apache + mod\_wsgi will be covered here. Take a look at the `oficial
+Apache + mod_wsgi will be covered here. Take a look at the `oficial
 Django
 documentation <https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/>`__
 for other options available and further information on this topic.
 
-Install apache and mod\_wsgi
+Install apache and mod_wsgi
+----------------------------
 
 ::
 
     sudo apt-get install apache2 libapache2-mod-wsgi
 
-Configure Apache. The details on how to correctly configure Apache or
+Configure Apache
+----------------
+
+The details on how to correctly configure Apache or
 set up HTTPS are beyond te scope this document, check the `Django
 documentation <https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/modwsgi/>`__
 and `Apache HTTPS
@@ -108,6 +125,9 @@ also make sure to create the Alias
       Require all granted
     </Directory>
 
+Collect Static Assets
+---------------------
+
 Now, go to the folder you have installed Horizon and run
 
 ::
@@ -115,7 +135,7 @@ Now, go to the folder you have installed Horizon and run
     sudo tools/with_venv.sh python manage.py collectstatic
     sudo tools/with_venv.sh python manage.py compress --force
 
-Edit the local\_settings.py file and set
+Edit the local_settings.py file and set
 
 ::
 
@@ -127,14 +147,15 @@ Edit the local\_settings.py file and set
     SECRET_KEY = 'somethingsecret'
 
 NO CAPTCHA reCAPTCHA
-~~~~~~~~~~~~~~~~~~~~
+====================
 
 You can find how to set up the reCAPTCHA field for user registration in
-the `installation and administration
-guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide/#installing-horizon>`__
+the :ref:`installation and administration guide <captcha>`
 
-EMAIL
-~~~~~
+.. _production-email:
+
+Email Configuration
+===================
 
 The IdM can't send emails by itself, you must set up a SMTP server to
 send it. This section covers how to set up a mail server using
@@ -142,15 +163,15 @@ send it. This section covers how to set up a mail server using
 Further information can be found in the `Django
 documentation <https://docs.djangoproject.com/en/1.8/topics/email/#email-backends>`__.
 
-Install and configure `POSTFIX <http://www.postfix.org/>`__, `Ubuntu
-guide <https://help.ubuntu.com/lts/serverguide/postfix.html>`__.
+Install and configure `POSTFIX <http://www.postfix.org/>`__, 
+`Ubuntu guide <https://help.ubuntu.com/lts/serverguide/postfix.html>`__.
 
 ::
 
     sudo apt-get install postfix
 
 Go to the folder where you have installed the front-end and edit
-local\_settings.py
+local_settings.py
 
 ::
 
