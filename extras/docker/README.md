@@ -63,7 +63,7 @@ To stop the container:
 
 ## Run the container from the last release in Docker Hub
 
-You can also run the container from the [image we provide](https://hub.docker.com/r/ging/idm/) in Docker Hub. In this case you have only to execute the run command. But now the image name is ging/idm:*version* where `version` is the release you want to use:
+You can also run the container from the [image we provide](https://hub.docker.com/r/ging/fiware-idm/) in Docker Hub. In this case you have only to execute the run command. But now the image name is ging/fiware-idm:*version* where `version` is the release you want to use:
 
 	sudo docker run -d --name idm -v [host_config_file]:/opt/idm/openstack_dashboard/local/local_settings.py -v [host_db_file]:/opt/idm/keystone/keystone.db -p 5000:5000 -p 8000:8000 -t  ging/idm
 
