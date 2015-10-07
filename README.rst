@@ -270,15 +270,15 @@ How to Run Checks
 When the Identity Manager is installed, as well as every time it is
 updated, some check tasks will be run. These tasks will especially 
 look for missing settings in the config files, and tell you to manually 
-fix them or even try to figure them out.
+fix them or even try to figure them out automatically.
 
-You can run these checks whenever you want, simply running the following:
+You can also run these checks whenever you want, simply running the following:
 
 ::
 
     fab check_all
 
-You can check each component separately:
+Each component can be checked separately:
 
 - Front-end: ``fab horizon.check``
 - Back-end: ``fab keystone.check``
