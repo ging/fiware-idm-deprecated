@@ -224,9 +224,15 @@ Other Installation options
 
 VM Image
 ^^^^^^^^
+We provide an installation script that can be run within an Ubuntu
+virtual machine. This script installs the whole Identity Manager, and
+sets it up to run in background.
+
+You can find the installation script and a verification script `here <https://github.com/ging/fiware-idm/tree/master/extras/scripts>`__.
 
 Chef
 ^^^^
+We also provide a Chef Cookbook, which you can find `here <https://github.com/ging/fiware-idm/tree/master/extras/chef/fiware-idm>`__.
 
 Docker
 ^^^^^^
