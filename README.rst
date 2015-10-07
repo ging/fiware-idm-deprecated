@@ -257,10 +257,31 @@ following with the virtualenv activated:
 
     fab update_all
 
-You can update each component separatly
+You can update each component separately
 
 - Front-end: ``fab horizon.update`` 
 - Back-end: ``fab keystone.update``
+
+.. _check:
+
+How to Run Checks
+=================
+
+When the Identity Manager is installed, as well as every time it is
+updated, some check tasks will be run. These tasks will especially 
+look for missing settings in the config files, and tell you to manually 
+fix them or even try to figure them out.
+
+You can run these checks whenever you want, simply running the following:
+
+::
+
+    fab check_all
+
+You can check each component separately:
+
+- Front-end: ``fab horizon.check``
+- Back-end: ``fab keystone.check``
 
 .. _api:
 
