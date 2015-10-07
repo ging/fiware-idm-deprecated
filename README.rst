@@ -224,7 +224,7 @@ Other Installation options
 
 VM Image
 ^^^^^^^^
-We provide an installation script that can be run within an Ubuntu
+We provide an installation script that can be run within a Ubuntu
 virtual machine. This script installs the whole Identity Manager, and
 sets it up to run in background.
 
