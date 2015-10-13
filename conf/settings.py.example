@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-KEYROCK_VERSION = '4.4.0'
+KEYROCK_VERSION = '4.4.1'
 
 IDM_ROOT = './'
 KEYSTONE_ROOT = IDM_ROOT + 'keystone/'

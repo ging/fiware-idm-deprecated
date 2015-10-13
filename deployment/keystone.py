@@ -83,14 +83,18 @@ def install(keystone_path=settings.KEYSTONE_ROOT, version=None):
     check(keystone_path) # run check
 
 @task
-def update(keystone_path=settings.KEYSTONE_ROOT):
+def update(keystone_path=settings.KEYSTONE_ROOT, version=None):
     """Update the Back-end and its dependencies."""
     # returns 1 if everything went OK, 0 otherwise
 
     print 'Updating Keystone...'
     with lcd(keystone_path):
-        lrun('git pull origin')
+        lrun('git fetch')
+        if not version:
+            version = settings.KEYROCK_VERSION
+        lrun('git checkout tags/keyrock-{0}'.format(version))
         lrun('sudo python tools/install_venv.py')
+    
     print 'Syncing database...'
     database_create(keystone_path, True)
     print green('Keystone updated.')
