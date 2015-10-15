@@ -101,6 +101,18 @@ class CheckTask(Task):
         check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/')
         return check1 and check2
 
+    def _parse_setting(self, setting):
+        if '=' in setting:
+            if '#' in setting:
+                if setting[1] == ' ':
+                    return setting[setting.find('#')+2:setting.find('=')]
+                else:
+                    return setting[setting.find('#')+1:setting.find('=')]
+            else:
+                if setting[1] == ' ':
+                    return setting[1:setting.find('=')]
+                return setting[0:setting.find('=')]
+
     def _check_for_new_settings(self, settings_path):
         """Checks for new settings in the template which don't exist in the current file"""
         # returns 1 if everything went OK, 0 otherwise
@@ -114,11 +126,9 @@ class CheckTask(Task):
 
         # remove values to have settings' names
         for s in new.difference(old):
-            if '=' in s:
-                new_settings.add(s[0:s.find('=')])
+            new_settings.add(self._parse_setting(s))
         for s in old.difference(new):
-            if '=' in s:
-                old_settings.add(s[0:s.find('=')])
+            old_settings.add(self._parse_setting(s))
 
         latest_settings = new_settings.difference(old_settings)
 
