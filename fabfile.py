@@ -52,7 +52,7 @@ def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZ
         print(green('Everything up to date!'))
 
 @task
-def check_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT):
+def check_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT, warnings=False):
     """Run several checks both in the Front and in the Back-end."""
     keystone.check(keystone_path)
-    horizon.instance.run(horizon_path=horizon_path)
+    horizon.instance.run(horizon_path=horizon_path, warnings=warnings)

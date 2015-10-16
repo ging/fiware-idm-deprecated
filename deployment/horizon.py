@@ -19,7 +19,7 @@ from fabric.api import task
 from conf import settings
 from fabric.context_managers import lcd
 from fabric.operations import local as lrun, prompt
-from fabric.colors import red, green
+from fabric.colors import red, green, yellow
 from fabric.tasks import Task
 
 @task
@@ -94,10 +94,10 @@ def set_up_as_service(absolute_horizon_path=None):
 class CheckTask(Task):
     """Run several checks in the Front-end settings file."""
     name = "check"
-    def run(self, horizon_path=settings.HORIZON_ROOT):
+    def run(self, horizon_path=settings.HORIZON_ROOT, warnings=False):
         #   returns 1 if everything went OK, 0 otherwise
         print 'Checking Horizon... ',
-        check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/')
+        check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/',warnings)
         check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/')
         return check1 and check2
 
@@ -113,7 +113,7 @@ class CheckTask(Task):
                     return setting[1:setting.find('=')]
                 return setting[0:setting.find('=')]
 
-    def _check_for_new_settings(self, settings_path):
+    def _check_for_new_settings(self, settings_path, warnings=False):
         """Checks for new settings in the template which don't exist in the current file"""
         # returns 1 if everything went OK, 0 otherwise
         with open(settings_path+'local_settings.py', 'r') as old_file,\
@@ -131,6 +131,13 @@ class CheckTask(Task):
             old_settings.add(self._parse_setting(s))
 
         latest_settings = new_settings.difference(old_settings)
+
+        created_settings = old_settings.difference(new_settings)
+
+        if warnings and created_settings:
+            print yellow('[Warning] the followind settings couldn\'t be found in the settings template: ')
+            for s in created_settings:
+                print '\t'+yellow(s)
 
         if not latest_settings:
             print green('Settings OK.'),
