@@ -243,7 +243,7 @@ GE.
 -  `Here <https://github.com/ging/fiware-idm/tree/master/extras/docker>`__
    you will find the Dockerfile and the documentation explaining how to
    use it.
--  In `Docker Hub <https://hub.docker.com/r/ging/fiware-idm/>`__ you
+-  In `Docker Hub <https://hub.docker.com/r/fiware/idm/>`__ you
    will find the public image.
 
 .. warning:: Docker support is still experimental.
