@@ -46,6 +46,6 @@ sudo service keystone_idm start
 fab keystone.populate
 
 # Install Horizon front-end and set-up service
-fab horizon.install
+yes Y | fab horizon.install
 fab horizon.set_up_as_service
 sudo service horizon_idm start
