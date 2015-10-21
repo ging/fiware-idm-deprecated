@@ -42,10 +42,10 @@ pip install -r requirements.txt
 fab keystone.install
 fab keystone.database_create
 fab keystone.set_up_as_service
-service keystone_idm start
+sudo service keystone_idm start
 fab keystone.populate
 
 # Install Horizon front-end and set-up service
 fab horizon.install
 fab horizon.set_up_as_service
-service horizon_idm start
+sudo service horizon_idm start
