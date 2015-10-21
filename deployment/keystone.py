@@ -178,6 +178,7 @@ def set_up_as_service(absolute_keystone_path=None):
     out_file.close()
     lrun('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
     lrun('sudo rm tmp_keystone_idm.conf')
+    lrun('sudo ln -s /etc/init/keystone_idm.conf /etc/init.d/keystone_idm')
 
 @task
 def start():

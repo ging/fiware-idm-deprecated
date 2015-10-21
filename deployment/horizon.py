@@ -89,7 +89,8 @@ def set_up_as_service(absolute_horizon_path=None):
         'absolute_horizon_path': absolute_horizon_path}))
     out_file.close()
     lrun('sudo cp tmp_horizon_idm.conf /etc/init/horizon_idm.conf')
-    lrun('sudo rm tmp_horizon_idm.conf')    
+    lrun('sudo rm tmp_horizon_idm.conf')
+    lrun('sudo ln -s /etc/init/horizon_idm.conf /etc/init.d/horizon_idm')
 
 class CheckTask(Task):
     """Run several checks in the Front-end settings file."""
