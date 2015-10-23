@@ -17,7 +17,7 @@ export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/Devel
 source /usr/local/bin/virtualenvwrapper.sh
 " >> .profile
-source .profile
+source ~/.profile
 
 echo "
 # Settings for VirtualenvWrapper
@@ -25,7 +25,7 @@ export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/Devel
 source /usr/local/bin/virtualenvwrapper.sh
 " >> .bashrc
-source .bashrc
+source ~/.bashrc
 
 # Download latest version of the code 
 git clone https://github.com/ging/fiware-idm idm
@@ -34,6 +34,7 @@ cp conf/settings.py.example conf/settings.py
 
 # Create virtualenv
 mkvirtualenv idm_tools
+workon idm_tools
 
 # Install python dependecies
 pip install -r requirements.txt
