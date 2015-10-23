@@ -2,6 +2,7 @@
 
 # Install Ubuntu dependencies
 sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install -y wget python python-dev git
 wget https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
