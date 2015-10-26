@@ -2,7 +2,7 @@
 
 # Install Ubuntu dependencies
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get -y upgrade
 sudo apt-get install -y wget python python-dev git
 wget https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
@@ -45,7 +45,9 @@ fab keystone.install
 fab keystone.database_create
 fab keystone.set_up_as_service
 sudo service keystone_idm start
+sleep 10s
 fab keystone.populate
+sleep 10s
 
 # Install Horizon front-end and set-up service
 yes Y | fab horizon.install
