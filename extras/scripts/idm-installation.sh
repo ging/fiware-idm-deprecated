@@ -2,7 +2,7 @@
 
 # Install Ubuntu dependencies
 sudo apt-get update
-sudo apt-get -y upgrade
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 sudo apt-get install -y wget python python-dev git
 wget https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
