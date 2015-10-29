@@ -23,7 +23,7 @@ from fabric.colors import red, green, yellow
 from fabric.tasks import Task
 
 @task
-def install(horizon_path=settings.HORIZON_ROOT, version=None):
+def install(horizon_path=settings.HORIZON_ROOT, version=None, unattended=False):
     """Download and install the Front-end and its dependencies."""
     if os.path.isdir(horizon_path[:-1]):
         print 'Already downloaded.'
@@ -56,7 +56,7 @@ def install(horizon_path=settings.HORIZON_ROOT, version=None):
         }))
     out_file.close()
 
-    instance.run(horizon_path=horizon_path) # run check task
+    instance.run(horizon_path=horizon_path, unattended=unattended) # run check task
 
 @task
 def update(horizon_path=settings.HORIZON_ROOT):
@@ -95,11 +95,11 @@ def set_up_as_service(absolute_horizon_path=None):
 class CheckTask(Task):
     """Run several checks in the Front-end settings file."""
     name = "check"
-    def run(self, horizon_path=settings.HORIZON_ROOT, warnings=False):
+    def run(self, horizon_path=settings.HORIZON_ROOT, warnings=False, unattended=False):
         #   returns 1 if everything went OK, 0 otherwise
         print 'Checking Horizon... ',
         check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/',warnings)
-        check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/')
+        check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/',unattended)
         return check1 and check2
 
     def _parse_setting(self, setting):
@@ -170,7 +170,7 @@ class CheckTask(Task):
                 print red('Please edit the local_settings.py module manually so that it contains the settings above.')
             return 0 # flag for the main task
 
-    def _check_for_roles_ids(self, settings_path):
+    def _check_for_roles_ids(self, settings_path, unattended=False):
         # returns 1 if everything went OK, 0 otherwise
 
         if not hasattr(settings,'INTERNAL_ROLES_IDS'):
@@ -191,7 +191,10 @@ class CheckTask(Task):
             print green('Role IDs OK.')
             return 1
         else:
-            autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
+            if unattended:
+                autofix=='Y'
+            else: 
+                autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
             if autofix == 'Y':
                 with open(settings_path+'local_settings.py', 'r+') as settings_file:
                     lines = settings_file.readlines()
@@ -202,7 +205,7 @@ class CheckTask(Task):
                             line = 'FIWARE_PURCHASER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['purchaser']+'\'\n'
                         if 'FIWARE_PROVIDER_ROLE_ID' in line:
                             line = 'FIWARE_PROVIDER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['provider']+'\'\n'
-                        settings_file.write(line)            
+                        settings_file.write(line)
             return 0
 
 instance = CheckTask()
