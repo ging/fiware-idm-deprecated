@@ -206,6 +206,7 @@ class CheckTask(Task):
                         if 'FIWARE_PROVIDER_ROLE_ID' in line:
                             line = 'FIWARE_PROVIDER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['provider']+'\'\n'
                         settings_file.write(line)
+                print green('Role IDs automatically fixed.')
             return 0
 
 instance = CheckTask()
