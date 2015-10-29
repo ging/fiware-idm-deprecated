@@ -192,7 +192,7 @@ class CheckTask(Task):
             return 1
         else:
             if unattended:
-                autofix=='Y'
+                autofix = 'Y'
             else: 
                 autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
             if autofix == 'Y':
