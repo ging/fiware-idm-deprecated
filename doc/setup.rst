@@ -72,7 +72,7 @@ virtual environment)
     fab localhost keystone.populate
 
 You can find aditional help for setting up Keystone + MySQL
-`here <http://docs.openstack.org/havana/install-guide/install/apt/content/keystone-install.html>`__.
+`here <http://docs.openstack.org/juno/install-guide/install/apt/content/keystone-install.html>`__.
 
 
 .. _production-apache:
