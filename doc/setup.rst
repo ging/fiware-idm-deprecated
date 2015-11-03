@@ -74,6 +74,10 @@ virtual environment)
 You can find aditional help for setting up Keystone + MySQL
 `here <http://docs.openstack.org/havana/install-guide/install/apt/content/keystone-install.html>`__.
 
+
+.. _production-apache:
+
+
 Web Server (Apache + mod_wsgi)
 ===============================
 
