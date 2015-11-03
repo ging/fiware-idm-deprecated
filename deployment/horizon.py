@@ -19,11 +19,11 @@ from fabric.api import task
 from conf import settings
 from fabric.context_managers import lcd
 from fabric.operations import local as lrun, prompt
-from fabric.colors import red, green
+from fabric.colors import red, green, yellow
 from fabric.tasks import Task
 
 @task
-def install(horizon_path=settings.HORIZON_ROOT, version=None):
+def install(horizon_path=settings.HORIZON_ROOT, version=None, unattended=False):
     """Download and install the Front-end and its dependencies."""
     if os.path.isdir(horizon_path[:-1]):
         print 'Already downloaded.'
@@ -56,7 +56,7 @@ def install(horizon_path=settings.HORIZON_ROOT, version=None):
         }))
     out_file.close()
 
-    instance.run(horizon_path=horizon_path) # run check task
+    instance.run(horizon_path=horizon_path, unattended=unattended) # run check task
 
 @task
 def update(horizon_path=settings.HORIZON_ROOT, version=None):
@@ -93,19 +93,32 @@ def set_up_as_service(absolute_horizon_path=None):
         'absolute_horizon_path': absolute_horizon_path}))
     out_file.close()
     lrun('sudo cp tmp_horizon_idm.conf /etc/init/horizon_idm.conf')
-    lrun('sudo rm tmp_horizon_idm.conf')    
+    lrun('sudo rm tmp_horizon_idm.conf')
+    lrun('sudo ln -sf /etc/init/horizon_idm.conf /etc/init.d/horizon_idm')
 
 class CheckTask(Task):
     """Run several checks in the Front-end settings file."""
     name = "check"
-    def run(self, horizon_path=settings.HORIZON_ROOT):
+    def run(self, horizon_path=settings.HORIZON_ROOT, warnings=False, unattended=False):
         #   returns 1 if everything went OK, 0 otherwise
         print 'Checking Horizon... ',
-        check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/')
-        check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/')
+        check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/',warnings)
+        check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/',unattended)
         return check1 and check2
 
-    def _check_for_new_settings(self, settings_path):
+    def _parse_setting(self, setting):
+        if '=' in setting:
+            if '#' in setting:
+                if setting[1] == ' ':
+                    return setting[setting.find('#')+2:setting.find('=')]
+                else:
+                    return setting[setting.find('#')+1:setting.find('=')]
+            else:
+                if setting[1] == ' ':
+                    return setting[1:setting.find('=')]
+                return setting[0:setting.find('=')]
+
+    def _check_for_new_settings(self, settings_path, warnings=False):
         """Checks for new settings in the template which don't exist in the current file"""
         # returns 1 if everything went OK, 0 otherwise
         with open(settings_path+'local_settings.py', 'r') as old_file,\
@@ -118,13 +131,18 @@ class CheckTask(Task):
 
         # remove values to have settings' names
         for s in new.difference(old):
-            if '=' in s:
-                new_settings.add(s[0:s.find('=')])
+            new_settings.add(self._parse_setting(s))
         for s in old.difference(new):
-            if '=' in s:
-                old_settings.add(s[0:s.find('=')])
+            old_settings.add(self._parse_setting(s))
 
         latest_settings = new_settings.difference(old_settings)
+
+        created_settings = old_settings.difference(new_settings)
+
+        if warnings and created_settings:
+            print yellow('[Warning] the followind settings couldn\'t be found in the settings template: ')
+            for s in created_settings:
+                print '\t'+yellow(s)
 
         if not latest_settings:
             print green('Settings OK.'),
@@ -156,7 +174,7 @@ class CheckTask(Task):
                 print red('Please edit the local_settings.py module manually so that it contains the settings above.')
             return 0 # flag for the main task
 
-    def _check_for_roles_ids(self, settings_path):
+    def _check_for_roles_ids(self, settings_path, unattended=False):
         # returns 1 if everything went OK, 0 otherwise
 
         if not hasattr(settings,'INTERNAL_ROLES_IDS'):
@@ -177,7 +195,10 @@ class CheckTask(Task):
             print green('Role IDs OK.')
             return 1
         else:
-            autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
+            if unattended:
+                autofix = 'Y'
+            else: 
+                autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
             if autofix == 'Y':
                 with open(settings_path+'local_settings.py', 'r+') as settings_file:
                     lines = settings_file.readlines()
@@ -188,7 +209,8 @@ class CheckTask(Task):
                             line = 'FIWARE_PURCHASER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['purchaser']+'\'\n'
                         if 'FIWARE_PROVIDER_ROLE_ID' in line:
                             line = 'FIWARE_PROVIDER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['provider']+'\'\n'
-                        settings_file.write(line)            
+                        settings_file.write(line)
+                print green('Role IDs automatically fixed.')
             return 0
 
 instance = CheckTask()

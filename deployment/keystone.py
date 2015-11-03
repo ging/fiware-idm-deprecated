@@ -117,17 +117,9 @@ def check(keystone_path=settings.KEYSTONE_ROOT):
     old_settings = set()
 
     for s in new.difference(old):
-        if '=' in s:
-            if '#' in s:
-                new_settings.add(s[s.find('#')+1:s.find('=')])
-            else:
-                new_settings.add(s[0:s.find('=')])
+        new_settings.add(_parse_setting(s))
     for s in old.difference(new):
-        if '=' in s:
-            if '#' in s:
-                old_settings.add(s[s.find('#')+1:s.find('=')])
-            else:
-                old_settings.add(s[0:s.find('=')])
+        old_settings.add(_parse_setting(s))
     latest_settings = new_settings.difference(old_settings)
     if not latest_settings:
         print (green('Everything OK'))
@@ -139,6 +131,13 @@ def check(keystone_path=settings.KEYSTONE_ROOT):
             print '\t'+red(s)
         print red('Please edit the keystone.conf file manually so that it contains the settings above.')
         return 0 # flag for the main task
+
+def _parse_setting(setting):
+    if '=' in setting:
+        if '#' in setting:
+            return setting[setting.find('#')+1:setting.find('=')]
+        else:
+            return setting[0:setting.find('=')]
 
 @task
 def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
@@ -183,6 +182,7 @@ def set_up_as_service(absolute_keystone_path=None):
     out_file.close()
     lrun('sudo cp tmp_keystone_idm.conf /etc/init/keystone_idm.conf')
     lrun('sudo rm tmp_keystone_idm.conf')
+    lrun('sudo ln -sf /etc/init/keystone_idm.conf /etc/init.d/keystone_idm')
 
 @task
 def start():

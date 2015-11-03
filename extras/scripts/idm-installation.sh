@@ -2,12 +2,13 @@
 
 # Install Ubuntu dependencies
 sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 sudo apt-get install -y wget python python-dev git
 wget https://bootstrap.pypa.io/get-pip.py
-python get-pip.py
+sudo python get-pip.py
 
 # Install virtualenvwrapper and virtualenv
-pip install virtualenvwrapper
+sudo pip install virtualenvwrapper
 export WORKON_HOME=~/venvs
 mkdir -p $WORKON_HOME
 
@@ -17,6 +18,7 @@ export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/Devel
 source /usr/local/bin/virtualenvwrapper.sh
 " >> .profile
+source ~/.profile
 
 echo "
 # Settings for VirtualenvWrapper
@@ -24,6 +26,7 @@ export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/Devel
 source /usr/local/bin/virtualenvwrapper.sh
 " >> .bashrc
+source ~/.bashrc
 
 # Download latest version of the code 
 git clone https://github.com/ging/fiware-idm idm
@@ -38,15 +41,15 @@ workon idm_tools
 pip install -r requirements.txt
 
 # Install Keystone back-end and set-up service
-workon idm_tools
 fab keystone.install
 fab keystone.database_create
 fab keystone.set_up_as_service
-service keystone_idm start
+sudo service keystone_idm start
+sleep 10s
 fab keystone.populate
+sleep 10s
 
 # Install Horizon front-end and set-up service
-workon idm_tools
-fab horizon.install
+fab horizon.install:unattended=True
 fab horizon.set_up_as_service
-service horizon_idm start
+sudo service horizon_idm start
