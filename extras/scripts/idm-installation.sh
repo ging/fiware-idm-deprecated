@@ -50,6 +50,6 @@ fab keystone.populate
 sleep 10s
 
 # Install Horizon front-end and set-up service
-yes Y | fab horizon.install
+fab horizon.install:unattended=True
 fab horizon.set_up_as_service
 sudo service horizon_idm start
