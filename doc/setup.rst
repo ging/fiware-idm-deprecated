@@ -193,4 +193,5 @@ following settings
     EMAIL_PORT = 25
     EMAIL_HOST_USER = 'djangomail'
     EMAIL_HOST_PASSWORD = 'top-secret!'
+    EMAIL_URL = 'your-webstie-domain.com'
 
