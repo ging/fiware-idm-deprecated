@@ -131,7 +131,10 @@ def check(keystone_path=settings.KEYSTONE_ROOT):
 def _parse_setting(setting):
     if '=' in setting:
         if '#' in setting:
-            return setting[setting.find('#')+1:setting.find('=')]
+            if setting[1] == ' ':
+                return setting[setting.find('#')+2:setting.find('=')]
+            else:
+                return setting[setting.find('#')+1:setting.find('=')]
         else:
             return setting[0:setting.find('=')]
 
@@ -149,6 +152,8 @@ def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
             ' db_sync --extension=roles').format(v=add_verbose))
         lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync --extension=user_registration').format(v=add_verbose))
+        lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
+            ' db_sync --extension=two_factor_auth').format(v=add_verbose))
 
 @task
 def database_delete(keystone_path=settings.KEYSTONE_ROOT):
