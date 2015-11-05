@@ -29,7 +29,7 @@ from fabric.api import execute
 from fabric.context_managers import lcd
 from fabric.contrib.files import exists
 from fabric.tasks import Task
-from fabric.operations import local as lrun
+from fabric.operations import local as lrun, prompt
 from fabric.colors import red, green
 
 
@@ -83,14 +83,18 @@ def install(keystone_path=settings.KEYSTONE_ROOT, version=None):
     check(keystone_path) # run check
 
 @task
-def update(keystone_path=settings.KEYSTONE_ROOT):
+def update(keystone_path=settings.KEYSTONE_ROOT, version=None):
     """Update the Back-end and its dependencies."""
     # returns 1 if everything went OK, 0 otherwise
 
     print 'Updating Keystone...'
     with lcd(keystone_path):
-        lrun('git pull origin')
+        lrun('git fetch')
+        if not version:
+            version = settings.KEYROCK_VERSION
+        lrun('git checkout tags/keyrock-{0}'.format(version))
         lrun('sudo python tools/install_venv.py')
+    
     print 'Syncing database...'
     database_create(keystone_path, True)
     print green('Keystone updated.')
@@ -106,7 +110,7 @@ def check(keystone_path=settings.KEYSTONE_ROOT):
     
     print 'Checking Keystone...',
     path = keystone_path + 'etc/'
-    with open(path+'keystone.conf','r') as old_file,open(path+'keystone.conf.sample','r') as new_file:
+    with open(path+'keystone.conf', 'r') as old_file, open(path+'keystone.conf.sample', 'r') as new_file:
         old = set(old_file)
         new = set(new_file)
     new_settings = set()
@@ -170,6 +174,58 @@ def database_reset(keystone_path=settings.KEYSTONE_ROOT):
     execute('keystone.database_create', keystone_path=keystone_path)
     execute('keystone.populate', keystone_path=keystone_path)
 
+@task
+def database_tweak(keystone_path=settings.KEYSTONE_ROOT, common_password='test',
+                   keystone_dev_address=settings.KEYSTONE_PUBLIC_ADDRESS,
+                   keystone_dev_port=settings.KEYSTONE_PUBLIC_PORT):
+    """Tweaks the database setting the same password for all users
+    and the keystone endpoints to localhost. Handy for development or
+    local testing with a production database backup. NEVER USE IN 
+    THE PRODUCTION DEPLOYMENT.
+    """
+    warning_message = (
+        'This will ruin your database in a production setting and'
+        ' is a major security issue. Use only for development'
+        ' purposes. Continue? [Y/n]: '
+    )
+    cont = prompt(
+        red(warning_message),
+        default='n',
+        validate='[Y,n]')
+
+    if cont != 'Y':
+        print red('Cancel tweak')
+        return
+
+    print 'Proceed...'
+
+    keystone = _admin_token_connection()
+
+    print 'Set all users password to a fixed value'
+    for user in keystone.users.list():
+        keystone.users.update(user, password=common_password)
+
+    print 'Set the idm user password to the configured one'
+    idm = keystone.users.find(name=settings.IDM_USER_CREDENTIALS['username'])
+    keystone.users.update(idm, password=settings.IDM_USER_CREDENTIALS['password'])
+
+    print 'tweak the identity service endpoints to point to a development keystone'
+    identity_service = next(s for s in keystone.services.list() if s.type == 'identity')
+    identity_endpoints = [
+        e for e in keystone.endpoints.list()
+        if e.service_id == identity_service.id
+    ]
+    for endpoint in identity_endpoints:
+        keystone.endpoints.update(
+            endpoint,
+            url=('http://{ip}:{port}/v3').format(
+                ip=keystone_dev_address,
+                port=keystone_dev_port
+            )
+        )
+
+    print 'Tweak Succesfull'
+
 
 @task
 def set_up_as_service(absolute_keystone_path=None):
@@ -209,12 +265,7 @@ def dev_server(keystone_path=settings.KEYSTONE_ROOT):
 @task
 def delete_region_and_endpoints(region):
     """Deletes a region and all its associated endpoints and endpoint_groups."""
-    admin_port = settings.KEYSTONE_ADMIN_PORT
-    token = settings.KEYSTONE_ADMIN_TOKEN
-
-    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
-                                              port=admin_port)
-    keystone = client.Client(token=token, endpoint=endpoint)
+    keystone = _admin_token_connection()
 
     # check region exists
     keystone.regions.get(region)
@@ -244,12 +295,7 @@ def create_new_endpoints(endpoints_file):
     f = open(os.path.join(__location__, endpoints_file))
     catalog = json.load(f)
 
-    admin_port = settings.KEYSTONE_ADMIN_PORT
-    token = settings.KEYSTONE_ADMIN_TOKEN
-
-    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
-                                              port=admin_port)
-    keystone = client.Client(token=token, endpoint=endpoint)
+    keystone = _admin_token_connection()
 
     endpoint_groups = keystone.endpoint_groups.list()
     services = keystone.services.list()
@@ -359,9 +405,11 @@ class PopulateTask(Task):
                 filters={
                     'region_id': region.id
                 })
-        identity_services = [service for service 
-                             in keystone.services.list(type='identity')
-                             if service.type == 'identity']
+        identity_services = [
+            service for service 
+            in keystone.services.list(type='identity')
+            if service.type == 'identity'
+        ]
 
         for service in identity_services:
             keystone.endpoint_groups.create(
@@ -443,7 +491,7 @@ class PopulateTask(Task):
 
         print 'Created default fiware roles and permissions.'
         
-        with open('conf/settings.py','r+') as settings_file:
+        with open('conf/settings.py', 'r+') as settings_file:
             flag_replace = False
             lines = settings_file.readlines()
             settings_file.seek(0)

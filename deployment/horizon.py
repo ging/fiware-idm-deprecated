@@ -59,13 +59,17 @@ def install(horizon_path=settings.HORIZON_ROOT, version=None, unattended=False):
     instance.run(horizon_path=horizon_path, unattended=unattended) # run check task
 
 @task
-def update(horizon_path=settings.HORIZON_ROOT):
+def update(horizon_path=settings.HORIZON_ROOT, version=None):
     """Update the Front-end and its dependencies."""
     # returns 1 if everything went OK, 0 otherwise
 
     print 'Updating Horizon...'
     with lcd(horizon_path):
-        lrun('git pull origin')
+        lrun('git fetch')
+        if not version:
+            version = settings.KEYROCK_VERSION
+        lrun('git checkout tags/keyrock-{0}'.format(version))
+
         lrun('sudo python tools/install_venv.py')
     print green('Horizon updated.')
     return instance.run(horizon_path=horizon_path) #flag for the main task

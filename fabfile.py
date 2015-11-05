@@ -18,8 +18,8 @@ from deployment import migration
 from conf import settings
 
 from fabric.api import task
-from fabric.operations import local as lrun
-from fabric.colors import red,green
+from fabric.operations import local as lrun, prompt
+from fabric.colors import red, green, yellow
 
 
 @task
@@ -41,8 +41,23 @@ def _install_dependencies():
     print 'Dependencies correctly installed'
 
 @task
-def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT):
+def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT, version=None):
     """Update both the Front and the Back-end, as well as their dependencies."""
+    if not version:
+        print yellow(('You called update without specifying a version. The default version you have configured'
+            ' is {0}.').format(settings.KEYROCK_VERSION))
+
+        print red('Check the official repository to find the latest version')
+             
+        cont = prompt(
+            yellow('Do you want to continue and update to the default version? [Y/n]: '),
+            default='n', 
+            validate='[Y,n]')
+
+        if cont != 'Y':
+            print red('Cancel update')
+            return
+
     update1_ok = keystone.update(keystone_path) 
     update2_ok = horizon.update(horizon_path)
 

@@ -199,8 +199,7 @@ docs <https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runse
 .. warning:: 
   As the Django documentation states: DO NOT USE THIS
   SERVER IN A PRODUCTION SETTING. It has not gone through security audits
-  or performance tests. For a production setting, follow the `production
-  setup guide <http://fiware-idm.readthedocs.org/en/latest/setup>`__
+  or performance tests. For a production setting, follow the :ref:`Production Set up Guide <production-apache>`.
 
 Installing Keystone
 -------------------
