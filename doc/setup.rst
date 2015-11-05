@@ -194,4 +194,5 @@ following settings
     EMAIL_HOST_USER = 'djangomail'
     EMAIL_HOST_PASSWORD = 'top-secret!'
     EMAIL_URL = 'your-webstie-domain.com'
+    DEFAULT_FROM_EMAIL = 'your-no-reply-address'
 
