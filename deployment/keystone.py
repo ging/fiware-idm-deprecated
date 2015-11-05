@@ -156,8 +156,6 @@ def database_create(keystone_path=settings.KEYSTONE_ROOT, verbose=True):
             ' db_sync --extension=roles').format(v=add_verbose))
         lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
             ' db_sync --extension=user_registration').format(v=add_verbose))
-        lrun(('sudo tools/with_venv.sh bin/keystone-manage {v}'
-            ' db_sync --extension=two_factor_auth').format(v=add_verbose))
 
 @task
 def database_delete(keystone_path=settings.KEYSTONE_ROOT):
