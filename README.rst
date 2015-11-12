@@ -311,7 +311,7 @@ applications based on FIWARE identity. This is posible thanks to
 -  `Keyrock extensions
    API <http://docs.keyrock.apiary.io/#reference/keystone-extensions>`__
 -  `SCIM 2.0 API <http://docs.keyrock.apiary.io/#reference/scim-2.0>`__
--  `OAuth2 API <http://fiware-idm.readthedocs.org/en/latest/oauth2/>`__
+-  `OAuth2 API <http://fiware-idm.readthedocs.org/en/latest/oauth2.html>`__
 
 You will find the full API description
 `here <http://docs.keyrock.apiary.io/>`__
@@ -323,15 +323,15 @@ Advanced Documentation
 ======================
 
 -  `User & Programmers
-   Manual <http://fiware-idm.readthedocs.org/en/latest/user_guide/>`__
+   Manual <http://fiware-idm.readthedocs.org/en/latest/user_guide.html>`__
 -  `Installation & Administration
-   Guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide/>`__
+   Guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide.html>`__
 -  `Production set-up
-   guide <http://fiware-idm.readthedocs.org/en/latest/setup/>`__
+   guide <http://fiware-idm.readthedocs.org/en/latest/setup.html>`__
 -  `How to run
-   tests <http://fiware-idm.readthedocs.org/en/latest/admin_guide#end-to-end-testing>`__
+   tests <http://fiware-idm.readthedocs.org/en/latest/admin_guide.html#end-to-end-testing>`__
 -  `Using the FIWARE LAB instance
-   (OAuth2) <http://fiware-idm.readthedocs.org/en/latest/oauth2/>`__
+   (OAuth2) <http://fiware-idm.readthedocs.org/en/latest/oauth2.html>`__
 -  `Developers and contributors
-   Guide <http://fiware-idm.readthedocs.org/en/latest/developer_guide/>`__
+   Guide <http://fiware-idm.readthedocs.org/en/latest/developer_guide.html>`__
 
