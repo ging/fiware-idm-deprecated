@@ -1,2 +1,0 @@
-Fabric==1.10.1
--e git+https://github.com/ging/python-keystoneclient.git#egg=fiwareclient
