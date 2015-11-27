@@ -1,6 +1,6 @@
 
 body {
-  padding: 2em 1em 2em 70px;
+  /*padding: 2em 1em 2em 70px;*/
   margin: 0;
   /*font-family: sans-serif;*/
   font-family: verdana !important;
@@ -30,7 +30,9 @@ a img {
 
 h1, h2, h3, h4, h5, h6 {
     text-align: left;
-    color:#00275a !important;font-family:"Neo Tech W02 Medium" !important 
+    color:#00275a !important;font-family:"Neo Tech W02 Medium" !important;
+    word-break: break-word;
+    word-wrap: normal;
 }
 
 h1, h2, h3 {
@@ -63,6 +65,15 @@ h6 {
     font: small-caps 100%;
 }
 
+.header h5, .header h3, .header span{
+    display: inline-block !important;
+}
+
+.header span{
+    font-weight: bold;
+    margin-bottom: 1em;
+}
+
 table, td, th {
     border-style: solid;
     border-width: 1px;
@@ -83,8 +94,17 @@ table, td, th {
     } 
 }
 
+.packetType{
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
 .selfContainedLink:after{
     content: "" !important;
+}
+
+#top-source-buttons{
+    margin-top: 5px;
 }
 
 @media speech {
@@ -113,15 +133,27 @@ table, td, th {
     width: 20%;
     height: 100%;
     overflow: auto;
+    min-width: 20%;
+    max-width: 40%;
+    resize:horizontal;
+    background-color: #00275a;
   }
 
   #API-content{
-    margin-left: calc(18%);
+    margin-left: calc(22%);
   }
   #API-content{
-    margin-left: calc(20% - 2em - 15px);
+    margin-left: calc(20% + 15px);
   }
 
+  #fiware-logo-container{
+    height: 90px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 600;
+    width: 20%;
+  }
   #fiware-logo{
     height: 80px;
     /*margin-bottom: 15px;*/
@@ -130,9 +162,44 @@ table, td, th {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 600;
     }
 
+    #fiware-logo::after{
+        position: absolute;
+        top:80px;
+        left: 0;
+        width: 100%;
+        height: 10px;
+        background-color: #00275a;
+        z-index: 500;
+        content: " ";
+    }
+    #toc{
+        margin-top: 90px;
+        height: calc(100% - 95px);/*90 margin 5 resize button */
+        overflow: auto;
+        width: calc(100%);
+        resize: none;
+    }
+    #toc>ul{
+        border: 0px !important;
+    }
+
+  #top-source-buttons{
+    position: fixed;
+    top: 5px;
+    right: 10px;
+  }
 }
+
+#fiware-logo-container{
+    height: 80px;
+  }
 
 #fiware-logo{
     height: 80px;
@@ -165,6 +232,7 @@ table, td, th {
     padding-bottom: 0.37em;
     color: #333 ;
     max-width: 100%;
+    width: 100%;
 }
 
 #TOC-container li a:hover{
@@ -249,6 +317,18 @@ dd dl{
 
 .parameters-title+dl dl{
     margin-left:2em;
+}
+
+.parameter-name {
+	padding: 2px 4px;
+	font-size: 90%;
+	color: #C7254E;
+	background-color: #F9F2F4;
+	border-radius: 4px;
+}
+
+.parameter-attributes {
+	font-weight: normal;
 }
 
 .attributes-title{
@@ -422,8 +502,9 @@ dd dl{
 
 .goExample{
     margin-top: 20px;
-    float: left;
+    /*float: left;*/
     margin-right: 10px;
+    display: inline-block;
 }
 
 /*
@@ -435,6 +516,7 @@ dd dl{
 */
 .goApiary {
     margin-top: 20px;
+    display: inline-block;
 }
 
 /*
@@ -455,18 +537,18 @@ dd dl{
     border:1px solid;
 }*/
 
-.goActions a, .goApiary a, .goExample a{
+.goActions a, .goApiary a, .goExample a, #top-source-buttons a{
     padding: 0.25em;
     background-color:#00d3de !important;
     color:black !important;
     border: 0;
 }
-.goActions a::after, .goApiary a::after, .goExample a::after{
+.goActions a::after, .goApiary a::after, .goExample a::after, #top-source-buttons a::after{
     font-family: FontAwesome;
     content:' \f0a9'
 }
 
-.goActions a:hover, .goApiary a:hover, .goExample a:hover{
+.goActions a:hover, .goApiary a:hover, .goExample a:hover, #top-source-buttons a:hover{
     color:#fff !important;
     text-decoration: none;
 }
@@ -481,3 +563,8 @@ dd dl{
     margin-left: 20px;
 }
 
+
+.api-summary .actionMethod{
+    width: 4em;
+    display: inline-table;
+}
