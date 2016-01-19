@@ -12,13 +12,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from deployment import keystone
-from deployment import horizon
-from deployment import migration
+from tools import keystone
+from tools import horizon
 from conf import settings
 
 from fabric.api import task
-from fabric.operations import local as lrun, prompt
+from fabric.operations import prompt
 from fabric.colors import red, green, yellow
 
 
@@ -27,18 +26,6 @@ def localhost():
     """DEPRECATED. Executing tasks in remote hosts is no longer supported.
     Therefore, localhost task is no longer required. Call the tasks directly."""
     print localhost.__doc__
-
-
-def set_up(dev=False):
-    """Install system and python dependencies."""
-    _install_dependencies()
-
-def _install_dependencies():
-    command = settings.UBUNTU_DEPENDENCIES['install_command']
-    dependencies = ' '.join(settings.UBUNTU_DEPENDENCIES['dependencies'])
-    lrun('{command} {dependencies}'.format(command=command, 
-        dependencies=dependencies))
-    print 'Dependencies correctly installed'
 
 @task
 def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT, version=None):
@@ -67,7 +54,8 @@ def update_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZ
         print(green('Everything up to date!'))
 
 @task
-def check_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT, warnings=False, unattended=False):
+def check_all(keystone_path=settings.KEYSTONE_ROOT, horizon_path=settings.HORIZON_ROOT,
+              warnings=False, unattended=False):
     """Run several checks both in the Front and in the Back-end."""
     keystone.check(keystone_path)
     horizon.instance.run(horizon_path=horizon_path, warnings=warnings)
