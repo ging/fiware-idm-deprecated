@@ -12,17 +12,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import code
+import logging
 import json
 import os
-import code
 import readline
 import rlcompleter
 
+from cliff.command import Command
 from keystoneclient.v3 import client
-
-from fabric.api import task
-from fabric.operations import prompt
-from fabric.colors import red, green
 
 
 def _admin_token_connection():
@@ -42,110 +40,110 @@ def _admin_token_connection():
     return keystone
 
 
-@task
-def console():
+class Console(Command):
     """Opens an interactive python console with a connection to Keystone using
     the ADMIN_TOKEN.
     """
-    keystone = _admin_token_connection()
 
-    vars = globals()
-    vars.update(locals())
-    readline.set_completer(rlcompleter.Completer(vars).complete)
-    readline.parse_and_bind("tab: complete")
-    shell = code.InteractiveConsole(vars)
-    shell.interact()
+    log = logging.getLogger(__name__)
 
-@task
-def check(keystone_path):
-    """Check for missing settings in the settings file."""
-    # returns 1 if everything went OK, 0 otherwise
+    def take_action(self, parsed_args):
+        keystone = _admin_token_connection()
+        vars = globals()
+        vars.update(locals())
+        readline.set_completer(rlcompleter.Completer(vars).complete)
+        readline.parse_and_bind("tab: complete")
+        shell = code.InteractiveConsole(vars)
+        shell.interact()
+
+
+# def check(keystone_path):
+#     """Check for missing settings in the settings file."""
+#     # returns 1 if everything went OK, 0 otherwise
     
-    print 'Checking Keystone...',
-    path = keystone_path + 'etc/'
-    with open(path+'keystone.conf', 'r') as old_file, open(path+'keystone.conf.sample', 'r') as new_file:
-        old = set(old_file)
-        new = set(new_file)
-    new_settings = set()
-    old_settings = set()
+#     print 'Checking Keystone...',
+#     path = keystone_path + 'etc/'
+#     with open(path+'keystone.conf', 'r') as old_file, open(path+'keystone.conf.sample', 'r') as new_file:
+#         old = set(old_file)
+#         new = set(new_file)
+#     new_settings = set()
+#     old_settings = set()
 
-    for s in new.difference(old):
-        new_settings.add(_parse_setting(s))
-    for s in old.difference(new):
-        old_settings.add(_parse_setting(s))
-    latest_settings = new_settings.difference(old_settings)
-    if not latest_settings:
-        print (green('Everything OK'))
-        return 1 # flag for the main task
-    else:
-        print red('Some errors were encountered:')
-        print red('The following settings couldn\'t be found in your keystone.conf file:')
-        for s in latest_settings:
-            print '\t'+red(s)
-        print red('Please edit the keystone.conf file manually so that it contains the settings above.')
-        return 0 # flag for the main task
+#     for s in new.difference(old):
+#         new_settings.add(_parse_setting(s))
+#     for s in old.difference(new):
+#         old_settings.add(_parse_setting(s))
+#     latest_settings = new_settings.difference(old_settings)
+#     if not latest_settings:
+#         print (green('Everything OK'))
+#         return 1 # flag for the main task
+#     else:
+#         print red('Some errors were encountered:')
+#         print red('The following settings couldn\'t be found in your keystone.conf file:')
+#         for s in latest_settings:
+#             print '\t'+red(s)
+#         print red('Please edit the keystone.conf file manually so that it contains the settings above.')
+#         return 0 # flag for the main task
 
-def _parse_setting(setting):
-    if '=' in setting:
-        if '#' in setting:
-            if setting[1] == ' ':
-                return setting[setting.find('#')+2:setting.find('=')]
-            else:
-                return setting[setting.find('#')+1:setting.find('=')]
-        else:
-            return setting[0:setting.find('=')]
+# def _parse_setting(setting):
+#     if '=' in setting:
+#         if '#' in setting:
+#             if setting[1] == ' ':
+#                 return setting[setting.find('#')+2:setting.find('=')]
+#             else:
+#                 return setting[setting.find('#')+1:setting.find('=')]
+#         else:
+#             return setting[0:setting.find('=')]
 
-@task
-def database_tweak(idm_user, idm_password, common_password='test'):
-    """Tweaks the database setting the same password for all users
-     and the keystone endpoints to localhost. Handy for development or
-     local testing with a production database backup. NEVER USE IN
-     THE PRODUCTION DEPLOYMENT.
-    """
-    warning_message = (
-        'This will ruin your database in a production setting and'
-        ' is a major security issue. Use only for development'
-        ' purposes. Continue? [Y/n]: '
-    )
-    cont = prompt(
-        red(warning_message),
-        default='n',
-        validate='[Y,n]')
+# def database_tweak(idm_user, idm_password, common_password='test'):
+#     """Tweaks the database setting the same password for all users
+#      and the keystone endpoints to localhost. Handy for development or
+#      local testing with a production database backup. NEVER USE IN
+#      THE PRODUCTION DEPLOYMENT.
+#     """
+#     warning_message = (
+#         'This will ruin your database in a production setting and'
+#         ' is a major security issue. Use only for development'
+#         ' purposes. Continue? [Y/n]: '
+#     )
+#     cont = prompt(
+#         red(warning_message),
+#         default='n',
+#         validate='[Y,n]')
 
-    if cont != 'Y':
-        print red('Cancel tweak')
-        return
+#     if cont != 'Y':
+#         print red('Cancel tweak')
+#         return
 
-    print 'Proceed...'
+#     print 'Proceed...'
 
-    keystone = _admin_token_connection()
+#     keystone = _admin_token_connection()
 
-    print 'Set all users password to a fixed value'
-    for user in keystone.users.list():
-        keystone.users.update(user, password=common_password)
+#     print 'Set all users password to a fixed value'
+#     for user in keystone.users.list():
+#         keystone.users.update(user, password=common_password)
 
-    print 'Set the idm user password to the configured one'
-    idm = keystone.users.find(name=idm_user)
-    keystone.users.update(idm, password=idm_password)
+#     print 'Set the idm user password to the configured one'
+#     idm = keystone.users.find(name=idm_user)
+#     keystone.users.update(idm, password=idm_password)
 
-    print 'tweak the identity service endpoints to point to a development keystone'
-    identity_service = next(s for s in keystone.services.list() if s.type == 'identity')
-    identity_endpoints = [
-        e for e in keystone.endpoints.list()
-        if e.service_id == identity_service.id
-    ]
-    for endpoint in identity_endpoints:
-        keystone.endpoints.update(
-            endpoint,
-            url=('http://{address}/{api_version}'.format(
-                address=os.environ.get('OS_SERVICE_ENDPOINT'),
-                api_version=os.environ.get('OS_IDENTITY_API_VERSION')))
-        )
+#     print 'tweak the identity service endpoints to point to a development keystone'
+#     identity_service = next(s for s in keystone.services.list() if s.type == 'identity')
+#     identity_endpoints = [
+#         e for e in keystone.endpoints.list()
+#         if e.service_id == identity_service.id
+#     ]
+#     for endpoint in identity_endpoints:
+#         keystone.endpoints.update(
+#             endpoint,
+#             url=('http://{address}/{api_version}'.format(
+#                 address=os.environ.get('OS_SERVICE_ENDPOINT'),
+#                 api_version=os.environ.get('OS_IDENTITY_API_VERSION')))
+#         )
 
-    print 'Tweak Succesfull'
+#     print 'Tweak Succesfull'
 
 
-@task
 def delete_region_and_endpoints(region):
     """Deletes a region and all its associated endpoints and endpoint_groups."""
     keystone = _admin_token_connection()
@@ -166,7 +164,6 @@ def delete_region_and_endpoints(region):
     # delete region
     keystone.regions.delete(region)
 
-@task
 def create_new_endpoints(endpoints_file):
     """Creates all the endpoints in a json file, adding an endpoint group
     filter for each region (if there is not currently one created). The service

@@ -13,127 +13,122 @@
 # under the License.
 
 
-from fabric.operations import prompt
-from fabric.colors import red, green, yellow
-from fabric.tasks import Task
+# class CheckTask(Task):
+#     """Run several checks in the Front-end settings file."""
+#     name = "check"
 
+#     def run(self, horizon_path, warnings=False, unattended=False):
+#         #   returns 1 if everything went OK, 0 otherwise
+#         print 'Checking Horizon... ',
+#         check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/', warnings)
+#         check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/', unattended)
+#         return check1 and check2
 
-class CheckTask(Task):
-    """Run several checks in the Front-end settings file."""
-    name = "check"
+#     def _parse_setting(self, setting):
+#         if '=' in setting:
+#             if '#' in setting:
+#                 if setting[1] == ' ':
+#                     return setting[setting.find('#')+2:setting.find('=')]
+#                 else:
+#                     return setting[setting.find('#')+1:setting.find('=')]
+#             else:
+#                 if setting[1] == ' ':
+#                     return setting[1:setting.find('=')]
+#                 return setting[0:setting.find('=')]
 
-    def run(self, horizon_path, warnings=False, unattended=False):
-        #   returns 1 if everything went OK, 0 otherwise
-        print 'Checking Horizon... ',
-        check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/', warnings)
-        check2 = self._check_for_roles_ids(horizon_path + 'openstack_dashboard/local/', unattended)
-        return check1 and check2
+#     def _check_for_new_settings(self, settings_path, warnings=False):
+#         """Checks for new settings in the template which don't exist in the current file"""
+#         # returns 1 if everything went OK, 0 otherwise
+#         with open(settings_path+'local_settings.py', 'r') as old_file,\
+#              open(settings_path+'local_settings.py.example', 'r') as new_file:
+#             old = set(old_file)
+#             new = set(new_file)
 
-    def _parse_setting(self, setting):
-        if '=' in setting:
-            if '#' in setting:
-                if setting[1] == ' ':
-                    return setting[setting.find('#')+2:setting.find('=')]
-                else:
-                    return setting[setting.find('#')+1:setting.find('=')]
-            else:
-                if setting[1] == ' ':
-                    return setting[1:setting.find('=')]
-                return setting[0:setting.find('=')]
+#         new_settings = set()
+#         old_settings = set()
 
-    def _check_for_new_settings(self, settings_path, warnings=False):
-        """Checks for new settings in the template which don't exist in the current file"""
-        # returns 1 if everything went OK, 0 otherwise
-        with open(settings_path+'local_settings.py', 'r') as old_file,\
-             open(settings_path+'local_settings.py.example', 'r') as new_file:
-            old = set(old_file)
-            new = set(new_file)
+#         # remove values to have settings' names
+#         for s in new.difference(old):
+#             new_settings.add(self._parse_setting(s))
+#         for s in old.difference(new):
+#             old_settings.add(self._parse_setting(s))
 
-        new_settings = set()
-        old_settings = set()
+#         latest_settings = new_settings.difference(old_settings)
 
-        # remove values to have settings' names
-        for s in new.difference(old):
-            new_settings.add(self._parse_setting(s))
-        for s in old.difference(new):
-            old_settings.add(self._parse_setting(s))
+#         created_settings = old_settings.difference(new_settings)
 
-        latest_settings = new_settings.difference(old_settings)
+#         if warnings and created_settings:
+#             print yellow('[Warning] the followind settings couldn\'t be found in the settings template: ')
+#             for s in created_settings:
+#                 print '\t'+yellow(s)
 
-        created_settings = old_settings.difference(new_settings)
+#         if not latest_settings:
+#             print green('Settings OK.'),
+#             return 1 # flag for the main task
+#         else:
+#             print red('Some errors were encountered:')
+#             print red('The following settings couldn\'t be found in your local_settings.py module:')
+#             settings_to_write = list()
+#             for s in latest_settings:
+#                 with open(settings_path+'local_settings.py.example', 'r') as template:
+#                     block = 0
+#                     for line in template.readlines():
+#                         if s in line or block > 0:
+#                             settings_to_write.append(line)
+#                             if '{' in line: block += 1
+#                             if '}' in line: block -= 1
+#                 print '\t'+red(s)
 
-        if warnings and created_settings:
-            print yellow('[Warning] the followind settings couldn\'t be found in the settings template: ')
-            for s in created_settings:
-                print '\t'+yellow(s)
+#             autofix = prompt(red('Would you like to add defaults for the missing settings? [Y/n]: '),\
+#                              default='n', validate='[Y,n]')
+#             if autofix == 'Y':
+#                 with open(settings_path+'local_settings.py', 'a') as output:
+#                     output.write('\n\n# --- NEW SETTINGS ADDED AUTOMATICALLY ---\n')
+#                     for s in settings_to_write:
+#                         output.write(s)
+#                 print green('The missing settings were added.\nPlease check the local_settings.py module to make any necessary changes.')
 
-        if not latest_settings:
-            print green('Settings OK.'),
-            return 1 # flag for the main task
-        else:
-            print red('Some errors were encountered:')
-            print red('The following settings couldn\'t be found in your local_settings.py module:')
-            settings_to_write = list()
-            for s in latest_settings:
-                with open(settings_path+'local_settings.py.example', 'r') as template:
-                    block = 0
-                    for line in template.readlines():
-                        if s in line or block > 0:
-                            settings_to_write.append(line)
-                            if '{' in line: block += 1
-                            if '}' in line: block -= 1
-                print '\t'+red(s)
+#             else:
+#                 print red('Please edit the local_settings.py module manually so that it contains the settings above.')
+#             return 0 # flag for the main task
 
-            autofix = prompt(red('Would you like to add defaults for the missing settings? [Y/n]: '),\
-                             default='n', validate='[Y,n]')
-            if autofix == 'Y':
-                with open(settings_path+'local_settings.py', 'a') as output:
-                    output.write('\n\n# --- NEW SETTINGS ADDED AUTOMATICALLY ---\n')
-                    for s in settings_to_write:
-                        output.write(s)
-                print green('The missing settings were added.\nPlease check the local_settings.py module to make any necessary changes.')
+#     def _check_for_roles_ids(self, settings_path, unattended=False):
+#         # returns 1 if everything went OK, 0 otherwise
+#         return 1
+#         # if not hasattr(settings, 'INTERNAL_ROLES_IDS'):
+#         #     print red("INTERNAL_ROLES_IDS attribute could not be found. Please make sure you have completely installed Keystone before running this check.")
+#         #     return 0
 
-            else:
-                print red('Please edit the local_settings.py module manually so that it contains the settings above.')
-            return 0 # flag for the main task
+#         # with open(settings_path+'local_settings.py', 'r') as local_settings:
+#         #     error = False
+#         #     for line in local_settings.readlines():
+#         #         if 'FIWARE_PURCHASER_ROLE_ID' in line and\
+#         #         settings.INTERNAL_ROLES_IDS['purchaser'] not in line:
+#         #             error = True
+#         #         elif 'FIWARE_PROVIDER_ROLE_ID' in line and\
+#         #         settings.INTERNAL_ROLES_IDS['provider'] not in line:
+#         #             error = True
+#         #             break
+#         # if not error:
+#         #     print green('Role IDs OK.')
+#         #     return 1
+#         # else:
+#         #     if unattended:
+#         #         autofix = 'Y'
+#         #     else: 
+#         #         autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
+#         #     if autofix == 'Y':
+#         #         with open(settings_path+'local_settings.py', 'r+') as settings_file:
+#         #             lines = settings_file.readlines()
+#         #             settings_file.seek(0)
+#         #             settings_file.truncate()
+#         #             for line in lines:
+#         #                 if 'FIWARE_PURCHASER_ROLE_ID' in line:
+#         #                     line = 'FIWARE_PURCHASER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['purchaser']+'\'\n'
+#         #                 if 'FIWARE_PROVIDER_ROLE_ID' in line:
+#         #                     line = 'FIWARE_PROVIDER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['provider']+'\'\n'
+#         #                 settings_file.write(line)
+#         #         print green('Role IDs automatically fixed.')
+#         #     return 0
 
-    def _check_for_roles_ids(self, settings_path, unattended=False):
-        # returns 1 if everything went OK, 0 otherwise
-        return 1
-        # if not hasattr(settings, 'INTERNAL_ROLES_IDS'):
-        #     print red("INTERNAL_ROLES_IDS attribute could not be found. Please make sure you have completely installed Keystone before running this check.")
-        #     return 0
-
-        # with open(settings_path+'local_settings.py', 'r') as local_settings:
-        #     error = False
-        #     for line in local_settings.readlines():
-        #         if 'FIWARE_PURCHASER_ROLE_ID' in line and\
-        #         settings.INTERNAL_ROLES_IDS['purchaser'] not in line:
-        #             error = True
-        #         elif 'FIWARE_PROVIDER_ROLE_ID' in line and\
-        #         settings.INTERNAL_ROLES_IDS['provider'] not in line:
-        #             error = True
-        #             break
-        # if not error:
-        #     print green('Role IDs OK.')
-        #     return 1
-        # else:
-        #     if unattended:
-        #         autofix = 'Y'
-        #     else: 
-        #         autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
-        #     if autofix == 'Y':
-        #         with open(settings_path+'local_settings.py', 'r+') as settings_file:
-        #             lines = settings_file.readlines()
-        #             settings_file.seek(0)
-        #             settings_file.truncate()
-        #             for line in lines:
-        #                 if 'FIWARE_PURCHASER_ROLE_ID' in line:
-        #                     line = 'FIWARE_PURCHASER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['purchaser']+'\'\n'
-        #                 if 'FIWARE_PROVIDER_ROLE_ID' in line:
-        #                     line = 'FIWARE_PROVIDER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['provider']+'\'\n'
-        #                 settings_file.write(line)
-        #         print green('Role IDs automatically fixed.')
-        #     return 0
-
-instance = CheckTask()
+# instance = CheckTask()

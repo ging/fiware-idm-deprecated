@@ -1,0 +1,286 @@
+CHANGES
+=======
+
+* Completely removed conf folder and settings
+* move example files to docs
+* remove old tasks
+* Added apib
+* Removed api_spec from extras
+* Fixed links
+* Added HTML API
+* default from email setting documented
+* email url setting documented
+* Removed unnecessary db_sync
+* Improve settings parsing in checking task
+* Refactored chef dir
+* added tweak helper
+* fix link to old Keystone version
+* fix link to apache set up in production guide
+* Update idm-verification.sh
+* Update horizon_idm.conf
+* Fixing installation script
+* Fixing installation script
+* Fixing installation script
+* Fixing installation script
+* Fix verification script
+* Improved installation script
+* Improved installation script
+* Improved installation script
+* Installation tasks updated
+* Improved installation script
+* Improved verification script
+* Improved installation script
+* Improved installation script
+* Update README.rst
+* Warnings added to check task
+* Check task fixed
+* Updated config to install KeyRock 4.4.1
+* update to version
+* FIX: wrong docker image name
+* Updated README
+* Updated README
+* Updated README
+* Check task added to README
+* updated version number in doc/conf.py
+
+v4.4.1
+------
+
+* More docs fixings to use rst
+* Increase depth in toctree
+* change readme to rst format
+* Documentation fixing to better support rst
+* fix Docker Hub link to image
+* Update docker docs until docker-compose support is implemented
+* change to use rst in all docs
+* add index.rst for better side bar
+* Fix typos in docs
+* RTD theme in local too
+* RTD theme
+* sphinx support
+* sphinx support
+* chef cookbook update
+* chef cookbook update
+* Verification script changed
+* Installation script updated
+* Intallation and verification scripts working
+* Installation script updated
+
+v4.4.0
+------
+
+* added version support
+* fix symlink >.<
+* Begin writing installation script
+* Bug fixed
+* Remover old chef
+* Remover old chef
+* chef cookbook docker compatibility
+* Chef recipes
+* Docs updated to include update task
+* chef cookbook docker compatibility
+* Refactored chef recipes
+* fix symlink
+* fix symlink
+* fix readthedocs index page
+* chef cookbook
+* minor fix
+* Perform check task after install task
+* CheckTask calls and other minor performance issues fixed
+* Update and check tasks working
+* updated README.md
+* 0.0.0.0 as default address for Horizon to listen
+* Auto fix settings with more than one line
+* Auto fix missing settings and ngs and other minor fixes
+* Flags to the new fab tasks added
+* entrypoint
+* Docker file
+* added -y option to apt-get install
+* added -y option to apt-get install
+* Refactored extras folder
+* Basic update and check tasks created
+* fix links :(
+* fix links
+* documentation fixes
+* documentation fixes
+* updated docs
+* added all grant types for OAuth
+* fixed conflicts
+* fixed links in developer docs
+* fixed links in developer docs
+* developers guide update with Horizon settings
+* developers guide
+* update admin guide
+* deleted duplicated dependecy
+* improvements in docs
+* Updated readme
+* Updated readme
+* Updated readme
+* Updated readme
+* Updated fi-ware to fiware
+* Updated docker hub link
+* Docker
+* Link to source code
+* Link to read the docs
+* Fixed images in docs
+* TOCs in docs
+* TOCs in docs
+* relative links in docs
+* Update README.md
+* Update README.md
+* Images in user guide
+* user_guide improvements
+* user_guide
+* admin guide fixes
+* admin guide
+* Updating docs
+* Updating docs
+* Refactoring docs
+* oauth2
+* Update README.md
+* Update README.md
+* Docs
+* Readme template as FIWARE guidelines
+* Readme template as FIWARE guidelines
+* Update README.md
+* renamed controller to keystone
+* removed support for remote host task execution
+* added interactive keystone console
+* only print service id
+* added print confirmation on endpoint creation
+* removed redundant done!
+* cleanup
+* added custom template delimiter
+* fixed bug with paths
+* sync some settings between fab and horizon
+* added a module doctstring to explain migration tasks module
+* removed mysql database support for now
+* removed mysql database support for now
+* removed mysql database support for now
+* renamed service tasks
+* integrated service catalog with settings
+* use master branch of the modified keystonelcient
+* clean up and simplification
+* Update README.md
+* Update README.md
+* Update README.md
+* merge
+* fix conflicts
+* fix typo
+* set username task
+* fix conflicts
+* default project to admins
+* create endpoints and regions
+* delete regions and endpoints task
+* fixed typo
+* better error handling
+* all regions to all users
+* deleted categories
+* user_id
+* new categories
+* user categories in migration
+* updated permission name
+* services en migration
+* added catalog to gitignore
+* creating endpoint filters for regions and identity
+* bug fixing
+* creating services and endpoitns from catalog setting
+* identity region setting0
+* added endpoint filter extension
+* Update README.md
+* style fixes, added default to basic, trial and community roles
+* default cloud roles
+* added basic and community roles
+* added new settings
+* trial user role
+* support for different domain
+* default fiware apps in test_data
+* new permission, user names with random leters in test data for filtering
+* fixed bug in service_create
+* fixed missing self args
+* mysql dependecy
+* TODOs
+* example settings, remote directory checking
+* settings out of vcs to protect sensible cpnfigurations
+* added user to server string
+* cp conf file before installing venv
+* removed trace
+* fixed missing blank space
+* improvements, fixes, updates
+* reworked instalation task
+* settings for each project and database separated
+* improved markdown and syntax
+* fixed link in readme
+* removed unused setting
+* added fabric and keysotneclient as dependencies
+* update imports for new structure
+* rewroking project structure
+* updated readme
+* refactor for better practices
+* refactoring to use new style tasks, work in progress
+* enhancements
+* Added roles and perm ids
+* refactorized populat for better code reuse
+* using owner
+* owner role
+* better use of config parser
+* passing port to endpoint creatin
+* fixed import bug
+* migration populate
+* added an empty description to idm app
+* fixed typos and mistakes
+* fixed typos
+* reorganized scripts
+* update
+* removed unused code, updated idm config
+* added username to idm user
+* removed pdb
+* test data updated with email as name
+* changes idm_id, provider_role and purchaser_role in local_settings
+* user name is email
+* added print statements until fabric propperly configures horizon
+* make idm user administrator
+* fixed typo in keystone initial data
+* added default to idm application
+* removed fiwareclient in requirements.txt editing
+* Checks dependencies
+* updated fabric to new changes in api
+* removed pdb trace
+* installing fiwareclient as local dependency
+* fixed typo
+* style fixes
+* added provider role to user0 in his app
+* give admin role to test user in his test organization
+* test data
+* added checkout to development branch if dev installation falg is set
+* test data
+* removed service from keystone dev deploy
+* reworked fiwareclient dependecy, deployment and project structure
+* fiwareclient as project and not a submodule
+* removed old .gitmodule file
+* removed fiwareclient as a submodule
+* reworked the addresses to not use environment variables
+* using the fiwareclient locally
+* added fiwareclient as a dependecy
+* added some feedback during database init
+* service conf file. TODO:user and path as params!!
+* link roles with permissions
+* added a default member role
+* refactor internal roles and permissions
+* refractor service creation
+* added internal interface to identity, fixed admin urls for all endpoints
+* changed % to $ to conform to the service templated backend syntax
+* fixed path in database_delete
+* fixed typo in default path
+* path as parameter
+* added fabric link in readme
+* better use of the path constants, updated keystone_restart to use the new names
+* rewrite to use constants for default paths
+* added license
+* update to the new spec
+* respec
+* fixed typo
+* IdM dir created
+* added fabfile.py
+* Update README.md
+* Initial commit
