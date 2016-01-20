@@ -13,8 +13,6 @@
 # under the License.
 
 
-from fabric.api import task
-from conf import settings
 from fabric.operations import prompt
 from fabric.colors import red, green, yellow
 from fabric.tasks import Task
@@ -24,7 +22,7 @@ class CheckTask(Task):
     """Run several checks in the Front-end settings file."""
     name = "check"
 
-    def run(self, horizon_path=settings.HORIZON_ROOT, warnings=False, unattended=False):
+    def run(self, horizon_path, warnings=False, unattended=False):
         #   returns 1 if everything went OK, 0 otherwise
         print 'Checking Horizon... ',
         check1 = self._check_for_new_settings(horizon_path + 'openstack_dashboard/local/', warnings)
@@ -101,41 +99,41 @@ class CheckTask(Task):
 
     def _check_for_roles_ids(self, settings_path, unattended=False):
         # returns 1 if everything went OK, 0 otherwise
+        return 1
+        # if not hasattr(settings, 'INTERNAL_ROLES_IDS'):
+        #     print red("INTERNAL_ROLES_IDS attribute could not be found. Please make sure you have completely installed Keystone before running this check.")
+        #     return 0
 
-        if not hasattr(settings, 'INTERNAL_ROLES_IDS'):
-            print red("INTERNAL_ROLES_IDS attribute could not be found. Please make sure you have completely installed Keystone before running this check.")
-            return 0
-
-        with open(settings_path+'local_settings.py', 'r') as local_settings:
-            error = False
-            for line in local_settings.readlines():
-                if 'FIWARE_PURCHASER_ROLE_ID' in line and\
-                settings.INTERNAL_ROLES_IDS['purchaser'] not in line:
-                    error = True
-                elif 'FIWARE_PROVIDER_ROLE_ID' in line and\
-                settings.INTERNAL_ROLES_IDS['provider'] not in line:
-                    error = True
-                    break
-        if not error:
-            print green('Role IDs OK.')
-            return 1
-        else:
-            if unattended:
-                autofix = 'Y'
-            else: 
-                autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
-            if autofix == 'Y':
-                with open(settings_path+'local_settings.py', 'r+') as settings_file:
-                    lines = settings_file.readlines()
-                    settings_file.seek(0)
-                    settings_file.truncate()
-                    for line in lines:
-                        if 'FIWARE_PURCHASER_ROLE_ID' in line:
-                            line = 'FIWARE_PURCHASER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['purchaser']+'\'\n'
-                        if 'FIWARE_PROVIDER_ROLE_ID' in line:
-                            line = 'FIWARE_PROVIDER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['provider']+'\'\n'
-                        settings_file.write(line)
-                print green('Role IDs automatically fixed.')
-            return 0
+        # with open(settings_path+'local_settings.py', 'r') as local_settings:
+        #     error = False
+        #     for line in local_settings.readlines():
+        #         if 'FIWARE_PURCHASER_ROLE_ID' in line and\
+        #         settings.INTERNAL_ROLES_IDS['purchaser'] not in line:
+        #             error = True
+        #         elif 'FIWARE_PROVIDER_ROLE_ID' in line and\
+        #         settings.INTERNAL_ROLES_IDS['provider'] not in line:
+        #             error = True
+        #             break
+        # if not error:
+        #     print green('Role IDs OK.')
+        #     return 1
+        # else:
+        #     if unattended:
+        #         autofix = 'Y'
+        #     else: 
+        #         autofix = prompt(red('Would you like to add the internal roles\' IDs to the local_settings.py module? [Y/n]: '), default='n', validate='[Y,n]')
+        #     if autofix == 'Y':
+        #         with open(settings_path+'local_settings.py', 'r+') as settings_file:
+        #             lines = settings_file.readlines()
+        #             settings_file.seek(0)
+        #             settings_file.truncate()
+        #             for line in lines:
+        #                 if 'FIWARE_PURCHASER_ROLE_ID' in line:
+        #                     line = 'FIWARE_PURCHASER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['purchaser']+'\'\n'
+        #                 if 'FIWARE_PROVIDER_ROLE_ID' in line:
+        #                     line = 'FIWARE_PROVIDER_ROLE_ID = \''+settings.INTERNAL_ROLES_IDS['provider']+'\'\n'
+        #                 settings_file.write(line)
+        #         print green('Role IDs automatically fixed.')
+        #     return 0
 
 instance = CheckTask()

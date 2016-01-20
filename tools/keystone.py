@@ -12,14 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import ConfigParser
 import json
 import os
 import code
 import readline
 import rlcompleter
-
-from conf import settings
 
 from keystoneclient.v3 import client
 
@@ -28,9 +25,26 @@ from fabric.operations import prompt
 from fabric.colors import red, green
 
 
+def _admin_token_connection():
+    """Connect to keystone using the ADMIN_TOKEN.
+    Returns a keystoneclient object.
+    """
+    token = os.environ.get('OS_SERVICE_TOKEN')
+    api_version = os.environ.get('OS_IDENTITY_API_VERSION')
+    identity_service_endpoint = os.environ.get('OS_SERVICE_ENDPOINT')
+
+    endpoint = 'http://{address}/{api_version}'.format(
+        address=identity_service_endpoint,
+        api_version=api_version)
+
+    keystone = client.Client(token=token, endpoint=endpoint)
+
+    return keystone
+
+
 @task
 def console():
-    """Opens an interactive python console with a connection to Keystone using 
+    """Opens an interactive python console with a connection to Keystone using
     the ADMIN_TOKEN.
     """
     keystone = _admin_token_connection()
@@ -43,7 +57,7 @@ def console():
     shell.interact()
 
 @task
-def check(keystone_path=settings.KEYSTONE_ROOT):
+def check(keystone_path):
     """Check for missing settings in the settings file."""
     # returns 1 if everything went OK, 0 otherwise
     
@@ -82,7 +96,7 @@ def _parse_setting(setting):
             return setting[0:setting.find('=')]
 
 @task
-def database_tweak(keystone_address, keystone_port, common_password='test'):
+def database_tweak(idm_user, idm_password, common_password='test'):
     """Tweaks the database setting the same password for all users
      and the keystone endpoints to localhost. Handy for development or
      local testing with a production database backup. NEVER USE IN
@@ -111,8 +125,8 @@ def database_tweak(keystone_address, keystone_port, common_password='test'):
         keystone.users.update(user, password=common_password)
 
     print 'Set the idm user password to the configured one'
-    idm = keystone.users.find(name=settings.IDM_USER_CREDENTIALS['username'])
-    keystone.users.update(idm, password=settings.IDM_USER_CREDENTIALS['password'])
+    idm = keystone.users.find(name=idm_user)
+    keystone.users.update(idm, password=idm_password)
 
     print 'tweak the identity service endpoints to point to a development keystone'
     identity_service = next(s for s in keystone.services.list() if s.type == 'identity')
@@ -123,10 +137,9 @@ def database_tweak(keystone_address, keystone_port, common_password='test'):
     for endpoint in identity_endpoints:
         keystone.endpoints.update(
             endpoint,
-            url=('http://{ip}:{port}/v3').format(
-                ip=keystone_address,
-                port=keystone_port
-            )
+            url=('http://{address}/{api_version}'.format(
+                address=os.environ.get('OS_SERVICE_ENDPOINT'),
+                api_version=os.environ.get('OS_IDENTITY_API_VERSION')))
         )
 
     print 'Tweak Succesfull'
@@ -212,125 +225,3 @@ def create_new_endpoints(endpoints_file):
                 filters={
                     'region_id': region
                 })
-
-def _admin_token_connection():
-    admin_port = settings.KEYSTONE_ADMIN_PORT
-    token = settings.KEYSTONE_ADMIN_TOKEN
-
-    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
-                                              port=admin_port)
-    keystone = client.Client(token=token, endpoint=endpoint)
-
-    return keystone
-
-
-def _register_user(keystone, name, activate=True):
-    email = name + '@test.com'
-    user = keystone.user_registration.users.register_user(
-        name=email,
-        password='test',
-        username=name,
-        domain=settings.KEYSTONE_DEFAULT_DOMAIN)
-    if activate:
-        user = keystone.user_registration.users.activate_user(
-            user=user.id,
-            activation_key=user.activation_key)
-    return user
-
-@task
-def test_data(keystone_path=settings.KEYSTONE_ROOT):
-    """Populate the database with some users, organizations and applications
-    for convenience"""
-
-    # Log as idm
-    config = ConfigParser.ConfigParser()
-    config.read(keystone_path + 'etc/keystone.conf')
-    admin_port = config.get('DEFAULT', 'admin_port')
-    endpoint = 'http://{ip}:{port}/v3'.format(ip='127.0.0.1',
-                                              port=admin_port)
-    keystone = client.Client(
-        username=settings.IDM_USER_CREDENTIALS['username'],
-        password=settings.IDM_USER_CREDENTIALS['password'],
-        project_name=settings.IDM_USER_CREDENTIALS['project'],
-        auth_url=endpoint)
-
-    # Create some default apps to test
-    for app_name in settings.FIWARE_DEFAULT_APPS:
-        app = keystone.oauth2.consumers.create(
-            app_name,
-            description='Default app in FIWARE',
-            grant_type='authorization_code',
-            client_type='confidential')
-        # Create default roles
-        for role_name in settings.FIWARE_DEFAULT_APPS[app_name]:
-            keystone.fiware_roles.roles.create(
-                name=role_name,
-                is_internal=False,
-                application=app.id)
-
-    owner_role = keystone.roles.find(name='owner')
-
-    # Create 4 users
-    users = []
-    for i in range(10):
-        username = 'user'
-        users.append(_register_user(keystone, username + str(i)))
-
-    # Log as user0
-    user0 = users[0]
-
-    # Create 1 organization for user0 and give him owner role in it
-    test_org = keystone.projects.create(
-        name='Test Organization',
-        description='Testing data',
-        domain=settings.KEYSTONE_DEFAULT_DOMAIN,
-        enabled=True,
-        img='/static/dashboard/img/logos/small/group.png',
-        city='',
-        email='',
-        website='')
-    keystone.roles.grant(user=user0.id,
-                         role=owner_role.id,
-                         project=test_org.id)
-
-    # Create 1 application for user0 and give him the provider role
-    test_app = keystone.oauth2.consumers.create(
-        name='Test Application',
-        redirect_uris=['localhost/login'],
-        description='Test data',
-        scopes=['all_info'],
-        client_type='confidential',
-        grant_type='authorization_code',
-        url='localhost',
-        img='/static/dashboard/img/logos/small/app.png')
-    provider_role = next(r for r
-                         in keystone.fiware_roles.roles.list()
-                         if r.name == 'provider')
-
-    keystone.fiware_roles.roles.add_to_user(
-        role=provider_role.id,
-        user=user0.id,
-        application=test_app.id,
-        organization=user0.default_project_id)
-
-    # Create a role for the application
-    test_role = keystone.fiware_roles.roles.create(
-        name='Test role',
-        is_internal=False,
-        application=test_app.id)
-
-    # Give it the permission to get and assign only the owned roles
-    internal_permission_owned = next(
-        p for p in keystone.fiware_roles.permissions.list()
-        if p.name == settings.INTERNAL_PERMISSIONS[4])
-    keystone.fiware_roles.permissions.add_to_role(
-        role=test_role,
-        permission=internal_permission_owned)
-
-    # And assign the role to user1
-    user1 = users[1]
-    keystone.fiware_roles.roles.add_to_user(
-        role=test_role.id,
-        user=user1.id,
-        application=test_app.id,
-        organization=user1.default_project_id)

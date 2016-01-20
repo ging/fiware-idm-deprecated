@@ -14,7 +14,6 @@
 
 from tools import keystone
 from tools import horizon
-from conf import settings
 
 from fabric.api import task
 from fabric.operations import prompt
