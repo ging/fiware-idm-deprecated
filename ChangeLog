@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* Final conversion from task to commands for delete region and create endpoints
 * move from fabric to cli
 * Completely removed conf folder and settings
 * move example files to docs
