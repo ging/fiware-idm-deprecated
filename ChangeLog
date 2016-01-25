@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* move from fabric to cli
 * Completely removed conf folder and settings
 * move example files to docs
 * remove old tasks

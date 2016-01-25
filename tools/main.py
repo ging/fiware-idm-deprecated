@@ -9,11 +9,10 @@ class IdmToolsApp(App):
     def __init__(self):
         super(IdmToolsApp, self).__init__(
             description='Some tools to help with common tasks using FIWARE IdM Keyrock',
-
-            version='0.1',
+            version='5.1',
             command_manager=CommandManager('idmadmin.tools'),
             deferred_help=True,
-            )
+        )
 
 
 def main(argv=sys.argv[1:]):

@@ -56,6 +56,103 @@ class Console(Command):
         shell = code.InteractiveConsole(vars)
         shell.interact()
 
+class DeleteRegionAndEndpoints(Command):
+    """Deletes a region and all its associated endpoints and endpoint_groups."""
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(DeleteRegionAndEndpoints, self).get_parser(prog_name)
+        parser.add_argument('region', metavar='region', type=str, nargs='?',
+                   help='the region id')
+        return parser
+
+    def take_action(self, parsed_args):
+        keystone = _admin_token_connection()
+        region = parsed_args.region
+
+        # check region exists
+        keystone.regions.get(region)
+
+        # delete all region endpoints
+        for endpoint in keystone.endpoints.list():
+            if endpoint.region == region:
+                keystone.endpoints.delete(endpoint)
+
+        # delete all endpoint groups that filter for region
+        for endpoint_group in keystone.endpoint_groups.list():
+            if endpoint_group.filters.get('region_id', None) == region:
+                keystone.endpoint_groups.delete(endpoint_group)
+
+        # delete region
+        keystone.regions.delete(region)
+
+class CreateNewEndpoints(Command):
+    """Reads a a json file with a Keystone catalog sintax and creates all the endpoints in it,
+    adding an endpoint group filter for each region if there is not one created already.
+
+    The service associated with the endpoints must be already created.
+    """
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(CreateNewEndpoints, self).get_parser(prog_name)
+        parser.add_argument('filename', nargs='?', default='endpoints.json')
+        return parser
+
+    def take_action(self, parsed_args):
+        f = open(parsed_args.filename)
+        catalog = json.load(f)
+
+        keystone = _admin_token_connection()
+
+        endpoint_groups = keystone.endpoint_groups.list()
+        services = keystone.services.list()
+
+        regions = set()
+        for service_data in catalog:
+            service = next((s for s in services if s.type == service_data['type']), None)
+
+            if not service:
+                print ('Service {0} type {1} is not created,'
+                       ' skipping these endpoints').format(service_data['name'],
+                                                           service_data['type'])
+                continue
+
+            for endpoint in service_data['endpoints']:
+                interfaces = [
+                    ('public', endpoint['publicURL']),
+                    ('admin', endpoint['adminURL']),
+                    ('internal', endpoint['internalURL']),
+                ]
+                for interface, url in interfaces:
+                    keystone.endpoints.create(
+                        region=endpoint['region'],
+                        service=service,
+                        url=url,
+                        interface=interface)
+                    print 'Created {0} for service {1} and region {2}'.format(
+                        url, service.id, endpoint['region'])
+
+                regions.add(endpoint['region'])
+
+        # create endpoint group for region if it doesnt exists
+        for region in regions:
+
+            endpoint_group_for_region = [
+                eg for eg in endpoint_groups
+                if eg.filters.get('region_id', None) == region
+            ]
+
+            if not endpoint_group_for_region:
+                print 'Creating endpoint_group for region {0}'.format(region)
+                keystone.endpoint_groups.create(
+                    name=region + ' Region Group',
+                    filters={
+                        'region_id': region
+                    })
+
 
 # def check(keystone_path):
 #     """Check for missing settings in the settings file."""
@@ -142,83 +239,3 @@ class Console(Command):
 #         )
 
 #     print 'Tweak Succesfull'
-
-
-def delete_region_and_endpoints(region):
-    """Deletes a region and all its associated endpoints and endpoint_groups."""
-    keystone = _admin_token_connection()
-
-    # check region exists
-    keystone.regions.get(region)
-
-    # delete all region endpoints
-    for endpoint in keystone.endpoints.list():
-        if endpoint.region == region:
-            keystone.endpoints.delete(endpoint)
-
-    # delete all endpoint groups that filter for region
-    for endpoint_group in keystone.endpoint_groups.list():
-        if endpoint_group.filters.get('region_id', None) == region:
-            keystone.endpoint_groups.delete(endpoint_group)
-
-    # delete region
-    keystone.regions.delete(region)
-
-def create_new_endpoints(endpoints_file):
-    """Creates all the endpoints in a json file, adding an endpoint group
-    filter for each region (if there is not currently one created). The service
-    must be already created.
-    """
-    __location__ = os.path.realpath(
-        os.path.join(os.getcwd(), os.path.dirname(__file__)))
-
-    f = open(os.path.join(__location__, endpoints_file))
-    catalog = json.load(f)
-
-    keystone = _admin_token_connection()
-
-    endpoint_groups = keystone.endpoint_groups.list()
-    services = keystone.services.list()
-
-    regions = set()
-    for service_data in catalog:
-        service = next((s for s in services if s.type == service_data['type']), None)
-
-        if not service:
-            print ('Service {0} type {1} is not created,'
-                   ' skipping these endpoints').format(service_data['name'],
-                                                       service_data['type'])
-            continue
-
-        for endpoint in service_data['endpoints']:
-            interfaces = [
-                ('public', endpoint['publicURL']),
-                ('admin', endpoint['adminURL']),
-                ('internal', endpoint['internalURL']),
-            ]
-            for interface, url in interfaces:
-                keystone.endpoints.create(
-                    region=endpoint['region'],
-                    service=service,
-                    url=url,
-                    interface=interface)
-                print 'Created {0} for service {1} and region {2}'.format(
-                    url, service.id, endpoint['region'])
-
-            regions.add(endpoint['region'])
-
-    # create endpoint group for region if it doesnt exists
-    for region in regions:
-
-        endpoint_group_for_region = [
-            eg for eg in endpoint_groups
-            if eg.filters.get('region_id', None) == region
-        ]
-
-        if not endpoint_group_for_region:
-            print 'Creating endpoint_group for region {0}'.format(region)
-            keystone.endpoint_groups.create(
-                name=region + ' Region Group',
-                filters={
-                    'region_id': region
-                })
