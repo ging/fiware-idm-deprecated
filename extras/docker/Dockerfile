@@ -4,50 +4,49 @@ MAINTAINER FIWARE Indentity Manager Team. DIT-UPM
 
 WORKDIR /opt
 
-# fix source
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
 # Install Ubuntu dependencies
 RUN sudo apt-get update && \
-    sudo apt-get install -y wget python python-dev git && \
+    sudo apt-get install -y wget python git vim expect && \
     wget https://bootstrap.pypa.io/get-pip.py && \
-    python get-pip.py
+    sudo python get-pip.py
 
-# Install virtualenvwrapper
-RUN pip install virtualenvwrapper && \
-    export WORKON_HOME=~/venvs && \
-    mkdir -p $WORKON_HOME
+# Install Ubuntu project dependencies
+RUN sudo apt-get install -y python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev libxml2-dev libxslt1-dev libsasl2-dev libssl-dev libldap2-dev libffi-dev libsqlite3-dev libmysqlclient-dev python-mysqldb
 
 # Download latest version of the code 
-RUN git clone https://github.com/ging/fiware-idm idm && \
-    cd idm && \
-    cp conf/settings.py.example conf/settings.py
+RUN git clone -b development https://github.com/ging/keystone && \
+    git clone -b development https://github.com/ging/horizon
 
-WORKDIR /opt/idm
+# Configuring settings files
+RUN cp keystone/etc/keystone.conf.sample keystone/etc/keystone.conf && \
+    cp horizon/openstack_dashboard/local/local_settings.py.example horizon/openstack_dashboard/local/local_settings.py && \
+    sed -i s/\$\$IDM_PASS/idm/g horizon/openstack_dashboard/local/local_settings.py
 
 # Install python dependecies
-RUN source /usr/local/bin/virtualenvwrapper.sh && \
-    mkvirtualenv idm_tools && \
-    pip install -r requirements.txt
+RUN sudo python keystone/tools/install_venv.py && \
+    sudo python horizon/tools/install_venv.py
 
-# Install Keystone back-end
-RUN source /usr/local/bin/virtualenvwrapper.sh && \
-    workon idm_tools && \
-    fab keystone.install
+# Sync database
+RUN sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync && \
+    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=endpoint_filter && \
+    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=oauth2 && \
+    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=roles && \
+    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=user_registration && \
+    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=two_factor_auth
 
-# Install Horizon front-end
-RUN source /usr/local/bin/virtualenvwrapper.sh && \
-    workon idm_tools && \
-    fab horizon.install
+# Prepare to set up idm password
+COPY expect_idm_password .
+RUN chmod +x expect_idm_password
 
-
-# Run IdM
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod 755 /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Mount volumes to grant access from host
+VOLUME /opt/keystone/
+VOLUME /opt/horizon/
 
 ### Exposed ports
 # - Keystone
 EXPOSE 5000
 # - Horizon (HTTP)
 EXPOSE 8000
+
+CMD sudo ./expect_idm_password && \
+    sudo keystone/tools/with_venv.sh keystone/bin/keystone-all -v & sudo horizon/tools/with_venv.sh python horizon/manage.py runserver 0.0.0.0:8000
