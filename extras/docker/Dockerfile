@@ -2,7 +2,7 @@ FROM ubuntu:14.04
 
 MAINTAINER FIWARE Indentity Manager Team. DIT-UPM
 
-WORKDIR /opt
+ENV HOME=/
 
 # Install Ubuntu dependencies
 RUN sudo apt-get update && \
@@ -39,8 +39,8 @@ COPY expect_idm_password .
 RUN chmod +x expect_idm_password
 
 # Mount volumes to grant access from host
-VOLUME /opt/keystone/
-VOLUME /opt/horizon/
+VOLUME /keystone/
+VOLUME /horizon/
 
 ### Exposed ports
 # - Keystone
