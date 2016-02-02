@@ -36,7 +36,8 @@ RUN sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync && \
 
 # Prepare to set up idm password
 COPY expect_idm_password .
-RUN chmod +x expect_idm_password
+RUN chmod +x expect_idm_password && \
+    sudo ./expect_idm_password
 
 # Mount volumes to grant access from host
 VOLUME /keystone/
@@ -48,5 +49,4 @@ EXPOSE 5000
 # - Horizon (HTTP)
 EXPOSE 8000
 
-CMD sudo ./expect_idm_password && \
-    sudo keystone/tools/with_venv.sh keystone/bin/keystone-all -v & sudo horizon/tools/with_venv.sh python horizon/manage.py runserver 0.0.0.0:8000
+CMD sudo keystone/tools/with_venv.sh keystone/bin/keystone-all -v & sudo horizon/tools/with_venv.sh python horizon/manage.py runserver 0.0.0.0:8000
