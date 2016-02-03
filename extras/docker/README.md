@@ -63,11 +63,41 @@ You can also run the container from the [image we provide](https://hub.docker.co
 > If you do not specify a version you are pulling from `latest` by default.
 
 # Default settings included in the Image
-The image includes the following settings as defaults:
+The image includes the following settings as defaults, but you can change any of them by accessing the container (see [this](#volumes)):
 
 | Setting       | Value  |
 |:-------------:|:------:|
 | idm user      | `idm`  |
 | idm password  | `idm`  |
 | Horizon port  | `8000` |
-| Keystone port | `5000` | 
+| Keystone port | `5000` |
+
+# Volumes
+Both `keystone` and `horizon` directories can be accessed through two mounted Docker data volumes. You just need to navigate to the certain mount point, which changes every time the container is created, but can be shown running the following (use the name of your container instead of `idm-container`:
+
+	sudo docker inspect idm-container
+
+The `Mounts` section contains the mount points of the volumes, right after the `Source` key. For example:
+	
+```JSON
+"Mounts": [
+       	{
+       	"Name": "e7bfca8928745b25f1101e97b0e9ec6c43a7e53e101b3817de97106eebc8d504",
+       	"Source": "/var/lib/docker/volumes/e7bfca8928745b25f1101e97b0e9ec6c43a7e53e101b3817de97106eebc8d504/_data",
+        "Destination": "/keystone",
+        "Driver": "local",
+        "Mode": "",
+        "RW": true
+        },
+       	{
+        "Name": "0e3816196a43b14a82bbe922dd1fce7aea8f71640b38b036b51e1869f82c5571",
+        "Source": "/var/lib/docker/volumes/0e3816196a43b14a82bbe922dd1fce7aea8f71640b38b036b51e1869f82c5571/_data",
+        "Destination": "/horizon",
+        "Driver": "local",
+        "Mode": "",
+        "RW": true
+        }
+]
+```
+
+You can learn more about Docker volumes [here](https://docs.docker.com/engine/userguide/dockervolumes/).
