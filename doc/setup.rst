@@ -6,6 +6,7 @@ Production Set Up Guide
    :local:
    :depth: 3
 
+.. _production-guide:
 
 This section covers how to set up the IdM for production, covering
 topics like email sending, No CAPTCHA reCAPTCHA support or how to serve
@@ -62,14 +63,12 @@ keystone database user:
 Populate Database
 -----------------
 
-You need to create the database tables and populate them with the
-initial data. Run the following fabric tasks (remember to activate the
-virtual environment)
+You need to create the database tables and populate them.
 
-::
+.. include:: introduction.rst
+  :start-after: begin-database
+  :end-before: end-database
 
-    fab localhost keystone.database_create
-    fab localhost keystone.populate
 
 You can find aditional help for setting up Keystone + MySQL
 `here <http://docs.openstack.org/juno/install-guide/install/apt/content/keystone-install.html>`__.
@@ -129,6 +128,76 @@ also make sure to create the Alias
       Require all granted
     </Directory>
 
+As reference, here you can see a full Apache configuration file using HTTPS
+
+::
+
+    <IfModule mod_ssl.c>
+    <VirtualHost *:443>
+        ServerName  foo
+        ServerAdmin bar
+
+        WSGIScriptAlias / /home/someone/horizon/openstack_dashboard/wsgi/django.wsgi
+
+        <Directory /home/someone/horizon/openstack_dashboard/wsgi>
+          Order allow,deny
+          Allow from all
+        </Directory>
+
+        Alias /media/ /home/someone/horizon/media/
+        Alias /static/dashboard/fonts /home/someone/horizon/openstack_dashboard/static/dashboard/fonts
+        Alias /static/dashboard/img /home/someone/horizon/openstack_dashboard/static/dashboard/img
+        Alias /static/dashboard/css /home/someone/horizon/static/dashboard/css
+        Alias /static/dashboard/js /home/someone/horizon/static/dashboard/js
+
+        <Directory /path/to/foo/static>
+         Require all granted
+        </Directory>
+
+        <Directory /path/to/foo/media>
+         Require all granted
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel debug
+
+        CustomLog ${APACHE_LOG_DIR}/ssl_access.log combined
+
+        #   SSL Engine Switch:
+        #   Enable/Disable SSL for this virtual host.
+        SSLEngine on
+
+        SSLCertificateFile    /etc/ssl/private/someplace.org/somecert.crt
+        SSLCertificateKeyFile /etc/ssl/private/someplace.org/*.somepem.pem 
+        SSLCertificateChainFile    /etc/ssl/private/someplace.org/chain.crt
+
+        <FilesMatch "\.(cgi|shtml|phtml|php)$">
+            SSLOptions +StdEnvVars
+        </FilesMatch>
+        <Directory /usr/lib/cgi-bin>
+            SSLOptions +StdEnvVars
+        </Directory>
+
+        BrowserMatch "MSIE [2-6]" \
+            nokeepalive ssl-unclean-shutdown \
+            downgrade-1.0 force-response-1.0
+        # MSIE 7 and newer should be able to use keepalive
+        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+    </VirtualHost>
+    </IfModule>
+
+    #rdeirection to the secure version
+    <VirtualHost 0.0.0.0:80>
+        ServerName foo2
+        Redirect permanent / foo
+    </VirtualHost>
+
+
+
 Collect Static Assets
 ---------------------
 
@@ -148,13 +217,30 @@ Edit the local_settings.py file and set
         'your.domain.com',
         'another.domain.es'
     ]
-    SECRET_KEY = 'somethingsecret'
+    SECRET_KEY = 'arandomstringhere' # DON'T LEAVE THIS SAMPLE STRING
+
+.. warning:: Please set your SECRET_KEY. A know SECRET_KEY is a huge security vulnerability.
+More information `here <https://docs.djangoproject.com/en/1.9/ref/settings/#std:setting-SECRET_KEY>`__
 
 NO CAPTCHA reCAPTCHA
 ====================
 
-You can find how to set up the reCAPTCHA field for user registration in
-the :ref:`installation and administration guide <captcha>`
+.. begin-captcha
+
+.. warning:: Don't deploy KeyRock in a public domain with CAPTCHA disabled.
+
+Get your keys
+`here <https://www.google.com/recaptcha/admin#createsite>`__. More
+documentation in `the captcha package
+repository <https://github.com/ImaginaryLandscape/django-nocaptcha-recaptcha>`__.
+
+.. code-block:: python
+
+    USE_CAPTCHA = False
+    NORECAPTCHA_SITE_KEY   = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+    NORECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+
+.. end-captcha
 
 .. _production-email:
 
