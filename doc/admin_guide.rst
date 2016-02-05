@@ -227,7 +227,7 @@ are serveral possibilities. You can try to reuse the scripts provided
 with keystone or you can add a .conf file to **etc/init**. Here is a
 basic example:
 
-Create the following file at: **etc/init/keystone_idm.conf**::
+Create the following file at: **/etc/init/keystone_idm.conf**::
 
     # keystone_idm - keystone_idm job file
      description "Service conf file for the IdM backend based in Keystone"
