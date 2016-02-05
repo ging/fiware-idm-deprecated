@@ -10,63 +10,51 @@ Introduction
 ============
 
 Welcome to the Installation and Administration Guide for the Identity
-Management - KeyRock Generic Enabler. This generic enabler has been
-developed as an Open Source project, therefore this guide points to the
-appropriate online content that has been created for this it.
+Management - KeyRock Generic Enabler. This section will cover how to
+install, configure and administrate a working instance of KeyRock. 
 
-The recommended way of installing the IdM is through the :ref:`installation
-tools <automated-installation>`
-
-In case you would rather install it step by step, you can follow 
-:ref:`this guide <step-installation>`
+If you want to deploy it in a production environment, take a look at 
+the :ref:`Production set up Guide <production-guide>`.
 
 .. include:: introduction.rst
   :start-after: begin-requirements
   :end-before: end-requirements
 
-.. _automated-installation:
-
-Automated Installation (Recommended)
-====================================
-
-.. include:: introduction.rst
-  :start-after: begin-installation
-  :end-before: end-installation
 
 .. _step-installation:
 
 Step by Step Installation
 =========================
 
-Installing Horizon
-------------------
+The IdM is composed of two separated services, that interact with each other. The web portal is
+based on OpenStack's Dashboard, Horizon. The back-end is a REST service based on OpenStack's Identity 
+Provider, Keystone. 
+
+They can be installed both on the same machine (or docker container) or in separated ones. If separated
+machines is the preferred option, make sure there is connectivity between them, as Horizon needs to be
+able to consume Keystone's REST API.
 
 .. note:: 
 
   To be able to log into the IdM, you will need a working
-  Keystone backend. Please complete the steps in this page in order to
+  Keystone backend. Please complete all the steps in this page in order to
   have a complete and working IdM.
 
-1. Install Ubuntu dependencies and repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Installing Horizon
+------------------
 
-Downloading the code and installing the dependencies will create a
-python virtual environment with all the libraries needed. To check for
-more details, the *requirement.txt* file has a list of all the libraries
-needed.::
 
-  $ sudo apt-get update
-  $ sudo apt-get install git python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev
-  $ git clone https://github.com/ging/horizon.git
-  $ cd horizon
-  $ sudo python tools/install_venv.py
+1. Installation
+^^^^^^^^^^^^^^^
 
-Create a basic configuration file.::
+.. include:: introduction.rst
+  :start-after: begin-horizon-installation
+  :end-before: end-horizon-installation
 
-  $ cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py
+.. _horizon-configuration:
 
-2. Configuring Horizon
-^^^^^^^^^^^^^^^^^^^^^^
+2. Configuration
+^^^^^^^^^^^^^^^^
 
 To configure Horizon, the configuration file can be found in
 **openstack_dashboard/local/local_settings.py**. This file holds
@@ -110,22 +98,15 @@ comment it out for no filtering.
 
     EMAIL_LIST_TYPE = 'blacklist'
 
-.. _captcha:
+More info :ref:`here <email-lists>`.
 
 -  noCAPTCHA reCAPTCHA. 
 
-Get your keys
-`here <https://www.google.com/recaptcha/admin#createsite>`__. More
-documentation in `the package
-repository <https://github.com/ImaginaryLandscape/django-nocaptcha-recaptcha>`__.
-
-.. code-block:: python
-
-    USE_CAPTCHA = False
-    NORECAPTCHA_SITE_KEY   = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
-    NORECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-
 .. note:: If you want to disable the captcha, set USE_CAPTCHA to False.
+
+.. include:: setup.rst
+  :start-after: begin-captcha
+  :end-before: end-captcha
 
 -  FIWARE Applications and Roles. 
 
@@ -178,7 +159,7 @@ The settings for all the Django configuration are located at
 **horizon/openstack_dashboard/settings.py**
 
 Here we added some django apps, middleware, etc. You can check the file
-for reference but there is no configuration to be done here.
+for reference but there is no extra configuration needed here.
 
 4. Running a development server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -204,38 +185,18 @@ docs <https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runse
 Installing Keystone
 -------------------
 
-1. Install Ubuntu dependencies and repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Installation
+^^^^^^^^^^^^^^^
 
--  Get the code::
+.. include:: introduction.rst
+  :start-after: begin-keystone-installation
+  :end-before: end-keystone-installation
 
-    $ git clone https://github.com/ging/keystone.git
-    $ cd keystone
 
--  Install the system dependencies.::
+.. _keystone-configuration:
 
-    $ sudo apt-get install python-dev python-virtualenv libxml2-dev libxslt1-dev libsasl2-dev libsqlite3-dev libssl-dev libldap2-dev libffi-dev libmysqlclient-dev python-mysqldb
-
--  Python dependencies::
-
-    $ sudo python tools/install_venv.py
-
--  To verify that this has worked correctly run::
-
-    $ source .venv/bin/activate
-    $ python
-
-  .. code-block:: python
-
-    >>> import keystone
-    >>>
-
--  Create the default configuration file::
-
-    $ cp etc/keysonte.conf.sample etc/keystone.conf
-
-2. Keystone configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^
+2. Configuration
+^^^^^^^^^^^^^^^^
 
 After creating the default configuration file, the following lines must
 be uncommented and set to your custom values.
@@ -246,25 +207,6 @@ be uncommented and set to your custom values.
      admin_port=35357
      public_port=5000
 
-Run the following commands to create the database. By default it will
-create a SQLite database. If you want to use a MySQL database
-(recommended for production) follow the configuration instructions in
-the `production setup
-guide <http://fiware-idm.readthedocs.org/en/latest/setup/>`__::
-
-  $ sudo tools/with_venv.sh bin/keystone-manage db_sync
-
-Create tables for the OAuth2.0 extension::
-
-  $ sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2 
-
-Create tables for the Fiware Roles extension::
-
-  $ sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles
-
-Create tables for the User Registration extension::
-
-  $ sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=user_registration 
 
 3. Run Keystone
 ^^^^^^^^^^^^^^^
@@ -274,26 +216,10 @@ the following command::
 
   $ sudo tools/with_venv.sh bin/keystone-all -v
 
-4. Initial Data
-^^^^^^^^^^^^^^^
 
-For the Identity Manager to work, the database has to be populated with
-some initial data. To populate the database we provide a script in the
-`official KeyRock repository <https://github.com/ging/fiware-idm>`__,
-along with other management tools. For this initial data, use the task
-`keystone.populate <https://github.com/ging/fiware-idm/blob/master/deployment/keystone.py#L243>`__.
-If you don't want to use this tools, you can create all the elements
-throught the API yourself. Please check the `populate
-script <https://github.com/ging/fiware-idm/blob/master/deployment/keystone.py#L245>`__
-for a detailed list of all elements to create.
+.. _keystone-as-service:
 
-.. note::
-  
-  Additionally, there is a task called keystone.test_data that will
-  create some sample data to start using the Identity Manager right away,
-  for demo or test purposes.
-
-5. Configuring Keystone as a service
+4. Configuring Keystone as a service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to ad the keystone to init.d to run it as a service there
@@ -323,7 +249,7 @@ To run keystone, you can now run it with the following command::
 
   $ sudo service keystone_idm start
 
-6. Running tests
+5. Running tests
 ^^^^^^^^^^^^^^^^
 
 In order to test, we use the keystone built in system: **tox** and
@@ -338,10 +264,33 @@ To Execute the extension tests (in this case for oauth2)::
 
 .. note::
   To debug during test, add the following parameter to the command:
-    -e debub
+    -e debug
 
 System Administration
 =====================
+
+CLI tools
+---------
+
+A set of commands is provided to help with some common tasks like updating endpoints and regions, a console to execute python against Keystone API, etc.
+
+To install them
+
+::
+
+  $ git clone https://github.com/ging/fiware-idm imd-admin && cd imd-admin
+  $ sudo pip install -r requirements.txt
+  $ sudo python setup.py install
+
+
+Usage
+
+::
+  
+  $ idm-admin --help
+
+
+.. _email-lists:
 
 White and black lists
 ---------------------

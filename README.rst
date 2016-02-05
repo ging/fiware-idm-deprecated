@@ -1,6 +1,6 @@
-**************************
-Identity Manager - Keyrock
-**************************
+***********************************
+Identity Manager - Keyrock Overview
+***********************************
 
 .. contents::
    :local:
@@ -53,174 +53,138 @@ two machines must be able to communicate to each other through the network.
 How to Build & Install
 ======================
 
-In this repository you can find a set of tools to help in developing,
-deploying and testing FIWARE's IdM KeyRock using
-`Fabric <http://www.fabfile.org/>`__. This is the recomended way to
-install the IdM but if you rather install it step by step on your own,
-please head to the advanced documentation.
-
 The IdM is made out of two components, the web-based front-end and the
-restful back-end. You can check specific documentation in their repos.
+restful back-end. You can check specific documentation in their respective repositories.
 
-.. begin-installation
-
-.. _tools-installation:
-
-Tools installation
-------------------
-
-For the instructions on how to install the IdM using the tools scroll
-down to the next section. This section covers the tools installation.
-
-Install python and python-dev
-::
-
-  sudo apt-get install python python-dev
-
-Clone the tools in your machine
-
-::
-
-    git clone https://github.com/ging/fiware-idm idm && cd idm
-
-Create a settings file from the template
-
-::
-
-    cp conf/settings.py.example conf/settings.py
-
-Install `virtualenvwrapper <https://virtualenvwrapper.readthedocs.org/en/latest/index.html>`__
-following the instructions at their page.
-
-Create a virtualenv and activate it
-
-::
-
-    mkvirtualenv idm_tools
-
-Install python dependencies
-
-::
-
-    pip install -r requirements.txt
-
-Tools Usage
------------
-
-To see all available commands use
-
-::
-
-    fab --list
-
-With the virtualenv activated (use
-`workon <https://virtualenvwrapper.readthedocs.org/en/latest/command_ref.html?highlight=workon>`__)
-you can run the commands using fab task_name. For example:
-
-::
-
-    fab keystone.populate
-
-Some tasks accept arguments that override the defaults from
-conf/settings.py. It is recommended to use settings.py to configure the
-tasks but you can use this arguments in a per-task basis if you find you
-need it. Other tasks might need explicit arguments like the path to a
-file. The way to pass arguments to tasks is simple and documented
-`here <http://docs.fabfile.org/en/1.10/tutorial.html#task-arguments>`__.
-
-For example:
-
-::
-
-    fab keystone.task:one_arg='this',another='that'
-
-Steps to install the IdM using the tools
-----------------------------------------
-
-Configuration
-^^^^^^^^^^^^^
-
-There is a configuration file template in /conf/settings.py.example.
-This provides as a good base configuration file that should be enough
-for a test/development installation. 
-
-Some options you might have to pay attention to are: 
-
-- ``IDM_ROOT``
-
-If the location of the keystone and
-horizon components in your system is not directly inside the folder
-where you have cloned the tools you will have to set this accordingly.
-
-- ``HORIZON_DEV_ADDRESS``
-
-Sets the address and port where the frontend will
-listen to. Default is localhost:8000, you might want to tweak it based
-on your set up.
-
-- ``KEYSTONE_ADMIN_PORT`` and ``KEYSTONE_PUBLIC_PORT``
-
-If you need to use different ports for the keystone back-end
 
 Installing the back-end
-^^^^^^^^^^^^^^^^^^^^^^^
-::
+-----------------------
 
-    fab keystone.install
-    fab keystone.database_create
-    fab keystone.dev_server
+.. begin-keystone-installation
 
-You will need to populate the database with some data needed for the IdM
-to work properly. In another console and keeping the server on run
+Install the dependencies
 
 ::
 
-    fab keystone.populate
+    $ sudo apt-get install python python-dev python-virtualenv libxml2-dev libxslt1-dev libsasl2-dev libssl-dev libldap2-dev libffi-dev libsqlite3-dev libmysqlclient-dev python-mysqldb
 
-You can now log into the web using the administrative account (by
-default user idm pass idm). If you want some more data to play around
-run keystone.test_data. This will create some users and organizations
-to make it easier to try the IdM. Log in with user0@test.com (default
-password test).
 
-::
+Get the code
 
-    fab keystone.test_data
+:: 
 
-If at some point you want to clean up, run keystone.database_reset. It
-will delete the whole database, create it again and populate it.
+    $ git clone https://github.com/ging/keystone && cd keystone
+  
+
+Install the python dependencies
 
 ::
 
-    fab keystone.database_reset
+  $ sudo python tools/install_venv.py
+
+
+Create a configuration file
+
+::
+
+  $ cp etc/keystone.conf.example etc/keystone.conf
+
+Create the tables and populate the database
+
+.. begin-database
+
+::
+    
+    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync
+    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=oauth2
+    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=roles
+    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=user_registration
+    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=
+    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --populate
+
+.. end-database
+
+You can run keystone in the console
+
+::
+
+  $ sudo tools/with_venv.sh bin/keystone-all -v
+
+
+You can now log into the web (if you have horizon installed) using the administrative account (by
+default user idm and the password you entered during the populate step).
 
 Finally, if you want to run the keystone backend in the backgroud you
-can install it as a service
+can :ref:`install it as a service <keystone-as-service>`.
 
-::
+.. end-keystone-installation
 
-    fab keystone.set_up_as_service
+Now, head to the :ref:`configuration instructions <keystone-configuration>`.
 
 Installing the front-end
-^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------
+
+.. begin-horizon-installation
+
+Install the dependencies
 
 ::
 
-    fab horizon.install
+    $ sudo apt-get install python python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev
+
+
+Get the code
+
+:: 
+
+    $ git clone https://github.com/ging/horizon && cd horizon
+
+
+Create a configuration file
+
+::
+
+  $ cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py
+
+
+Install the python dependencies
+
+::
+
+  $ sudo python tools/install_venv.py
+  
 
 You can check everything went OK running the development server, but you
 won't be able to log in until you install the backend.
 
 ::
 
-    fab horizon.dev_server
+    $ sudo tools/with_venv.sh python manage.py runserver localhost:8000
 
-.. end-installation
+
+Finally, if you want to run the horizon frontend in the backgroud you
+can install it as a service or, for a production environment, run it under Apache.
+
+.. end-horizon-installation
+
+Now, head to the :ref:`configuration instructions <horizon-configuration>`.
 
 .. _extras:
 
 Other Installation options
 --------------------------
+
+Docker
+^^^^^^
+
+We provide a Docker image to facilitate you the building of this
+GE.
+
+-  `Here <https://github.com/ging/fiware-idm/tree/master/extras/docker>`__
+   you will find the Dockerfile and the documentation explaining how to
+   use it.
+-  In `Docker Hub <https://hub.docker.com/r/fiware/idm/>`__ you
+   will find the public image.
 
 VM Image
 ^^^^^^^^
@@ -232,62 +196,8 @@ You can find the installation script and a verification script `here <https://gi
 
 Chef
 ^^^^
-We also provide a Chef Cookbook, which you can find `here <https://github.com/ging/fiware-idm/tree/master/extras/chef/fiware-idm>`__.
+We also provide a Chef Cookbook, which you can find `here <https://github.com/ging/fiware-idm/tree/master/extras/chef>`__.
 
-Docker
-^^^^^^
-
-We also provide a Docker image to facilitate you the building of this
-GE.
-
--  `Here <https://github.com/ging/fiware-idm/tree/master/extras/docker>`__
-   you will find the Dockerfile and the documentation explaining how to
-   use it.
--  In `Docker Hub <https://hub.docker.com/r/fiware/idm/>`__ you
-   will find the public image.
-
-.. warning:: Docker support is still experimental.
-
-.. _update:
-
-How to Update
-==============
-
-When either the Front-end
-(`ging/horizon <https://github.com/ging/horizon>`__) or the Back-end
-(`ging/keystone <https://github.com/ging/keystone>`__) are updated, you
-no longer need to install everything from start. Simply run the
-following with the virtualenv activated:
-
-::
-
-    fab update_all
-
-You can update each component separately
-
-- Front-end: ``fab horizon.update`` 
-- Back-end: ``fab keystone.update``
-
-.. _check:
-
-How to Run Checks
-=================
-
-When the Identity Manager is installed, as well as every time it is
-updated, some check tasks will be run. These tasks will especially 
-look for missing settings in the config files, and tell you to manually 
-fix them or even try to figure them out automatically.
-
-You can also run these checks whenever you want, simply running the following:
-
-::
-
-    fab check_all
-
-Each component can be checked separately:
-
-- Front-end: ``fab horizon.check``
-- Back-end: ``fab keystone.check``
 
 .. _api:
 
