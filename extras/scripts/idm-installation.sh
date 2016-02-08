@@ -27,17 +27,17 @@ sudo python keystone/tools/install_venv.py
 sudo python horizon/tools/install_venv.py
 
 # Sync database
-sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync
-sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=endpoint_filter
-sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=oauth2
-sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=roles
-sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=user_registration
-sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=two_factor_auth
+(cd keystone && sudo tools/with_venv.sh bin/keystone-manage db_sync && \
+sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=endpoint_filter && \
+sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2 && \
+sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles && \
+sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=user_registration && \
+sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=two_factor_auth )
 
 # Set up idm password
-wget https://raw.githubusercontent.com/ging/fiware-idm/master/extras/docker/expect_idm_password
+wget https://raw.githubusercontent.com/ging/fiware-idm/master/extras/scripts/expect_idm_password
 chmod +x expect_idm_password
-sudo ./expect_idm_password
+(cd keystone && sudo ../expect_idm_password)
 
 # Set up environment variables
 ABSOLUTE_KEYROCK_PATH="$(pwd)"
@@ -45,7 +45,7 @@ ABSOLUTE_HORIZON_PATH="$(echo $ABSOLUTE_KEYROCK_PATH/horizon)"
 ABSOLUTE_KEYSTONE_PATH="$(echo $ABSOLUTE_KEYROCK_PATH/keystone)"
 
 # Install Keystone back-end and set-up service
-/bin/cat <<EOM >/etc/init/keystone_idm.conf
+/bin/cat <<EOT >keystone_idm.conf
 # keystone_idm - keystone_idm job file
  description "Service conf file for the IdM backend based in Keystone"
  author "Enrique Garcia Navalon <garcianavalon@gmail.com>"
@@ -61,11 +61,12 @@ cd $ABSOLUTE_KEYSTONE_PATH
 #run keystone
 bin/keystone-all
 end script
-EOM
+EOT
+sudo mv keystone_idm.conf /etc/init
 sudo service keystone_idm start
 
 # Install Horizon front-end and set-up service
-/bin/cat <<EOM >/etc/init/horizon_idm.conf
+/bin/cat <<EOM >horizon_idm.conf
 # horizon_idm - horizon_idm job file
 description "Service conf file for the IdM frontend based in Horizon"
 start on (local-filesystems and net-device-up IFACE!=lo)
@@ -81,4 +82,5 @@ cd $ABSOLUTE_HORIZON_PATH
 python manage.py runserver 0.0.0.0:8000
 end script
 EOM
+sudo mv horizon_idm.conf /etc/init
 sudo service horizon_idm start
