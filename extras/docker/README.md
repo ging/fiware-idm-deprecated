@@ -55,9 +55,9 @@ And to start it back again:
 
 ## Run the container from the last release in Docker Hub
 
-You can also run the container from the [image we provide](https://hub.docker.com/r/ging/fiware-idm/) in Docker Hub. In this case you have only to execute the `run` command. But now the image name is ging/fiware-idm:*version* where `version` is the release you want to use:
+You can also run the container from the [image we provide](https://hub.docker.com/r/fiware/idm/) in Docker Hub. In this case you have only to execute the `run` command. But now the image name is fiware/idm:*version* where `version` is the release you want to use:
 
-	sudo docker run -d --name idm -p 8000:8000 -p 5000:5000 -t  ging/fiware-idm
+	sudo docker run -d --name idm -p 8000:8000 -p 5000:5000 -t  fiware/idm
 
 > **Note**
 > If you do not specify a version you are pulling from `latest` by default.
