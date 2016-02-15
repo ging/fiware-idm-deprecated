@@ -198,6 +198,10 @@ See :ref:`Authorization Code Grant <access-token-response>`
 Get user information and roles
 ==============================
 
+.. warning:: Be aware that if you used the Client Credentials Grant to obtain the token there is no
+  such thing as an 'authorizing user' because of the nature of this grant. You can still use this endpoint
+  to validate the token, but the JSON (if the token is valid) will be empty.
+  
 Request:
 ::
 
@@ -234,4 +238,3 @@ Example response:
         }
       ]
     }
-
