@@ -269,6 +269,8 @@ To Execute the extension tests (in this case for oauth2)::
 System Administration
 =====================
 
+.. _cli-tools:
+
 CLI tools
 ---------
 

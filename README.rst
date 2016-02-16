@@ -228,6 +228,18 @@ You will find the full API description
 `here <http://docs.keyrock.apiary.io/>`__
 
 
+Changes introduced in 5.x
+=========================
+
+This section is for users of the 4.x versions. They biggest change introduced
+in 5.x is the removal Fabric tasks. The functionality in the tasks has been moved elsewhere, converted to a CLI or removed completely.
+
+- A new CLI tool to help with admin tasks. Documentation :ref:`here <cli-tools>`
+- The instalation now is always done step by step.
+- The population script for the keystone database is now part of keystone.
+
+Check the release notes for a full list of changes and new features.
+
 .. _advanced:
 
 Advanced Documentation
