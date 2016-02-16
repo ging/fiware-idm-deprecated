@@ -1,9 +1,29 @@
 CHANGES
 =======
 
+* documented fabric changes in 5.x for reference
+* added warning for client credential grant token validation
+* Updated Dockerfile
+* Update installation script to work with the new installation method
+* Updated IdM installation script to meet the new installation process
+* fixed typo in path to service .conf file
+
+v5.1.0
+------
+
+* update docker to use latest release
+* added missing extensions
+* new docs
+* Update Docker Readme.md
+* Update Docker Readme.md
+* Updated Dockerfile to enable restarting
+* Fixed Dockerfile to work with Docker Hub automated build
+* Updated Dockerfile (Now working for development environment)
+* removed unrelevant check
 * Final conversion from task to commands for delete region and create endpoints
 * move from fabric to cli
 * Completely removed conf folder and settings
+* fix trivial typo in keyrock.apib
 * move example files to docs
 * remove old tasks
 * Added apib

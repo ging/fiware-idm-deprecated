@@ -27,15 +27,9 @@ def _admin_token_connection():
     """Connect to keystone using the ADMIN_TOKEN.
     Returns a keystoneclient object.
     """
-    token = os.environ.get('OS_SERVICE_TOKEN')
-    api_version = os.environ.get('OS_IDENTITY_API_VERSION')
-    identity_service_endpoint = os.environ.get('OS_SERVICE_ENDPOINT')
-
-    endpoint = 'http://{address}/{api_version}'.format(
-        address=identity_service_endpoint,
-        api_version=api_version)
-
-    keystone = client.Client(token=token, endpoint=endpoint)
+    keystone = client.Client(
+        token=os.environ.get('OS_SERVICE_TOKEN'),
+        endpoint=os.environ.get('OS_SERVICE_ENDPOINT'))
 
     return keystone
 
