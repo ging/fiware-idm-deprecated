@@ -87,7 +87,7 @@ Create a configuration file
 
 ::
 
-  $ cp etc/keystone.conf.example etc/keystone.conf
+  $ cp etc/keystone.conf.sample etc/keystone.conf
 
 Create the tables and populate the database
 
