@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* fixed keystone console authentication
 * documented fabric changes in 5.x for reference
 * added warning for client credential grant token validation
 * Updated Dockerfile

@@ -66,20 +66,51 @@ class DeleteRegionAndEndpoints(Command):
         region = parsed_args.region
 
         # check region exists
-        keystone.regions.get(region)
+        try:
+            keystone.regions.get(region)
+        except Exception, e:
+            self.log.error('Aborting')
+            raise e
 
         # delete all region endpoints
         for endpoint in keystone.endpoints.list():
             if endpoint.region == region:
                 keystone.endpoints.delete(endpoint)
+                self.log.info('Deleted endpoint %s', endpoint.id)
 
         # delete all endpoint groups that filter for region
         for endpoint_group in keystone.endpoint_groups.list():
             if endpoint_group.filters.get('region_id', None) == region:
                 keystone.endpoint_groups.delete(endpoint_group)
+                self.log.info('Deleted endpoint group %s', endpoint_group.id)
+
+        # delete all related users
+        projects = [keystone.projects.find(name=p_name).id for p_name in ['admin', 'service',]]
+        assignments = []
+        for p_id in projects:
+            assignments += keystone.role_assignments.list(project=p_id)
+
+        potential_users = [
+            (ass.user['id'], keystone.users.get(ass.user['id']).name) for ass in assignments
+        ]
+
+        region_slug = region.lower()
+        deleted = []
+        for (user_id, user_name) in potential_users:
+            if user_id in deleted:
+                continue
+            if region_slug in user_id or region_slug in user_name:
+                keystone.users.delete(user_id)
+                self.log.info('Deleted user %s with name %s', user_id, user_name)
+                deleted.append(user_id)
 
         # delete region
         keystone.regions.delete(region)
+        self.log.info('Deleted region %s', region)
+
+        # notify user to remember to delete regions in Horizon
+        self.log.warning('Remember to delete this region as an available region in Horizon settings!')
+        self.log.info('Done :)')
 
 class CreateNewEndpoints(Command):
     """Reads a a json file with a Keystone catalog sintax and creates all the endpoints in it,
