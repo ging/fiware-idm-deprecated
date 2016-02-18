@@ -122,6 +122,8 @@ can :ref:`install it as a service <keystone-as-service>`.
 
 Now, head to the :ref:`configuration instructions <keystone-configuration>`.
 
+(You can read more in depth documentation at the `Installation & Administration Guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide.html>`__)
+
 Installing the front-end
 ------------------------
 
@@ -169,6 +171,8 @@ can install it as a service or, for a production environment, run it under Apach
 .. end-horizon-installation
 
 Now, head to the :ref:`configuration instructions <horizon-configuration>`.
+
+(You can read more in depth documentation at the `Installation & Administration Guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide.html>`__)
 
 .. _extras:
 
