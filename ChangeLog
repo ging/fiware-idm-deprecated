@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+* tweak database task as cliff command
+* added simple link that is shown in github render of .rst for clarity
+* Fix typo in docs
+* updated ChangeLog
 * Delete region task completed
 * fixed keystone console authentication
 * documented fabric changes in 5.x for reference

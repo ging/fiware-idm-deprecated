@@ -16,6 +16,7 @@ import code
 import logging
 import json
 import os
+import sys
 import readline
 import rlcompleter
 
@@ -200,11 +201,11 @@ class CreateNewEndpoints(Command):
 #         print (green('Everything OK'))
 #         return 1 # flag for the main task
 #     else:
-#         print red('Some errors were encountered:')
-#         print red('The following settings couldn\'t be found in your keystone.conf file:')
+#         log.warning('Some errors were encountered:')
+#         log.warning('The following settings couldn\'t be found in your keystone.conf file:')
 #         for s in latest_settings:
 #             print '\t'+red(s)
-#         print red('Please edit the keystone.conf file manually so that it contains the settings above.')
+#         log.warning('Please edit the keystone.conf file manually so that it contains the settings above.')
 #         return 0 # flag for the main task
 
 # def _parse_setting(setting):
@@ -217,50 +218,101 @@ class CreateNewEndpoints(Command):
 #         else:
 #             return setting[0:setting.find('=')]
 
-# def database_tweak(idm_user, idm_password, common_password='test'):
-#     """Tweaks the database setting the same password for all users
-#      and the keystone endpoints to localhost. Handy for development or
-#      local testing with a production database backup. NEVER USE IN
-#      THE PRODUCTION DEPLOYMENT.
-#     """
-#     warning_message = (
-#         'This will ruin your database in a production setting and'
-#         ' is a major security issue. Use only for development'
-#         ' purposes. Continue? [Y/n]: '
-#     )
-#     cont = prompt(
-#         red(warning_message),
-#         default='n',
-#         validate='[Y,n]')
+def query_yes_no(question, default="yes"):
+    """Ask a yes/no question via raw_input() and return their answer.
 
-#     if cont != 'Y':
-#         print red('Cancel tweak')
-#         return
+    "question" is a string that is presented to the user.
+    "default" is the presumed answer if the user just hits <Enter>.
+        It must be "yes" (the default), "no" or None (meaning
+        an answer is required of the user).
 
-#     print 'Proceed...'
+    The "answer" return value is True for "yes" or False for "no".
+    """
+    valid = {"yes": True, "y": True, "ye": True,
+             "no": False, "n": False}
+    if default is None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError("invalid default answer: '%s'" % default)
 
-#     keystone = _admin_token_connection()
+    while True:
+        sys.stdout.write(question + prompt)
+        choice = raw_input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            sys.stdout.write("Please respond with 'yes' or 'no' "
+                             "(or 'y' or 'n').\n")
 
-#     print 'Set all users password to a fixed value'
-#     for user in keystone.users.list():
-#         keystone.users.update(user, password=common_password)
+class DatabaseTweak(Command):
+    """Tweaks the database setting the same password for all users
+    and the keystone endpoints to localhost. Handy for development or
+    local testing with a production database backup. NEVER USE IN
+    THE PRODUCTION DEPLOYMENT.
+    """
 
-#     print 'Set the idm user password to the configured one'
-#     idm = keystone.users.find(name=idm_user)
-#     keystone.users.update(idm, password=idm_password)
+    log = logging.getLogger(__name__)
 
-#     print 'tweak the identity service endpoints to point to a development keystone'
-#     identity_service = next(s for s in keystone.services.list() if s.type == 'identity')
-#     identity_endpoints = [
-#         e for e in keystone.endpoints.list()
-#         if e.service_id == identity_service.id
-#     ]
-#     for endpoint in identity_endpoints:
-#         keystone.endpoints.update(
-#             endpoint,
-#             url=('http://{address}/{api_version}'.format(
-#                 address=os.environ.get('OS_SERVICE_ENDPOINT'),
-#                 api_version=os.environ.get('OS_IDENTITY_API_VERSION')))
-#         )
+    def get_parser(self, prog_name):
+        parser = super(DatabaseTweak, self).get_parser(prog_name)
+        parser.add_argument('common_password', metavar='common_password', type=str, nargs='?',
+        help='the new password for all users')
 
-#     print 'Tweak Succesfull'
+        parser.add_argument('idm_user', metavar='idm_user', type=str, nargs='?',
+        help='the username of the horizon admin account')
+
+        parser.add_argument('idm_password', metavar='idm_password', type=str, nargs='?',
+        help='the new password for the horizon admin account')
+        return parser
+
+    def take_action(self, parsed_args):
+        keystone = _admin_token_connection()
+        password = parsed_args.common_password if parsed_args.common_password else 'test'
+        idm_user = parsed_args.idm_user if parsed_args.idm_user else 'idm'
+        idm_password = parsed_args.idm_password if parsed_args.idm_password else 'idm'
+
+        warning_message = (
+            'This will ruin your database in a production setting and'
+            ' is a major security issue. Use only for development'
+            ' purposes. Continue?: '
+        )
+
+        cont = query_yes_no(warning_message)
+
+        if not cont:
+            self.log.warning('Cancel tweak')
+            return
+
+        self.log.info('Proceed...')
+
+        keystone = _admin_token_connection()
+
+        self.log.info('Set all users password to a fixed value')
+
+        for user in keystone.users.list():
+            keystone.users.update(user, password=password)
+
+        self.log.info('Set the idm user password to the configured one')
+
+        idm = keystone.users.find(name=idm_user)
+        keystone.users.update(idm, password=idm_password)
+
+        self.log.info('tweak the identity service endpoints to point to a development keystone')
+
+        identity_service = next(s for s in keystone.services.list() if s.type == 'identity')
+        identity_endpoints = [
+            e for e in keystone.endpoints.list()
+            if e.service_id == identity_service.id
+        ]
+        url = os.environ.get('OS_SERVICE_ENDPOINT')
+
+        for endpoint in identity_endpoints:
+            keystone.endpoints.update(endpoint, url=url)
+
+        self.log.info('Tweak Succesfull')
