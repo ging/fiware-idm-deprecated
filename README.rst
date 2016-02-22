@@ -199,6 +199,20 @@ sets it up to run in background.
 
 You can find the installation script and a verification script `here <https://github.com/ging/fiware-idm/tree/master/extras/scripts>`__.
 
+This image contains the following settings as defaults, but you can change any of them after installation, as you can see in the :ref:`horizon <horizon-configuration>` and the :ref:`keystone <keystone-configuration>` configuration instructions:
+
++---------------+--------------+
+| Setting       | Value        |
++===============+==============+
+| idm user      | :code:`idm`  |
++---------------+--------------+
+| idm password  | :code:`idm`  |
++---------------+--------------+
+| Horizon port  | :code:`8000` |
++---------------+--------------+
+| Keystone port | :code:`5000` |
++---------------+--------------+
+
 Chef
 ^^^^
 We also provide a Chef Cookbook, which you can find `here <https://github.com/ging/fiware-idm/tree/master/extras/chef>`__.
