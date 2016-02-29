@@ -2,6 +2,7 @@ CHANGES
 =======
 
 * tweak database task as cliff command
+* Added default settings in Image script doc
 * added simple link that is shown in github render of .rst for clarity
 * Fix typo in docs
 * updated ChangeLog

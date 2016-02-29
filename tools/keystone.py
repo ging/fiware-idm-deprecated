@@ -60,11 +60,14 @@ class DeleteRegionAndEndpoints(Command):
         parser = super(DeleteRegionAndEndpoints, self).get_parser(prog_name)
         parser.add_argument('region', metavar='region', type=str, nargs='?',
                    help='the region id')
+        parser.add_argument('delete_users', metavar='delete_users', type=bool, nargs='?',
+            help='Also delete the region service and admin users.')
         return parser
 
     def take_action(self, parsed_args):
         keystone = _admin_token_connection()
         region = parsed_args.region
+        delete_users = parsed_args.delete_users
 
         # check region exists
         try:
@@ -85,25 +88,26 @@ class DeleteRegionAndEndpoints(Command):
                 keystone.endpoint_groups.delete(endpoint_group)
                 self.log.info('Deleted endpoint group %s', endpoint_group.id)
 
-        # delete all related users
-        projects = [keystone.projects.find(name=p_name).id for p_name in ['admin', 'service',]]
-        assignments = []
-        for p_id in projects:
-            assignments += keystone.role_assignments.list(project=p_id)
+        if delete_users:
+            # delete all related users
+            projects = [keystone.projects.find(name=p_name).id for p_name in ['admin', 'service',]]
+            assignments = []
+            for p_id in projects:
+                assignments += keystone.role_assignments.list(project=p_id)
 
-        potential_users = [
-            (ass.user['id'], keystone.users.get(ass.user['id']).name) for ass in assignments
-        ]
+            potential_users = [
+                (ass.user['id'], keystone.users.get(ass.user['id']).name) for ass in assignments
+            ]
 
-        region_slug = region.lower()
-        deleted = []
-        for (user_id, user_name) in potential_users:
-            if user_id in deleted:
-                continue
-            if region_slug in user_id or region_slug in user_name:
-                keystone.users.delete(user_id)
-                self.log.info('Deleted user %s with name %s', user_id, user_name)
-                deleted.append(user_id)
+            region_slug = region.lower()
+            deleted = []
+            for (user_id, user_name) in potential_users:
+                if user_id in deleted:
+                    continue
+                if region_slug == user_name.split('-')[-1]:
+                    keystone.users.delete(user_id)
+                    self.log.info('Deleted user %s with name %s', user_id, user_name)
+                    deleted.append(user_id)
 
         # delete region
         keystone.regions.delete(region)
