@@ -100,14 +100,18 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 + Request (application/json)
         
         {
-        "consumer": {
-        "name": "test_consumer",
-        "description": "my test consumer",
-        "client_type": "confidential",
-        "redirect_uris": ["http://localhost/login"],
-        "grant_type": "authorization_code",
-        "scopes": ["all_info"]
-        } 
+          "consumer": {
+            "name": "test_consumer",
+            "description": "my test consumer",
+            "client_type": "confidential",
+            "redirect_uris": [
+              "http://localhost/login"
+            ],
+            "grant_type": "authorization_code",
+            "scopes": [
+              "all_info"
+            ]
+          }
         }
 
 + Response 200 (application/json)
@@ -115,25 +119,25 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
     + Body
             
             {
-            "consumer": {
-            "scopes": [
-            "all_info"
-            ],
-            "redirect_uris": [
-            "http://localhost/login"
-            ],
-            "description": "my test consumer",
-            "links": {
-            "self": "http://host/v3/OS-OAUTH2/consumers/308423904823490234923"
-            },
-            "extra": {},
-            "secret": "3534535345345",
-            "client_type": "confidential",
-            "response_type": "code",
-            "grant_type": "authorization_code",
-            "id": "308423904823490234923",
-            "name": "test_consumer"
-            }
+              "consumer": {
+                "scopes": [
+                  "all_info"
+                ],
+                "redirect_uris": [
+                  "http://localhost/login"
+                ],
+                "description": "my test consumer",
+                "links": {
+                  "self": "http://host/v3/OS-OAUTH2/consumers/308423904823490234923"
+                },
+                "extra": {},
+                "secret": "3534535345345",
+                "client_type": "confidential",
+                "response_type": "code",
+                "grant_type": "authorization_code",
+                "id": "308423904823490234923",
+                "name": "test_consumer"
+              }
             }
 
 ## Consumer [/OS-OAUTH2/consumers/{consumer_id}]
@@ -146,34 +150,34 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 + Response 200 (application/json)
 
         {
-            "consumer": {
+          "consumer": {
             "scopes": [
-        "all_info"
-        ],
-        "redirect_uris": [
-        "http://app.com/v1/login_fiware"
-        ],
-        "img_small": "ApplicationAvatar/small/dddjajdsajd23234232342",
-        "name": "App test",
-        "links": {
-        "self": "http://host/v3/OS-OAUTH2/consumers/dddjajdsajd23234232342"
-        },
-        "extra": {
-        "url": "http://app.com/v1",
-        "img_original": "ApplicationAvatar/original/dddjajdsajd23234232342",
-        "img_small": "ApplicationAvatar/small/dddjajdsajd23234232342",
-        "img_medium": "ApplicationAvatar/medium/dddjajdsajd23234232342"
-        },
-        "url": "http://app.com/v1",
-        "img_original": "ApplicationAvatar/original/dddjajdsajd23234232342",
-        "description": "App test",
-        "secret": "43534534535345345345345",
-        "client_type": "confidential",
-        "response_type": "code",
-        "grant_type": "authorization_code",
-        "id": "dddjajdsajd23234232342",
-        "img_medium": "ApplicationAvatar/medium/dddjajdsajd23234232342"
-        }
+              "all_info"
+            ],
+            "redirect_uris": [
+              "http://app.com/v1/login_fiware"
+            ],
+            "img_small": "ApplicationAvatar/small/dddjajdsajd23234232342",
+            "name": "App test",
+            "links": {
+              "self": "http://host/v3/OS-OAUTH2/consumers/dddjajdsajd23234232342"
+            },
+            "extra": {
+              "url": "http://app.com/v1",
+              "img_original": "ApplicationAvatar/original/dddjajdsajd23234232342",
+              "img_small": "ApplicationAvatar/small/dddjajdsajd23234232342",
+              "img_medium": "ApplicationAvatar/medium/dddjajdsajd23234232342"
+            },
+            "url": "http://app.com/v1",
+            "img_original": "ApplicationAvatar/original/dddjajdsajd23234232342",
+            "description": "App test",
+            "secret": "43534534535345345345345",
+            "client_type": "confidential",
+            "response_type": "code",
+            "grant_type": "authorization_code",
+            "id": "dddjajdsajd23234232342",
+            "img_medium": "ApplicationAvatar/medium/dddjajdsajd23234232342"
+          }
         }
 
 ### Update a Consumer [PATCH]
@@ -181,10 +185,12 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 + Request (application/json)
 
         {
-        "consumer": {
-        "field_to_update": "value",
-        "antoher_field_to_update": ["another_value"]
-        } 
+          "consumer": {
+            "field_to_update": "value",
+            "antoher_field_to_update": [
+              "another_value"
+            ]
+          }
         }
 
 + Response 200 (application/json)
@@ -225,7 +231,7 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
               },
               "name": "test"
             }
-           ]
+          ]
         }
 
 ### Create a Role [POST]
@@ -233,10 +239,10 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 + Request (application/json)
 
         {
-        "role": {
-        "name": "test_role",
-        "application_id": "2222"
-        } 
+          "role": {
+            "name": "test_role",
+            "application_id": "2222"
+          }
         }
 
 + Response 200 (application/json)
@@ -281,10 +287,10 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 + Request (application/json)
 
         {
-        "role": {
-        "name": "test_role_new",
-        "application_id": "2222"
-        } 
+          "role": {
+            "name": "test_role_new",
+            "application_id": "2222"
+          }
         }
 
 + Response 200 (application/json)
@@ -331,7 +337,7 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
               "application_id": "234234xc43242c",
               "id": "3987429348'3239234234"
             }
-            ]
+          ]
         }
 
 ### Create a Permission [POST]
@@ -339,10 +345,10 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 + Request (application/json)
 
         {
-        "permission": {
-        "name": "test_permission",
-        "application_id": "2222"
-        } 
+          "permission": {
+            "name": "test_permission",
+            "application_id": "2222"
+          }
         }
 
 + Response 200 (application/json)
@@ -393,10 +399,10 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 + Request (application/json)
 
         {
-        "permission": {
-        "name": "test_permission",
-        "application_id": "2222"
-        } 
+          "permission": {
+            "name": "test_permission",
+            "application_id": "2222"
+          }
         }
 
 + Response 200 (application/json)
@@ -457,7 +463,7 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 + Response 200 (application/json)
 
         {
-         "role_assignments": [
+          "role_assignments": [
             {
               "organization_id": "32163781263892173912312",
               "application_id": "12312301293-80181902380",
@@ -539,21 +545,28 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 
 + Response 200 (application/json)
 
-        {"totalResults": 12, "Resources": [...], "schemas": ["urn:scim:schemas:core:2.0", "urn:scim:schemas:extension:keystone:2.0"]}
+        {
+          "totalResults": 12,
+          "Resources": [...],
+          "schemas": [
+            "urn:scim:schemas:core:2.0",
+            "urn:scim:schemas:extension:keystone:2.0"
+          ]
+        }
 
 ### Create a User [POST]
 
 + Request (application/json)
 
-        { 
-         "userName": "alice",
-         "displayName": "Alice"
-         "password": "passw0rd",
-         "emails": [
-             {
-               "value": "alice@mailhost.com"
-              }
-         ]
+        {
+          "userName": "alice",
+          "displayName": "Alice",
+          "password": "passw0rd",
+          "emails": [
+            {
+              "value": "alice@mailhost.com"
+            }
+          ]
         }
 
 + Response 200 (application/json)
@@ -567,21 +580,32 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 
 + Response 200 (application/json)
 
-        {"userName": "user1@user.com", "urn:scim:schemas:extension:keystone:2.0": {"domain_id": "default"}, "active": true, "id": "user1", "schemas": ["urn:scim:schemas:core:2.0", "urn:scim:schemas:extension:keystone:2.0"]}
+        {
+          "userName": "user1@user.com",
+          "urn:scim:schemas:extension:keystone:2.0": {
+            "domain_id": "default"
+          },
+          "active": true,
+          "id": "user1",
+          "schemas": [
+            "urn:scim:schemas:core:2.0",
+            "urn:scim:schemas:extension:keystone:2.0"
+          ]
+        }
 
 ### Update a User [PUT]
 
 + Request (application/json)
 
-        { 
-         "userName": "alice",
-         "displayName": "Alice"
-         "password": "passw0rd_new",
-         "emails": [
-             {
-               "value": "alice@mailhost.com"
-              }
-         ]
+        {
+          "userName": "alice",
+          "displayName": "Alice",
+          "password": "passw0rd_new",
+          "emails": [
+            {
+              "value": "alice@mailhost.com"
+            }
+          ]
         }
 
 + Response 200 (application/json)
@@ -596,18 +620,25 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 
 + Response 200 (application/json)
 
-        {"totalResults": 24, "Resources": [...], "schemas": ["urn:scim:schemas:core:2.0", "urn:scim:schemas:extension:keystone:2.0"]}
+        {
+          "totalResults": 24,
+          "Resources": [...],
+          "schemas": [
+            "urn:scim:schemas:core:2.0",
+            "urn:scim:schemas:extension:keystone:2.0"
+          ]
+        }
 
 ### Create an Organization [POST]
 
 + Request (application/json)
 
         {
-            "name": "Name of organization", 
-            "is_default": true,
-            "domain_id": "domain",
-            "active": true, 
-            "id": "ID", 
+          "name": "Name of organization",
+          "is_default": true,
+          "domain_id": "domain",
+          "active": true,
+          "id": "ID"
         }
 
 + Response 200 (application/json)
@@ -621,7 +652,19 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 
 + Response 200 (application/json)
 
-        {"name": "org1", "is_default": true, "urn:scim:schemas:extension:keystone:2.0": {"domain_id": "default"}, "active": true, "id": "22928e07c0bd4063a7f0bb8c826b0a18", "schemas": ["urn:scim:schemas:core:2.0", "urn:scim:schemas:extension:keystone:2.0"]}
+        {
+          "name": "org1",
+          "is_default": true,
+          "urn:scim:schemas:extension:keystone:2.0": {
+            "domain_id": "default"
+          },
+          "active": true,
+          "id": "22928e07c0bd4063a7f0bb8c826b0a18",
+          "schemas": [
+            "urn:scim:schemas:core:2.0",
+            "urn:scim:schemas:extension:keystone:2.0"
+          ]
+        }
 
 ### Update an Organization [PUT]
 
@@ -632,7 +675,7 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
             "is_default": true,
             "domain_id": "domain",
             "active": true, 
-            "id": "ID", 
+            "id": "ID"
         }
 
 + Response 200 (application/json)
@@ -650,45 +693,51 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 + Response 200 (application/json)
 
         {
-        "sort": {
+          "sort": {
             "supported": false
-        }, 
-        "bulk": {
-            "maxPayloadSize": 0, 
-            "supported": false, 
+          },
+          "bulk": {
+            "maxPayloadSize": 0,
+            "supported": false,
             "maxOperations": 0
-        }, 
-        "changePassword": {
+          },
+          "changePassword": {
             "supported": true
-        }, "xmlDataFormat": {
+          },
+          "xmlDataFormat": {
             "supported": false
-        }, 
-        "information": {
-            "basicUsers": 1, 
-            "totalCloudOrganizations": 12, 
-            "totalUserOrganizations": 24, 
-            "communityUsers": 0, 
-            "totalUsers": 12, 
-            "trialUsers": 0, 
+          },
+          "information": {
+            "basicUsers": 1,
+            "totalCloudOrganizations": 12,
+            "totalUserOrganizations": 24,
+            "communityUsers": 0,
+            "totalUsers": 12,
+            "trialUsers": 0,
             "totalResources": 48
-        }, 
-        "documentationUrl": "https://github.com/ging/fi-ware-idm/wiki/SCIM-2.0-API", 
-        "patch": {
+          },
+          "documentationUrl": "https://github.com/ging/fi-ware-idm/wiki/SCIM-2.0-API",
+          "patch": {
             "supported": true
-        }, 
-        "filter": {
-            "supported": true, 
+          },
+          "filter": {
+            "supported": true,
             "maxResults": 9223372036854775807
-        }, 
-        "etag": {
+          },
+          "etag": {
             "supported": false
-        }, 
-        "schemas": ["urn:scim:schemas:core:2.0:ServiceProviderConfig"], 
-        "authenticationSchemes": [{
-            "name": "Keytone Authentication", 
-            "documentationUrl": "http://keystone.openstack.org/", 
-            "primary": true, 
-            "specUrl": "http://specs.openstack.org/openstack/keystone-specs", 
-            "type": "keystonetoken", 
-            "description": "Authentication using Keystone"
-        }]}
+          },
+          "schemas": [
+            "urn:scim:schemas:core:2.0:ServiceProviderConfig"
+          ],
+          "authenticationSchemes": [
+            {
+              "name": "Keytone Authentication",
+              "documentationUrl": "http://keystone.openstack.org/",
+              "primary": true,
+              "specUrl": "http://specs.openstack.org/openstack/keystone-specs",
+              "type": "keystonetoken",
+              "description": "Authentication using Keystone"
+            }
+          ]
+        }
