@@ -12,10 +12,10 @@ sudo apt-get install -y python-dev python-virtualenv libssl-dev libffi-dev libjp
 
 # Download latest version of the code 
 git clone https://github.com/ging/keystone
-(cd keystone && git checkout tags/keyrock-5.1.0)
+(cd keystone && git checkout tags/keyrock-5.1.1)
 
 git clone https://github.com/ging/horizon
-(cd horizon && git checkout tags/keyrock-5.1.0)
+(cd horizon && git checkout tags/keyrock-5.1.1)
 
 # Configuring settings files
 cp keystone/etc/keystone.conf.sample keystone/etc/keystone.conf
