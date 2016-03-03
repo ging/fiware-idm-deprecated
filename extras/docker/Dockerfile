@@ -31,13 +31,15 @@ RUN cp keystone/etc/keystone.conf.sample keystone/etc/keystone.conf && \
 RUN sudo python keystone/tools/install_venv.py && \
     sudo python horizon/tools/install_venv.py
 
+WORKDIR keystone
+
 # Sync database
-RUN sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync && \
-    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=endpoint_filter && \
-    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=oauth2 && \
-    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=roles && \
-    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=user_registration && \
-    sudo keystone/tools/with_venv.sh keystone/bin/keystone-manage db_sync --extension=two_factor_auth
+RUN sudo tools/with_venv.sh bin/keystone-manage db_sync && \
+    sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=endpoint_filter && \
+    sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=oauth2 && \
+    sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=roles && \
+    sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=user_registration && \
+    sudo tools/with_venv.sh bin/keystone-manage db_sync --extension=two_factor_auth
 
 # Prepare to set up idm password
 COPY expect_idm_password .
@@ -54,4 +56,4 @@ EXPOSE 5000
 # - Horizon (HTTP)
 EXPOSE 8000
 
-CMD sudo keystone/tools/with_venv.sh keystone/bin/keystone-all -v & sudo horizon/tools/with_venv.sh python horizon/manage.py runserver 0.0.0.0:8000
+CMD sudo /keystone/tools/with_venv.sh /keystone/bin/keystone-all -v & sudo /horizon/tools/with_venv.sh python /horizon/manage.py runserver 0.0.0.0:8000
