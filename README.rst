@@ -2,10 +2,6 @@
 Identity Manager - Keyrock Overview
 ***********************************
 
-.. contents::
-   :local:
-   :depth: 3
-
 .. image:: https://img.shields.io/badge/license-APACHE-blue.svg
    :target: http://www.apache.org/licenses/LICENSE-2.0
    
@@ -17,6 +13,10 @@ Identity Manager - Keyrock Overview
    
 .. image:: https://img.shields.io/badge/support-sof-yellowgreen.svg
    :target: http://stackoverflow.com/questions/tagged/fiware
+
+.. contents::
+   :local:
+   :depth: 3
 
 .. _introduction:
 
