@@ -124,7 +124,7 @@ else:
     html_theme = 'sphinx_rtd_theme'
     html_context = {
         'css_files': [
-            'doc/resources/fiware_style.css',
+            'resources/fiware_style.css',
         ],
     }
 
