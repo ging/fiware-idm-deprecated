@@ -17,7 +17,7 @@ else:
     # Override default css to get a larger width for ReadTheDoc build
     html_context = {
         'css_files': [
-            '_static/mystyle.css',
+            'doc/resources//mystyle.css',
         ],
     }
 
@@ -27,7 +27,7 @@ else:
 source_suffix = '.rst'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'README'
 
 # General information about the project.
-project = 'FIWARE-SDC'
+project = 'FIWARE-IDM'
