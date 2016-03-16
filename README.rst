@@ -6,9 +6,13 @@ Identity Manager - Keyrock Overview
    :local:
    :depth: 3
 
-.. image:: https://img.shields.io/badge/license-APACHE-blue.svg :target: http://www.apache.org/licenses/LICENSE-2.0
+
+.. image:: https://img.shields.io/badge/license-APACHE-blue.svg   :target: http://www.apache.org/licenses/LICENSE-2.0
+
 .. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat :target: http://fiware-idm.readthedocs.org/en/latest/
+
 .. image:: https://img.shields.io/docker/pulls/fiware/idm.svg :target: https://hub.docker.com/r/fiware/idm/
+
 .. image:: https://img.shields.io/badge/support-sof-yellowgreen.svg :target: http://stackoverflow.com/questions/tagged/fiware
 
 .. _introduction:
