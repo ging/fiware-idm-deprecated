@@ -121,7 +121,7 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
     html_context = {
         'css_files': [
-            'resources/fiware_style.css',
+            '_static/fiware_style.css',
         ],
     }
 else:
