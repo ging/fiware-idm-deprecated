@@ -60,7 +60,7 @@ class DeleteRegionAndEndpoints(Command):
         parser = super(DeleteRegionAndEndpoints, self).get_parser(prog_name)
         parser.add_argument('region', metavar='region', type=str, nargs='?',
                    help='the region id')
-        parser.add_argument('delete_users', metavar='delete_users', type=bool, nargs='?',
+        parser.add_argument('--delete_users', metavar='delete_users', type=bool, nargs='?',
             help='Also delete the region service and admin users.')
         return parser
 
@@ -116,6 +116,91 @@ class DeleteRegionAndEndpoints(Command):
         # notify user to remember to delete regions in Horizon
         self.log.warning('Remember to delete this region as an available region in Horizon settings!')
         self.log.info('Done :)')
+
+class CancelAccounts(Command):
+    """Cancels the account of some users"""
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(CancelAccounts, self).get_parser(prog_name)
+        parser.add_argument('users', metavar='users', type=str, nargs='+', help='the users IDs')
+        parser.add_argument('-o', '--keystone_owner_role', metavar='keystone_owner_role', type=str, nargs=1, default='owner', help='owner role ID in Keystone')
+        parser.add_argument('-p', '--provider_role', metavar='provider_role', type=str, nargs=1, default='provider', help='provider FIWARE role ID')
+        return parser
+
+    def take_action(self, parsed_args):
+        keystone = _admin_token_connection()
+
+        for user_id in parsed_args.users:
+            self.log.info('Deleting user ' + user_id)
+            user = keystone.users.get(user_id)
+            delete_orgs = self._get_orgs_to_delete(keystone, user, parsed_args.keystone_owner_role)
+            delete_apps = self._get_apps_to_delete(keystone, user, parsed_args.provider_role)
+
+            for org_id in delete_orgs:
+                self.log.info('Deleting project ' + org_id)
+                keystone.projects.delete(org_id)
+
+            for app_id in delete_apps:
+                self.log.info('Deleting app ' + app_id)
+                keystone.oauth2.consumers.delete(app_id)
+
+            # finally delete the user
+            keystone.users.delete(user.id)
+
+        self.log.info('Done :)')
+
+    def _get_orgs_to_delete(self, keystone, user, keystone_owner_role):
+        # all orgs where the user is the only owner
+        # and user specific organizations
+        delete_orgs = [
+            user.default_project_id,
+            user.cloud_project_id
+        ]
+        owner_role = keystone.roles.find(name=keystone_owner_role)
+        # NOTE(garcianavalon) the organizations the user is owner
+        # are already in the request object by the middleware
+        for org in keystone.projects.list():
+            if org.id in delete_orgs:
+                continue
+
+            owners = set([
+                a.user['id'] for a
+                in keystone.role_assignments.list(role=owner_role.id, project=org.id)
+                if hasattr(a, 'user')
+            ])
+
+            if len(owners) == 1 and user.id in owners:
+                import pdb; pdb.set_trace()
+                self.log.info('Org to delete: ' + org.id)
+                delete_orgs.append(org.id)
+
+        return delete_orgs
+
+    def _get_apps_to_delete(self, keystone, user, provider_role):
+        # all the apps where the user is the only provider
+        delete_apps = []
+        provider_role = keystone.fiware_roles.roles.get(provider_role)
+
+        provided_apps = [
+            a.application_id for a
+            in keystone.fiware_roles.role_assignments.list_user_role_assignments(user=user.id)
+            if a.role_id == provider_role.id
+        ]
+
+        for app_id in provided_apps:
+            providers = set([
+                a.user_id for a
+                in keystone.fiware_roles.role_assignments.list_user_role_assignments(application=app_id)
+                if a.role_id == provider_role.id
+            ])
+
+            if len(providers) == 1:
+                delete_apps.append(app_id)
+
+        return delete_apps
+
 
 class CreateNewEndpoints(Command):
     """Reads a a json file with a Keystone catalog sintax and creates all the endpoints in it,
@@ -265,21 +350,21 @@ class DatabaseTweak(Command):
 
     def get_parser(self, prog_name):
         parser = super(DatabaseTweak, self).get_parser(prog_name)
-        parser.add_argument('common_password', metavar='common_password', type=str, nargs='?',
-        help='the new password for all users')
+        parser.add_argument('-np', '--common_password', metavar='common_password', type=str, nargs=1,
+        default='test', help='the new password for all users')
 
-        parser.add_argument('idm_user', metavar='idm_user', type=str, nargs='?',
-        help='the username of the horizon admin account')
+        parser.add_argument('-u', '--idm_user', metavar='idm_user', type=str, nargs=1,
+        default='idm', help='the username of the horizon admin account')
 
-        parser.add_argument('idm_password', metavar='idm_password', type=str, nargs='?',
-        help='the new password for the horizon admin account')
+        parser.add_argument('-p', '--idm_password', metavar='idm_password', type=str, nargs=1,
+        default='idm', help='the new password for the horizon admin account')
         return parser
 
     def take_action(self, parsed_args):
         keystone = _admin_token_connection()
-        password = parsed_args.common_password if parsed_args.common_password else 'test'
-        idm_user = parsed_args.idm_user if parsed_args.idm_user else 'idm'
-        idm_password = parsed_args.idm_password if parsed_args.idm_password else 'idm'
+        password = parsed_args.common_password
+        idm_user = parsed_args.idm_user
+        idm_password = parsed_args.idm_password
 
         warning_message = (
             'This will ruin your database in a production setting and'

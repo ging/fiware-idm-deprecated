@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+* Updated release in installation script
+* Updated release in Dockerfile
+* Improved Dockerfile to store DB inside keystone directory
+* Fixing JSON indentation in apib (#47)
+* added flag to delete users
 * tweak database task as cliff command
 * Added default settings in Image script doc
 * added simple link that is shown in github render of .rst for clarity
