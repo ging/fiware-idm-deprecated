@@ -27,7 +27,8 @@ The API user should be familiar with:
 ## Editors
 
 + Álvaro Alonso González
-+ Enrique García Navalón 
++ Enrique García Navalón
++ Federico A. Fernández Moreno
 
 ## Copyright
 
@@ -530,6 +531,159 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 ### Remove a role assignment from an organization [DELETE]
 
 + Response 200 (application/json)
+
+## Two Factor Authentication [/OS-TWO-FACTOR/two_factor_auth?{user_id,user_name,domain_id,domain_name}]
+
+### Check if two factor authentication is enabled for a certain user [HEAD]
+Either user_id or user_name (along with domain_id or domain_name) must be provided.
+
++ Parameters
+    + user_id (optional) - ID of the user to be checked.
+    + user_name (optional) - Name of the user to be checked.
+    + domain_id (optional) - ID of the domain that the user belongs to.
+    + domain_name (optional) - Name of the domain that the user belongs to.
+    
++ Response 204
+    
++ Response 404
+
+## Two Factor Authentication Keys [/users/{user_id}/OS-TWO-FACTOR/two_factor_auth]
+
++ Parameters
+    + user_id - ID of the user.
+
+### Enable two factor authentication / Get new key [POST]
+
++ Request (application/json)
+
+        {
+            "two_factor_auth": {
+                "security_question":"sample question",
+                "security_answer":"sample answer"
+            }
+        }
+        
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "two_factor_auth": {
+                    "two_factor_key": "TSLX244ZPTDFTF43", 
+                    "user_id": "user0", 
+                    "links": {
+                        "self": "http://localhost:5000/v3/OS-TWOFACTOR/two_factor_auth"
+                    }, 
+                    "uri": "otpauth://totp/FIWARE%20Lab%20Accounts:user0@test.com?secret=TSLX244ZPTDFTF43&issuer=FIWARE%20Lab%20Accounts",
+                    "security_answer": "sample question", 
+                    "security_question": "sample answer"
+                }
+            }
+            
++ Request (application/json)
+    
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "two_factor_auth": {
+                    "two_factor_key": "O3JGFSSJZHQL24Q6", 
+                    "user_id": "user_0", 
+                    "links": {
+                        "self": "http://localhost:5000/v3/OS-TWOFACTOR/two_factor_auth"
+                    }, 
+                    "uri": "otpauth://totp/FIWARE%20Lab%20Accounts:user0@test.com?secret=O3JGFSSJZHQL24Q6&issuer=FIWARE%20Lab%20Accounts",
+                    "security_answer": "sample question", 
+                    "security_question": "sample answer"
+                }
+            }
+
+
+### Disable two factor authentication [DELETE]
+
++ Response 204
+
+## Two Factor Authentication Security Questions [/users/{user_id}/OS-TWO-FACTOR/]
+
++ Parameters
+    + user_id - ID of the user.
+
+### Retrieve non-sensitive data [GET /users/{user_id}/OS-TWO-FACTOR/two_factor_data]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "two_factor_auth": {
+                    "security_question": "sample question",
+                    "user_id": "user0", 
+                    "links": {
+                        "self": "http://localhost:5000/v3/OS-TWOFACTOR/two_factor_auth"
+                    }
+                }
+            }
+
+### Check security question [HEAD /users/{user_id}/OS-TWO-FACTOR/sec_question]
+
++ Request (application/json)
+    
+        {
+            "two_factor_auth": {
+                "security_answer":"answer"
+            }
+        }
+        
++ Response 204
+
++ Response 401
+
+## Two Factor Authentication Devices [/OS-TWO-FACTOR/devices]
+
+### Remember new device or get new token [POST /OS-TWO-FACTOR/devices?user_id={user_id}&user_name={user_name}&domain_name={domain_name}&device_id={device_id}]
+Either user_id or user_name and domain_name must be provided.
+
++ Parameters
+    + user_id (optional) - ID of the user.
+    + user_name (optional) - Name of the user.
+    + domain_name (optional) - Name of the domain that the user belongs to.
+    + device_id (optional) - ID of the device to be remembered.
+
++ Response 200 (application/json)
+    
+    + Body
+        
+            {
+                "two_factor_auth": {
+                    "device_token": "7525dc5bc8134b4a97526bcd7e45175e", 
+                    "links": {
+                        "self": "http://localhost:5000/v3/OS-TWOFACTOR/two_factor_auth"
+                    }, 
+                    "device_id": "815dfb0790934775bc8dac15f197a1f0"
+                }
+            }
+
+### Check for device [HEAD /OS-TWO-FACTOR/devices?device_id={device_id}&device_token={device_token}&user_id={user_id}&user_name={user_name}&domain_name={domain_name}]
+Either user_id or user_name and domain_name must be provided.
+
++ Parameters
+    + user_id (optional) - ID of the user.
+    + user_name (optional) - Name of the user.
+    + domain_name (optional) - Name of the domain that the user belongs to.
+    + device_id - ID of the device to be checked.
+    
++ Response 204
+
++ Response 404
+
++ Response 403
+
+### Forget all devices [DELETE /users/{user_id}/OS-TWO-FACTOR/devices]
++ Parameters
+    + user_id - ID of the user.
+    
++ Response 204
 
 #Group SCIM 2.0
 
