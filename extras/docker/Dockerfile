@@ -16,11 +16,11 @@ RUN sudo apt-get install -y python-dev python-virtualenv libssl-dev libffi-dev l
 # Download latest version of the code 
 RUN git clone https://github.com/ging/keystone && \
     cd keystone && \
-    git checkout tags/keyrock-5.1.1
+    git checkout tags/keyrock-5.2.0
     
 RUN git clone https://github.com/ging/horizon && \
     cd horizon && \
-    git checkout tags/keyrock-5.1.1
+    git checkout tags/keyrock-5.2.0
 
 # Configuring settings files
 RUN cp keystone/etc/keystone.conf.sample keystone/etc/keystone.conf && \
