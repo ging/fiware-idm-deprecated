@@ -1,0 +1,7 @@
+source "https://supermarket.chef.io"
+Encoding.default_external = Encoding::UTF_8
+metadata
+
+cookbook "apt"
+cookbook "build-essential"
+cookbook "poise-python"

@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: keyrock
-# Recipe:: default
+# Recipe:: configure
 #
 # Copyright 2015, GING, ETSIT, UPM
 #
@@ -17,4 +17,14 @@
 # limitations under the License.
 #
 
-include_recipe 'keyrock::0.0.1_install'
+INSTALL_DIR = node['keyrock'][:install_dir]
+
+## Creating keyrock config file
+remote_file "Copy service file" do
+  path "#{INSTALL_DIR}/conf/settings.py"
+  source "file://#{INSTALL_DIR}/conf/settings.py.example"
+  owner 'root'
+  group 'root'
+  mode 0755
+  not_if { ::File.exists?("#{INSTALL_DIR}/conf/settings.py") }
+end

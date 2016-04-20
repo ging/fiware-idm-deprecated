@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: keyrock
-# Recipe:: default
+# Recipe:: stop
 #
 # Copyright 2015, GING, ETSIT, UPM
 #
@@ -16,5 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+INSTALL_DIR = node['keyrock'][:install_dir]
+ENV['PYTHONPATH'] = "#{ENV['PYTHONPATH']}:#{INSTALL_DIR}/idm"
 
-include_recipe 'keyrock::0.0.1_install'
+bash 'stop idm' do
+  environment 'PYTHONPATH' => "#{INSTALL_DIR}/idm:#{ENV['PYTHONPATH']}"
+  cwd "#{INSTALL_DIR}"
+  user 'root'
+  ignore_failure true
+  code <<-EOH
+    source idm_tools/bin/activate
+    fab horizon.stop &
+    fab keystone.stop &
+    pkill -9 python
+  EOH
+end

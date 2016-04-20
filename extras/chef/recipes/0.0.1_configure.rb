@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: keyrock
-# Recipe:: default
+# Recipe:: configure
 #
 # Copyright 2015, GING, ETSIT, UPM
 #
@@ -16,5 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+node.set['keyrock']['version'] = '0.0.1'
 
-include_recipe 'keyrock::0.0.1_install'
+include_recipe 'keyrock::configure'

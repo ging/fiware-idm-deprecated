@@ -1,0 +1,21 @@
+DEPENDENCIES
+  apt
+  build-essential
+  keyrock
+    path: .
+    metadata: true
+  poise-python
+
+GRAPH
+  apt (2.9.2)
+  build-essential (2.2.4)
+  keyrock (0.0.1)
+    apt (>= 0.0.0)
+    build-essential (>= 0.0.0)
+    poise-python (>= 0.0.0)
+  poise (2.4.0)
+  poise-languages (1.2.0)
+    poise (~> 2.3)
+  poise-python (1.1.1)
+    poise (~> 2.0)
+    poise-languages (~> 1.2)

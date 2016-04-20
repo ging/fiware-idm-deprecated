@@ -1,7 +1,7 @@
 Description
 ===========
 
-Installs fiware-idm.
+Installs keyrock.
 
 Requirements
 ============
@@ -12,7 +12,7 @@ Chef must be installed.
 Attributes
 ==========
 
-node[fiware-idm]['app_dir'] contains the path to install
+node[keyrock]['app_dir'] contains the path to install
 
 Usage
 =====

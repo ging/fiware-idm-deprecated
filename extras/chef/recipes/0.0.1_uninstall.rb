@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: keyrock
-# Recipe:: default
+# Recipe:: uninstall
 #
 # Copyright 2015, GING, ETSIT, UPM
 #
@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe 'keyrock::0.0.1_install'
+include_recipe 'keyrock::uninstall'
