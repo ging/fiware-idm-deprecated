@@ -3,6 +3,7 @@ FROM ubuntu:14.04
 MAINTAINER FIWARE Indentity Manager Team. DIT-UPM
 
 ENV HOME=/
+ENV IDM_PASS=idm
 
 # Install Ubuntu dependencies
 RUN sudo apt-get update && \
@@ -25,7 +26,7 @@ RUN git clone https://github.com/ging/horizon && \
 # Configuring settings files
 RUN cp keystone/etc/keystone.conf.sample keystone/etc/keystone.conf && \
     cp horizon/openstack_dashboard/local/local_settings.py.example horizon/openstack_dashboard/local/local_settings.py && \
-    sed -i s/\$\$IDM_PASS/idm/g horizon/openstack_dashboard/local/local_settings.py
+    sed -i s/\$\$IDM_PASS/${IDM_PASS}/g horizon/openstack_dashboard/local/local_settings.py
 
 # Install python dependecies
 RUN sudo python keystone/tools/install_venv.py && \
@@ -43,7 +44,8 @@ RUN sudo tools/with_venv.sh bin/keystone-manage db_sync && \
 
 # Prepare to set up idm password
 COPY expect_idm_password .
-RUN chmod +x expect_idm_password && \
+RUN sed -i s/\$\$IDM_PASS/${IDM_PASS}/g expect_idm_password && \
+    chmod +x expect_idm_password && \
     sudo ./expect_idm_password
 
 # Mount volumes to grant access from host

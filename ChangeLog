@@ -1,6 +1,33 @@
 CHANGES
 =======
 
+* Requirements updated
+
+v5.2.0
+------
+
+* Updated release in installation script and Dockerfile
+* Included two factor API in apib file
+* Added cancel-accounts command
+* fiware read the docs style
+* Update conf.py
+* Update conf.py
+* Update conf.py
+* Update conf.py
+* Delete conf.py
+* Update conf.py
+* Update conf.py
+* Create fiware_style.css
+* Update conf.py
+* Create conf.py
+* Update README.rst
+* Badges
+* Update README.rst
+* Badges
+
+v5.1.1
+------
+
 * Updated release in installation script
 * Updated release in Dockerfile
 * Improved Dockerfile to store DB inside keystone directory
