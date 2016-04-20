@@ -63,7 +63,7 @@ You can also run the container from the [image we provide](https://hub.docker.co
 > If you do not specify a version you are pulling from `latest` by default.
 
 # Default settings included in the Image
-The image includes the following settings as defaults, but you can change any of them by accessing the container (see [this](#volumes)):
+The image includes the following settings as defaults, but you can change any of them by accessing the container (see [this](#volumes)) or changing the Dockerfile:
 
 | Setting       | Value  |
 |:-------------:|:------:|
