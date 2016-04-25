@@ -281,6 +281,8 @@ Example response:
 SCIM 2.0
 ---------
 
+Documentation on KeyRock APIs can be found at :ref:`API Overiview section <api>`. We provide bellow an example of API call, to retrieve the service provider documentation.
+
 Get service provider configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
