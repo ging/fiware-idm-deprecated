@@ -99,7 +99,7 @@ Configure Apache
 ----------------
 
 The details on how to correctly configure Apache or
-set up HTTPS are beyond te scope this document, check the `Django
+set up HTTPS are beyond the scope this document, check the `Django
 documentation <https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/modwsgi/>`__
 and `Apache HTTPS
 documentation <http://httpd.apache.org/docs/2.4/ssl/ssl_howto.html>`__
@@ -219,7 +219,7 @@ Edit the local_settings.py file and set
     ]
     SECRET_KEY = 'arandomstringhere' # DON'T LEAVE THIS SAMPLE STRING
 
-.. warning:: Please set your SECRET_KEY. A know SECRET_KEY is a huge security vulnerability.
+.. warning:: Please set your SECRET_KEY. A known SECRET_KEY is a huge security vulnerability.
 More information `here <https://docs.djangoproject.com/en/1.9/ref/settings/#std:setting-SECRET_KEY>`__
 
 NO CAPTCHA reCAPTCHA
