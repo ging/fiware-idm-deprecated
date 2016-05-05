@@ -8,6 +8,8 @@ APIARY_PROJECT: keyrock
 SPEC_URL: http://ging.github.io/fiware-idm/keyrock.html
 GITHUB_SOURCE: https://github.com/ging/fiware-idm
 
+
+
 # Identity Manager GE - Keyrock
 
 Identity Manager (IdM) GE API specifications comply with existing standards for authentication and user and provide access information. The following sections provide pointers to those standards and, when applicable, details about how the RESTful binding work. 
@@ -51,11 +53,15 @@ As Keyrock backend is based on Openstack Keystone, it fully implement its APIs. 
 
 In order to manage other entities that only Keyrock offers, you have to use the extensions APIs, explained bellow. This APIs are exposed by the back-end NOT the front-end.
 
-## Consumers [/OS-OAUTH2/consumers]
+## Consumers [/v3/OS-OAUTH2/consumers]
 
 Consumers are the Applications registered in Keyrock to consume OAuth2 resources.
 
 ### List Consumers [GET]
++ Request
+    + Headers
+    
+            X-Auth-token: token
 
 + Response 200 (application/json)
 
@@ -99,21 +105,26 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 ### Create a Consumer [POST]
 
 + Request (application/json)
-        
-        {
-          "consumer": {
-            "name": "test_consumer",
-            "description": "my test consumer",
-            "client_type": "confidential",
-            "redirect_uris": [
-              "http://localhost/login"
-            ],
-            "grant_type": "authorization_code",
-            "scopes": [
-              "all_info"
-            ]
-          }
-        }
+    + Headers
+            
+            X-Auth-token: token
+    
+    + Body
+    
+            {
+              "consumer": {
+                "name": "test_consumer",
+                "description": "my test consumer",
+                "client_type": "confidential",
+                "redirect_uris": [
+                  "http://localhost/login"
+                ],
+                "grant_type": "authorization_code",
+                "scopes": [
+                  "all_info"
+                ]
+              }
+            }
 
 + Response 200 (application/json)
 
@@ -141,110 +152,130 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
               }
             }
 
-## Consumer [/OS-OAUTH2/consumers/{consumer_id}]
+## Consumer [/v3/OS-OAUTH2/consumers/{consumer_id}]
 
 + Parameters
     + consumer_id - Id of the consumer.
-
+    
 ### Read Consumer details [GET]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
 
-        {
-          "consumer": {
-            "scopes": [
-              "all_info"
-            ],
-            "redirect_uris": [
-              "http://app.com/v1/login_fiware"
-            ],
-            "img_small": "ApplicationAvatar/small/dddjajdsajd23234232342",
-            "name": "App test",
-            "links": {
-              "self": "http://host/v3/OS-OAUTH2/consumers/dddjajdsajd23234232342"
-            },
-            "extra": {
-              "url": "http://app.com/v1",
-              "img_original": "ApplicationAvatar/original/dddjajdsajd23234232342",
-              "img_small": "ApplicationAvatar/small/dddjajdsajd23234232342",
-              "img_medium": "ApplicationAvatar/medium/dddjajdsajd23234232342"
-            },
-            "url": "http://app.com/v1",
-            "img_original": "ApplicationAvatar/original/dddjajdsajd23234232342",
-            "description": "App test",
-            "secret": "43534534535345345345345",
-            "client_type": "confidential",
-            "response_type": "code",
-            "grant_type": "authorization_code",
-            "id": "dddjajdsajd23234232342",
-            "img_medium": "ApplicationAvatar/medium/dddjajdsajd23234232342"
-          }
-        }
+            {
+              "consumer": {
+                "scopes": [
+                  "all_info"
+                ],
+                "redirect_uris": [
+                  "http://app.com/v1/login_fiware"
+                ],
+                "img_small": "ApplicationAvatar/small/dddjajdsajd23234232342",
+                "name": "App test",
+                "links": {
+                  "self": "http://host/v3/OS-OAUTH2/consumers/dddjajdsajd23234232342"
+                },
+                "extra": {
+                  "url": "http://app.com/v1",
+                  "img_original": "ApplicationAvatar/original/dddjajdsajd23234232342",
+                  "img_small": "ApplicationAvatar/small/dddjajdsajd23234232342",
+                  "img_medium": "ApplicationAvatar/medium/dddjajdsajd23234232342"
+                },
+                "url": "http://app.com/v1",
+                "img_original": "ApplicationAvatar/original/dddjajdsajd23234232342",
+                "description": "App test",
+                "secret": "43534534535345345345345",
+                "client_type": "confidential",
+                "response_type": "code",
+                "grant_type": "authorization_code",
+                "id": "dddjajdsajd23234232342",
+                "img_medium": "ApplicationAvatar/medium/dddjajdsajd23234232342"
+              }
+            }
 
 ### Update a Consumer [PATCH]
 
 + Request (application/json)
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
 
-        {
-          "consumer": {
-            "field_to_update": "value",
-            "antoher_field_to_update": [
-              "another_value"
-            ]
-          }
-        }
+            {
+              "consumer": {
+                "field_to_update": "value",
+                "antoher_field_to_update": [
+                  "another_value"
+                ]
+              }
+            }
 
 + Response 200 (application/json)
 
 ### Delete a Consumer [DELETE]
++ Request
+    + Headers
+            
+            X-Auth-token: token
++ Response 204 (application/json)
 
-+ Response 200 (application/json)
-
-## Roles [/OS-ROLES/roles]
+## Roles [/v3/OS-ROLES/roles]
 
 
 ### List Roles [GET]
++ Request
+    + Headers
+        
+            X-Auth-token: token
 
 + Response 200 (application/json)
 
-        {
-          "links": {
-            "self": "http://host/v3/OS-ROLES/roles",
-            "previous": null,
-            "next": null
-          },
-          "roles": [
             {
-              "is_internal": false,
-              "application_id": "3123123131fg12f3g1f23g1jjjhg123h",
-              "id": "312312384578231j312gff2h3782318",
               "links": {
-                "self": "http://host/v3/OS-ROLES/roles/312312384578231j312gff2h3782318"
+                "self": "http://host/v3/OS-ROLES/roles",
+                "previous": null,
+                "next": null
               },
-              "name": "admin1"
-            },
-            {
-              "is_internal": false,
-              "application_id": "23123897182903712893712h3dh1031sd3",
-              "id": "90834823948209f0sdf8jf'82kr820384",
-              "links": {
-                "self": "http://host/v3/OS-ROLES/roles/90834823948209f0sdf8jf82kr820384"
-              },
-              "name": "test"
+              "roles": [
+                {
+                  "is_internal": false,
+                  "application_id": "3123123131fg12f3g1f23g1jjjhg123h",
+                  "id": "312312384578231j312gff2h3782318",
+                  "links": {
+                    "self": "http://host/v3/OS-ROLES/roles/312312384578231j312gff2h3782318"
+                  },
+                  "name": "admin1"
+                },
+                {
+                  "is_internal": false,
+                  "application_id": "23123897182903712893712h3dh1031sd3",
+                  "id": "90834823948209f0sdf8jf'82kr820384",
+                  "links": {
+                    "self": "http://host/v3/OS-ROLES/roles/90834823948209f0sdf8jf82kr820384"
+                  },
+                  "name": "test"
+                }
+              ]
             }
-          ]
-        }
 
 ### Create a Role [POST]
 
 + Request (application/json)
-
-        {
-          "role": {
-            "name": "test_role",
-            "application_id": "2222"
-          }
-        }
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
+        
+            {
+              "role": {
+                "name": "test_role",
+                "application_id": "2222"
+              }
+            }
 
 + Response 200 (application/json)
 
@@ -262,13 +293,16 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
               }
             }
 
-## Role [/OS-ROLES/roles/{role_id}]
+## Role [/v3/OS-ROLES/roles/{role_id}]
 
 + Parameters
     + role_id - Id of the role.
 
 ### Read Role details [GET]
-
++ Request
+    + Headers
+    
+            X-Auth-token: token
 + Response 200 (application/json)
 
         {
@@ -286,25 +320,36 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 ### Update a Role [PATCH]
 
 + Request (application/json)
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
 
-        {
-          "role": {
-            "name": "test_role_new",
-            "application_id": "2222"
-          }
-        }
+            {
+              "role": {
+                "name": "test_role_new",
+                "application_id": "2222"
+              }
+            }
 
 + Response 200 (application/json)
 
 ### Delete a Role [DELETE]
++ Request
+    + Headers
+        
+            X-Auth-token: token
++ Response 204 (application/json)
 
-+ Response 200 (application/json)
-
-## Permissions [/OS-ROLES/permissions]
+## Permissions [/v3/OS-ROLES/permissions]
 
 
 ### List Permissions [GET]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
 
         {
@@ -344,13 +389,18 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
 ### Create a Permission [POST]
 
 + Request (application/json)
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
 
-        {
-          "permission": {
-            "name": "test_permission",
-            "application_id": "2222"
-          }
-        }
+            {
+              "permission": {
+                "name": "test_permission",
+                "application_id": "2222"
+              }
+            }
 
 + Response 200 (application/json)
 
@@ -371,54 +421,68 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
               }
             }
 
-## Permission [/OS-ROLES/permissions/{permission_id}]
+## Permission [/v3/OS-ROLES/permissions/{permission_id}]
 
 + Parameters
     + permission_id - Id of the permission.
 
 ### Read Permission details [GET]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
 
-        {
-          "permission": {
-            "xml": "",
-            "resource": "/enterprise/edit",
-            "name": "Enterprise",
-            "links": {
-              "self": "http://host/v3/OS-ROLES/permissions/21897318273128937sh12a1"
-            },
-            "is_internal": false,
-            "action": "GET",
-            "application_id": "23129371237917f17fd07102d7",
-            "id": "21897318273128937sh12a1"
-          }
-        }
+            {
+              "permission": {
+                "xml": "",
+                "resource": "/enterprise/edit",
+                "name": "Enterprise",
+                "links": {
+                  "self": "http://host/v3/OS-ROLES/permissions/21897318273128937sh12a1"
+                },
+                "is_internal": false,
+                "action": "GET",
+                "application_id": "23129371237917f17fd07102d7",
+                "id": "21897318273128937sh12a1"
+              }
+            }
 
 ### Update a Permission [PATCH]
 
 + Request (application/json)
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
 
-        {
-          "permission": {
-            "name": "test_permission",
-            "application_id": "2222"
-          }
-        }
+            {
+              "permission": {
+                "name": "test_permission",
+                "application_id": "2222"
+              }
+            }
 
 + Response 200 (application/json)
 
 ### Delete a Permission [DELETE]
++ Request
+    + Headers
+        
+            X-Auth-token: token
++ Response 204 (application/json)
 
-+ Response 200 (application/json)
-
-## Role - Permission Relationships [/OS-ROLES/roles/{role_id}/permissions]
+## Role - Permission Relationships [/v3/OS-ROLES/roles/{role_id}/permissions]
 
 + Parameters
     + role_id - Id of the role.
 
 ### List permissions associated to a role [GET]
-
++ Request
+    + Headers
+            
+            X-Auth-token: token
 + Response 200 (application/json)
 
         {
@@ -443,24 +507,33 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
           ]
         }
 
-## Role - Permission Relationship [/OS-ROLES/roles/{role_id}/permissions/{permission_id}]
+## Role - Permission Relationship [/v3/OS-ROLES/roles/{role_id}/permissions/{permission_id}]
 
 + Parameters
     + role_id - Id of the role.
     + permission_id - Id of the permission.
 
 ### Assign a permission to a role [PUT]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
 
 ### Remove a permission from a role [DELETE]
++ Request
+    + Headers
+        
+            X-Auth-token: token
++ Response 204 (application/json)
 
-+ Response 200 (application/json)
-
-## Role - User Relationships [/OS-ROLES/users/role_assignments]
+## Role - User Relationships [/v3/OS-ROLES/users/role_assignments]
 
 ### List users role assignments [GET]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
 
         {
@@ -480,7 +553,7 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
           ]
         }
 
-## Role - User Relationship [/OS-ROLES/users/{user_id}/applications/{application_id}/roles/{role_id}]
+## Role - User Relationship [/v3/OS-ROLES/users/{user_id}/applications/{application_id}/roles/{role_id}]
 
 + Parameters
     + user_id - Id of the user.
@@ -488,14 +561,17 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
     + role_id - Id of the role.
 
 ### Assign a role to a user [PUT]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
         
 ### Remove a role assignment from a user [DELETE]
 
-+ Response 200 (application/json)
++ Response 204 (application/json)
 
-## Role - User Relationship inside an organization [/OS-ROLES/users/{user_id}/organizations/{organization_id}/applications/{application_id}/roles/{role_id}]
+## Role - User Relationship inside an organization [/v3/OS-ROLES/users/{user_id}/organizations/{organization_id}/applications/{application_id}/roles/{role_id}]
 
 + Parameters
     + user_id - Id of the user
@@ -504,20 +580,26 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
     + role_id - Id of the role.
 
 ### Assign a role to a user inside an organization [PUT]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
         
 ### Remove a role assignment from a user inside an organization [DELETE]
++ Request
+    + Headers
+        
+            X-Auth-token: token
++ Response 204 (application/json)
 
-+ Response 200 (application/json)
-
-## Role - Organization Relationships [/OS-ROLES/organizations/role_assignments]
+## Role - Organization Relationships [/v3/OS-ROLES/organizations/role_assignments]
 
 ### List organizations role assignments [GET]
 
 + Response 200 (application/json)
 
-## Role - Organization Relationship [/OS-ROLES/organizations/{organization_id}/applications/{application_id}/roles/{role_id}]
+## Role - Organization Relationship [/v3/OS-ROLES/organizations/{organization_id}/applications/{application_id}/roles/{role_id}]
 
 + Parameters
     + organization_id - Id of the organization.
@@ -525,29 +607,39 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
     + role_id - Id of the role.
 
 ### Assign a rol to an organization [PUT]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
 
 ### Remove a role assignment from an organization [DELETE]
++ Request
+    + Headers
+        
+            X-Auth-token: token
++ Response 204 (application/json)
 
-+ Response 200 (application/json)
-
-## Two Factor Authentication [/OS-TWO-FACTOR/two_factor_auth?{user_id,user_name,domain_id,domain_name}]
+## Two Factor Authentication [/v3/OS-TWO-FACTOR/two_factor_auth?user_id={user_id}&user_name={user_name}&domain_id={domain_id}&domain_name={domain_name}]
 
 ### Check if two factor authentication is enabled for a certain user [HEAD]
 Either user_id or user_name (along with domain_id or domain_name) must be provided.
 
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Parameters
     + user_id (optional) - ID of the user to be checked.
     + user_name (optional) - Name of the user to be checked.
     + domain_id (optional) - ID of the domain that the user belongs to.
     + domain_name (optional) - Name of the domain that the user belongs to.
-    
+
 + Response 204
     
 + Response 404
 
-## Two Factor Authentication Keys [/users/{user_id}/OS-TWO-FACTOR/two_factor_auth]
+## Two Factor Authentication Keys [/v3/users/{user_id}/OS-TWO-FACTOR/two_factor_auth]
 
 + Parameters
     + user_id - ID of the user.
@@ -555,13 +647,18 @@ Either user_id or user_name (along with domain_id or domain_name) must be provid
 ### Enable two factor authentication / Get new key [POST]
 
 + Request (application/json)
-
-        {
-            "two_factor_auth": {
-                "security_question":"sample question",
-                "security_answer":"sample answer"
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
+    
+            {
+                "two_factor_auth": {
+                    "security_question":"sample question",
+                    "security_answer":"sample answer"
+                }
             }
-        }
         
 + Response 201 (application/json)
 
@@ -581,6 +678,9 @@ Either user_id or user_name (along with domain_id or domain_name) must be provid
             }
             
 + Request (application/json)
+    + Headers
+    
+            X-Auth-token: token
     
 + Response 201 (application/json)
 
@@ -601,16 +701,22 @@ Either user_id or user_name (along with domain_id or domain_name) must be provid
 
 
 ### Disable two factor authentication [DELETE]
-
++ Request
+    + Headers
+    
+            X-Auth-token: token
 + Response 204
 
-## Two Factor Authentication Security Questions [/users/{user_id}/OS-TWO-FACTOR/]
+## Two Factor Authentication Security Questions [/v3/users/{user_id}/OS-TWO-FACTOR/]
 
 + Parameters
     + user_id - ID of the user.
 
-### Retrieve non-sensitive data [GET /users/{user_id}/OS-TWO-FACTOR/two_factor_data]
-
+### Retrieve non-sensitive data [GET /v3/users/{user_id}/OS-TWO-FACTOR/two_factor_data]
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
 
     + Body
@@ -625,30 +731,37 @@ Either user_id or user_name (along with domain_id or domain_name) must be provid
                 }
             }
 
-### Check security question [HEAD /users/{user_id}/OS-TWO-FACTOR/sec_question]
+### Check security question [HEAD /v3/users/{user_id}/OS-TWO-FACTOR/sec_question?security_answer={security_answer}]
+
++ Parameters
+    + security_answer - Answer to be checked.
 
 + Request (application/json)
-    
-        {
-            "two_factor_auth": {
-                "security_answer":"answer"
-            }
-        }
+    + Headers
         
+            X-Auth-token: token
+
 + Response 204
 
 + Response 401
 
-## Two Factor Authentication Devices [/OS-TWO-FACTOR/devices]
+## Two Factor Authentication Devices [/v3/OS-TWO-FACTOR/devices]
 
-### Remember new device or get new token [POST /OS-TWO-FACTOR/devices?user_id={user_id}&user_name={user_name}&domain_name={domain_name}&device_id={device_id}]
+### Remember new device or get new token [POST /v3/OS-TWO-FACTOR/devices?user_id={user_id}&user_name={user_name}&domain_name={domain_name}&device_id={device_id}&device_token={device_token}]
 Either user_id or user_name and domain_name must be provided.
+The parameter device_token is required when providing device_id.
 
 + Parameters
     + user_id (optional) - ID of the user.
     + user_name (optional) - Name of the user.
     + domain_name (optional) - Name of the domain that the user belongs to.
-    + device_id (optional) - ID of the device to be remembered.
+    + device_id (optional) - ID of the device to be remembered, none if new one.
+    + device_token (optional) - Current token of the device, none if new one.
+    
++ Request
+    + Headers
+        
+            X-Auth-token: token
 
 + Response 200 (application/json)
     
@@ -664,7 +777,11 @@ Either user_id or user_name and domain_name must be provided.
                 }
             }
 
-### Check for device [HEAD /OS-TWO-FACTOR/devices?device_id={device_id}&device_token={device_token}&user_id={user_id}&user_name={user_name}&domain_name={domain_name}]
++ Response 401
+
++ Response 404
+
+### Check for device [HEAD /v3/OS-TWO-FACTOR/devices?device_id={device_id}&device_token={device_token}&user_id={user_id}&user_name={user_name}&domain_name={domain_name}]
 Either user_id or user_name and domain_name must be provided.
 
 + Parameters
@@ -672,14 +789,22 @@ Either user_id or user_name and domain_name must be provided.
     + user_name (optional) - Name of the user.
     + domain_name (optional) - Name of the domain that the user belongs to.
     + device_id - ID of the device to be checked.
+    + device_token - Current token of the device to be checked.
+
++ Request
+    + Headers
+        
+            X-Auth-token: token
     
 + Response 204
 
-+ Response 404
++ Response 401
 
 + Response 403
 
-### Forget all devices [DELETE /users/{user_id}/OS-TWO-FACTOR/devices]
++ Response 404
+
+### Forget all devices [DELETE /v3/users/{user_id}/OS-TWO-FACTOR/devices]
 + Parameters
     + user_id - ID of the user.
     
@@ -693,10 +818,13 @@ The access to the SCIM 2.0 API (except ServiceProvider calls) is only allowed fo
 
 In this case, we will be using version 2.0 of the API, but version 1.1 is compatible. To use version 1.1, replace in the examples below v2 with v1. In the case of the organizations, only v2 is available.
 
-# Users [/v2/Users/]
+# Users [/v3/OS-SCIM/v2/Users/]
 
 ### List Users [GET]
-
++ Request
+    + Headers
+        
+            X-Auth-token: token
 + Response 200 (application/json)
 
         {
@@ -711,17 +839,22 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 ### Create a User [POST]
 
 + Request (application/json)
-
-        {
-          "userName": "alice",
-          "displayName": "Alice",
-          "password": "passw0rd",
-          "emails": [
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
+    
             {
-              "value": "alice@mailhost.com"
+              "userName": "alice",
+              "displayName": "Alice",
+              "password": "passw0rd",
+              "emails": [
+                {
+                  "value": "alice@mailhost.com"
+                }
+              ]
             }
-          ]
-        }
 
 + Response 200 (application/json)
 
@@ -731,6 +864,10 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
     + user_id - Id of the user.
 
 ### Read info about a User [GET]
++ Request
+    + Headers
+        
+            X-Auth-token: token
 
 + Response 200 (application/json)
 
@@ -750,27 +887,40 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 ### Update a User [PUT]
 
 + Request (application/json)
-
-        {
-          "userName": "alice",
-          "displayName": "Alice",
-          "password": "passw0rd_new",
-          "emails": [
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
+    
             {
-              "value": "alice@mailhost.com"
+              "userName": "alice",
+              "displayName": "Alice",
+              "password": "passw0rd_new",
+              "emails": [
+                {
+                  "value": "alice@mailhost.com"
+                }
+              ]
             }
-          ]
-        }
 
 + Response 200 (application/json)
 
 ### Delete a User [DELETE]
++ Request
+    + Headers
+        
+            X-Auth-token: token
 
-+ Response 200 (application/json)
++ Response 204 (application/json)
 
-# Organizations [/v2/Organizations/]
+# Organizations [/v3/OS-SCIM/v2/Organizations]
 
 ### List Organizations [GET]
++ Request
+    + Headers
+        
+            X-Auth-token: token
 
 + Response 200 (application/json)
 
@@ -786,14 +936,19 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 ### Create an Organization [POST]
 
 + Request (application/json)
-
-        {
-          "name": "Name of organization",
-          "is_default": true,
-          "domain_id": "domain",
-          "active": true,
-          "id": "ID"
-        }
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
+    
+            {
+              "name": "Name of organization",
+              "is_default": true,
+              "domain_id": "domain",
+              "active": true,
+              "id": "ID"
+            }
 
 + Response 200 (application/json)
 
@@ -803,6 +958,10 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
     + organization_id - Id of the organization.
 
 ### Read info about an Organization [GET]
++ Request
+    + Headers
+        
+            X-Auth-token: token
 
 + Response 200 (application/json)
 
@@ -823,26 +982,35 @@ In this case, we will be using version 2.0 of the API, but version 1.1 is compat
 ### Update an Organization [PUT]
 
 + Request (application/json)
-
-        {
-            "name": "New name of organization", 
-            "is_default": true,
-            "domain_id": "domain",
-            "active": true, 
-            "id": "ID"
-        }
+    + Headers
+        
+            X-Auth-token: token
+    
+    + Body
+    
+            {
+                "name": "New name of organization", 
+                "is_default": true,
+                "domain_id": "domain",
+                "active": true, 
+                "id": "ID"
+            }
 
 + Response 200 (application/json)
 
 ### Delete an Organization [DELETE]
 
-+ Response 200 (application/json)
++ Response 204 (application/json)
 
 ## Service Provider [/v3/OS-SCIM/v2/ServiceProviderConfigs]
 
 ### Read Service Provider Configuration [GET]
 
 "Information" provides the number of total users, total organizations (not counting the default organizations), cloud organizations, and the number of each type of user (basic, trial and community).
++ Request
+    + Headers
+        
+            X-Auth-token: token
 
 + Response 200 (application/json)
 
