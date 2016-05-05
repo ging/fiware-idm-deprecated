@@ -8,7 +8,7 @@ wget https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
 
 # Install Ubuntu project dependencies
-sudo apt-get install -y python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev libxml2-dev libxslt1-dev libsasl2-dev libssl-dev libldap2-dev libffi-dev libsqlite3-dev libmysqlclient-dev python-mysqldb
+sudo apt-get install -y python-dev python-virtualenv libssl-dev libjpeg8-dev libxml2-dev libxslt1-dev libsasl2-dev libssl-dev libldap2-dev libffi-dev libsqlite3-dev libmysqlclient-dev python-mysqldb
 
 # Download latest version of the code 
 git clone https://github.com/ging/keystone
