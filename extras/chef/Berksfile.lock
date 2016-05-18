@@ -9,7 +9,7 @@ DEPENDENCIES
 GRAPH
   apt (2.9.2)
   build-essential (2.2.4)
-  keyrock (0.0.1)
+  keyrock (0.0.2)
     apt (>= 0.0.0)
     build-essential (>= 0.0.0)
     poise-python (>= 0.0.0)

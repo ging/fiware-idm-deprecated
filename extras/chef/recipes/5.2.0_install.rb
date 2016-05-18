@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: keyrock
-# Recipe:: start
+# Recipe:: install
 #
 # Copyright 2015, GING, ETSIT, UPM
 #
@@ -16,11 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+node.set['keyrock']['version'] = '5.2.0'
 
-
-service 'keystone_idm' do
-  action :start
-end
-service 'horizon_idm' do
-  action :start
-end
+include_recipe 'keyrock::install'

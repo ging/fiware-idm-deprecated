@@ -17,10 +17,5 @@
 # limitations under the License.
 #
 
+include_recipe 'keyrock::start'
 
-service 'keystone_idm' do
-  action :start
-end
-service 'horizon_idm' do
-  action :start
-end

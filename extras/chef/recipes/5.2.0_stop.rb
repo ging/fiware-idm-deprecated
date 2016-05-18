@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: keyrock
-# Recipe:: start
+# Recipe:: stop
 #
 # Copyright 2015, GING, ETSIT, UPM
 #
@@ -17,10 +17,4 @@
 # limitations under the License.
 #
 
-
-service 'keystone_idm' do
-  action :start
-end
-service 'horizon_idm' do
-  action :start
-end
+include_recipe 'keyrock::stop'

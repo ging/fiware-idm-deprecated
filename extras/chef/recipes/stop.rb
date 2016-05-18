@@ -16,18 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-INSTALL_DIR = node['keyrock'][:install_dir]
-ENV['PYTHONPATH'] = "#{ENV['PYTHONPATH']}:#{INSTALL_DIR}/idm"
 
-bash 'stop idm' do
-  environment 'PYTHONPATH' => "#{INSTALL_DIR}/idm:#{ENV['PYTHONPATH']}"
-  cwd "#{INSTALL_DIR}"
-  user 'root'
-  ignore_failure true
-  code <<-EOH
-    source idm_tools/bin/activate
-    fab horizon.stop &
-    fab keystone.stop &
-    pkill -9 python
-  EOH
+service 'keystone_idm' do
+  action :stop
+end
+service 'horizon_idm' do
+  action :stop
 end
