@@ -55,9 +55,9 @@ bash 'github_download' do
   user 'root'
   code <<-EOH
 git clone https://github.com/ging/keystone
-(cd keystone && git checkout tags/keyrock-5.2.0)
+(cd keystone && git checkout tags/keyrock-5.3.0)
 git clone https://github.com/ging/horizon
-(cd horizon && git checkout tags/keyrock-5.2.0)
+(cd horizon && git checkout tags/keyrock-5.3.0)
   EOH
 end
 
