@@ -1,6 +1,21 @@
 CHANGES
 =======
 
+* Updated release in installation script and Dockerfile
+* chef cookbook update
+
+v5.3.0
+------
+
+* Updated API Blueprint
+* Fixing Ubuntu dependencies
+* Fixing doc styles
+* Fixing doc styles
+* Fixing doc styles
+* reference to full API in SCIM 2.0 user guide
+* chef cookbook update
+* Dockerfile readme improved
+* Improvements in Dockerfile, related to #61
 * Requirements updated
 
 v5.2.0

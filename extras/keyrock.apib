@@ -51,7 +51,7 @@ The editors would like to express their gratitude to all the people that have co
 
 As Keyrock backend is based on Openstack Keystone, it fully implement its APIs. You can check them [here](http://developer.openstack.org/api-ref-identity-v3.html). Openstack also provides some [curl examples](http://docs.openstack.org/developer/keystone/api_curl_examples.html) in order to understand how the API works.
 
-In order to manage other entities that only Keyrock offers, you have to use the extensions APIs, explained bellow. This APIs are exposed by the back-end NOT the front-end.
+In order to manage other entities that only Keyrock offers, you have to use the extensions APIs, explained bellow. These APIs are exposed by the back-end NOT the front-end.
 
 ## Consumers [/v3/OS-OAUTH2/consumers]
 
@@ -817,6 +817,8 @@ The IDM provides several authentication mechanisms. Any of them is valid to acce
 The access to the SCIM 2.0 API (except ServiceProvider calls) is only allowed for administrators, access attempts performed by non-admin users will be answered with HTTP 401 (Unauthorized).
 
 In this case, we will be using version 2.0 of the API, but version 1.1 is compatible. To use version 1.1, replace in the examples below v2 with v1. In the case of the organizations, only v2 is available.
+
+Just like Keystone extensions, these APIs are exposed by the back-end NOT the front-end.
 
 # Users [/v3/OS-SCIM/v2/Users/]
 
