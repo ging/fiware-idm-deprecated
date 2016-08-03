@@ -13,6 +13,7 @@ This project is part of `FIWARE`_. You will find more information about this FIW
    introduction
    admin_guide
    setup
+   fed_private
 
 .. toctree::
    :maxdepth: 1
