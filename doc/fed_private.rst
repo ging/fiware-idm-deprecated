@@ -123,4 +123,3 @@ A detailed installation and configuration guide can be found `here <https://gith
 .. |image1| image:: /resources/fed_private/case1.png
 .. |image2| image:: /resources/fed_private/case2.png
 .. |image3| image:: /resources/fed_private/case3.png
-.. |image4| image:: /resources/fed_private/
