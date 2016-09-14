@@ -152,6 +152,17 @@ installation scripts, you will have to create them yourself.
     ]
     
 
+-  AuthZForce GE Configuration. 
+
+These settings configure the connection to an `Authorization PDP GE <http://catalogue.fiware.org/enablers/authorization-pdp-authzforce/>`__  instance to create permmisions to your applications. If the AZF instance is secured by a `PEP Proxy GE <http://catalogue.fiware.org/enablers/pep-proxy-wilma>`__ you can also set a magic key to bypass the policy enforcement point. 
+
+.. code-block:: python
+
+    # ACCESS CONTROL GE
+    ACCESS_CONTROL_URL = 'http://azf_host:6019'
+    ACCESS_CONTROL_MAGIC_KEY = 'azf_pep_key'
+    
+
 3. Django settings
 ^^^^^^^^^^^^^^^^^^
 
