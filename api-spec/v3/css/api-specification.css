@@ -1,10 +1,7 @@
 
 body {
-  /*padding: 2em 1em 2em 70px;*/
   margin: 0;
-  /*font-family: sans-serif;*/
   font-family: verdana !important;
-  /*color: black;*/
   color:#404040;
 }
 
@@ -36,7 +33,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1, h2, h3 {
-    /*color: #005A9C; */
     color:#00275a;
 }
 
@@ -65,7 +61,7 @@ h6 {
     font: small-caps 100%;
 }
 
-.header h5, .header h3, .header span{
+.header h3, .header span{
     display: inline-block !important;
 }
 
@@ -80,6 +76,7 @@ table, td, th {
     border-color: black;
     border-collapse: collapse;
     padding: 0.15em;
+    margin-bottom: 16px;
 }
 @media print {
     .goExample, .goActions {
@@ -156,7 +153,6 @@ table, td, th {
   }
   #fiware-logo{
     height: 80px;
-    /*margin-bottom: 15px;*/
     background: url(../img/fiware.png) no-repeat center center; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -185,6 +181,7 @@ table, td, th {
         overflow: auto;
         width: calc(100%);
         resize: none;
+        background-color: #f5f5f5;
     }
     #toc>ul{
         border: 0px !important;
@@ -204,7 +201,6 @@ table, td, th {
 #fiware-logo{
     height: 80px;
     background-color: white!important;
-    /*margin-bottom: 15px;*/
     background: url(../img/fiware2.png) no-repeat center center; 
     -webkit-background-size: contain;
     -moz-background-size: contain;
@@ -233,11 +229,13 @@ table, td, th {
     color: #333 ;
     max-width: 100%;
     width: 100%;
+    text-decoration: none;
 }
 
 #TOC-container li a:hover{
-   background-color: #e2e2e2;
-   text-decoration: none;
+    color: #ffffff !important;
+    background-color: #4e4a4a !important;
+    text-decoration: none;
 }
 
 #toc li{
@@ -283,7 +281,6 @@ ul.toc, ol.toc {
 }
 
 .toc li{
-  /*white-space: nowrap;*/
   overflow: hidden;
   text-overflow: ellipsis; 
 }
@@ -313,6 +310,7 @@ dd dl{
 .parameters-title{
     font-weight: bold;
     font-size: 1.1em;
+    display: block;
 }
 
 .parameters-title+dl dl{
@@ -344,12 +342,11 @@ dd dl{
     border-left: 5px darkgray solid;
     margin-top: 5px;
     padding-left: 5px;
-    background-color: #FBF7F7;
+    background-color: #f7f7f7;
     margin-bottom: 45px;
 }
 
 .resource dl dd>p{
-    font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -360,18 +357,15 @@ dd dl{
     margin-bottom: 25px;
     padding-left: 5px;
     padding-bottom: 15px;
-    background-color: #E0DCF3;
 }
 
 .action dl dd>p{
-    font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
 }
 
 .action:nth-child(even){
     border-left: 2px orange solid;
-    background-color: #F7EAD2;
 }
 
 .action-header{
@@ -380,31 +374,31 @@ dd dl{
 }
 
 .action.GET{
-    background-color: #E0DCF3;
-    border-left: 2px blue solid;
+    border-left: 2px green solid;
+    background-color:#dff0d8;
 }
 
 .action.POST{
-    border-left: 2px orange solid;
-    background-color: #F7EAD2;
+    border-left: 2px blue solid;
+    background-color:#d9edf7;
 }
 
 .action.PUT{
     border-left: 2px orange solid;
-    background-color: #DEB887;
+    background-color:#fcf8e3;
 }
 
 .action.PATCH{
-    border-left: 2px green solid;
-    background-color: #ECF5CF;
+    border-left: 2px orange solid;
+    background-color:#fcf8e3;
 }
 
 .action.DELETE{
     border-left: 2px red solid;
-    background-color: #E6BFBF;
+    background-color:#f2dede;
 }
 
-.action h4{
+.action h4, .actionExample h5{
     font-size: 1.05em;
     font-style: italic;
     text-decoration: underline;
@@ -415,12 +409,11 @@ dd dl{
     border-left: 5px darkgray solid;
     margin-top: 5px;
     padding-left: 5px;
-    background-color: #FBF7F7;
+    background-color: #f7f7f7;
     margin-bottom: 45px;
 }
 
 .resourceExample dl dd>p{
-    font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -432,20 +425,13 @@ dd dl{
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 15px;
-    background-color: #E0DCF3;
+    padding:5px;
 }
 
 .actionExample dl dd>p{
-    font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
 }
-
-.actionExample:nth-child(even){
-    border-left: 2px orange solid;
-    background-color: #F7EAD2;
-}
-
 
 .actionExample h4{
     font-size: 1.05em;
@@ -455,28 +441,28 @@ dd dl{
 }   
 
 .actionExample.GET{
-    background-color: #E0DCF3;
-    border-left: 2px blue solid;
+    border-left: 2px green solid;
+    background-color:#dff0d8;
 }
 
 .actionExample.POST{
-    border-left: 2px orange solid;
-    background-color: #F7EAD2;
+    border-left: 2px blue solid;
+    background-color:#d9edf7;
 }
 
 .actionExample.PUT{
     border-left: 2px orange solid;
-    background-color: #DEB887;
+    background-color:#fcf8e3;
 }
 
 .actionExample.PATCH{
-    border-left: 2px green solid;
-    background-color: #D4EA89;
+    border-left: 2px orange solid;
+    background-color:#fcf8e3;
 }
 
 .actionExample.DELETE{
     border-left: 2px red solid;
-    background-color: #E6BFBF;
+    background-color:#f2dede;
 }
 
 .payload-title{
@@ -484,6 +470,7 @@ dd dl{
     font-weight: normal;
     text-decoration: underline;
     margin-bottom: 7px;
+    display: block;
 }
 
 .packetType ~ .payload-title{
@@ -502,46 +489,29 @@ dd dl{
 
 .goExample{
     margin-top: 20px;
-    /*float: left;*/
     margin-right: 10px;
     display: inline-block;
 }
 
-/*
-.goExample a{
-    padding: 0.25em;
-    background-color: rgba(171, 171, 171, 0.4);
-    border:1px solid;
-}
-*/
+
 .goApiary {
     margin-top: 20px;
     display: inline-block;
 }
 
-/*
-.goApiary a{
-    padding: 0.25em;
-    background-color: rgba(171, 171, 171, 0.4);
-    border:1px solid;
-}
-*/
+
 
 .goActions {
     margin-top: 20px;
 }
-/*
-.goActions a{
-    padding: 0.25em;
-    background-color: rgba(171, 171, 171, 0.4);
-    border:1px solid;
-}*/
+
 
 .goActions a, .goApiary a, .goExample a, #top-source-buttons a{
     padding: 0.25em;
     background-color:#00d3de !important;
     color:black !important;
     border: 0;
+    text-decoration: none;
 }
 .goActions a::after, .goApiary a::after, .goExample a::after, #top-source-buttons a::after{
     font-family: FontAwesome;
@@ -568,3 +538,4 @@ dd dl{
     width: 4em;
     display: inline-table;
 }
+

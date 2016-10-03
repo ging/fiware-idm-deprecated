@@ -13,7 +13,8 @@
     <link href="css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/idea.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/monokai.css">
     <script src="js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="js/jquery.min.js"></script>
@@ -43,8 +44,6 @@
         
 	        
 		        <li><a href="#API-content">Identity Manager GE - Keyrock Specification</a></li>
-	        
-        
 	        
         
 	        
@@ -544,6 +543,8 @@
     
     
     
+    
+    
         <li class="tocline"> <a href="#acknowledgements" title = "Acknowledgements"> Acknowledgements </a>
 
     
@@ -582,8 +583,6 @@
 
 	
 
-	
-
 
 
 	<h1>Identity Manager GE - Keyrock Specification </h1>
@@ -608,8 +607,6 @@
 
 	
 
-	
-
 
 
 
@@ -634,12 +631,6 @@
 	
 		
 	
-	
-
-	
-	
-	
-		
 	
 
 	
@@ -661,29 +652,21 @@
 	<dl>
 	
 		<dt class="versionLabel">This version:</dt> 
-		<dd class="versionValue"> <a href="http://ging.github.io/fiware-idm/keyrock.html">
-			http://ging.github.io/fiware-idm/keyrock.html
+		<dd class="versionValue"> <a href="http://ging.github.io/fiware-idm/api-spec/v3">
+			http://ging.github.io/fiware-idm/api-spec/v3
 		</a> </dd>
 	
 
-	
-		<dt class="versionLabel">Previous version:</dt> 
-		<dd class="versionValue"> <a href="http://ging.github.io/fiware-idm/keyrock.html">
-			http://ging.github.io/fiware-idm/keyrock.html
-		</a> </dd>
 	
 
 	<dt class="versionLabel">Latest version:</dt> 
-	<dd class="versionValue"> <a href="http://ging.github.io/fiware-idm/keyrock.html">http://ging.github.io/fiware-idm/keyrock.html</a> </dd>
+	<dd class="versionValue"> <a href="http://ging.github.io/fiware-idm/api-spec/latest">http://ging.github.io/fiware-idm/api-spec/latest</a> </dd>
 
 	</dl>
 
 
 
 
-
-  
-  
 
   
   
@@ -741,15 +724,33 @@
 
 	
 
+	
+
+
+
+    
+
+    
+        <h2 id="copyright">Copyright</h2>
+        <p>Copyright &copy; 2015-2016 by <a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/UPM">UPM</a>.</p>
+    
+
+    
+
+    
+
+    
+
 
 
 	
 
 	
-		<h2 id="copyright">Copyright</h2>
+
+	
+		<h2 id="license">License</h2>
 		<p>This specification is licensed under the
-[FIWARE Open Specification License (implicit patent license)]
-(<a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_(implicit_patents_license))">http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_(implicit_patents_license))</a>.</p>
+<a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29">FIWARE Open Specification License (implicit patent license)</a>.</p>
 	
 
 	
@@ -763,7 +764,7 @@
 	<h2 id="abstract">Abstract</h2>
 	<p>Identity Manager (IdM) GE API specifications comply with existing standards for authentication and user and provide access information. The following sections provide pointers to those standards and, when applicable, details about how the RESTful binding work. </p>
 
-<p>This specification is intended for Service Consumers (with developement skills) and Cloud Providers. For the former, this document provides a full specification of how to interoperate with the Identity Management Service API. For the latter, this specification indicates the interface to be provided to the client application developers to provide the described functionalities. To use this information, the reader should first have a general understanding of the [Generic Enabler service] (<a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.Identity_Management_Generic_Enabler)">https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.Identity_Management_Generic_Enabler)</a>.</p>
+<p>This specification is intended for Service Consumers (with developement skills) and Cloud Providers. For the former, this document provides a full specification of how to interoperate with the Identity Management Service API. For the latter, this specification indicates the interface to be provided to the client application developers to provide the described functionalities. To use this information, the reader should first have a general understanding of the <a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.Identity_Management_Generic_Enabler">Generic Enabler service</a>.</p>
 
 <p>The API user should be familiar with:</p>
 
@@ -795,9 +796,11 @@
 	
 
 	
+
+	
 		<h2 id="status">Status of this document</h2>
 		<p>This is a work in progress and is changing on a daily basis.
-Please send your comments to <a href="https://github.com/ging/fiware-idm/issues">FIWARE IdM Github Project</a></p>
+Please send your comments to <a href="https://github.com/ging/fiware-idm/issues">FIWARE IdM Github Project</a>.</p>
 	
 
 	
@@ -1716,11 +1719,15 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
 	
 		
 	
+		
+	
 
 
 
 
 
+	
+		
 	
 		
 	
@@ -1847,8 +1854,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -1916,8 +1921,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -2051,8 +2054,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -2132,8 +2133,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -2201,8 +2200,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -2323,8 +2320,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -2392,8 +2387,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -2527,8 +2520,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -2608,8 +2599,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -2677,8 +2666,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -2799,8 +2786,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -2868,8 +2853,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -3003,8 +2986,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -3084,8 +3065,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -3153,8 +3132,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -3276,8 +3253,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -3419,8 +3394,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -3488,8 +3461,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -3598,8 +3569,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -3749,8 +3718,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -3813,8 +3780,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                 <div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -3972,8 +3937,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -4041,8 +4004,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -4146,8 +4107,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                 <div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -4297,8 +4256,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -4366,8 +4323,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -4525,8 +4480,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -4654,8 +4607,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -4723,8 +4674,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -4858,8 +4807,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
         
     
         
-    
-        
             
                 
             
@@ -4940,8 +4887,6 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -5108,8 +5053,6 @@ The parameter device_token is required when providing device_id.</p>
         
     
         
-    
-        
             
                 
             
@@ -5234,8 +5177,6 @@ The parameter device_token is required when providing device_id.</p>
         
     
         
-    
-        
             
                 
             
@@ -5311,8 +5252,6 @@ The parameter device_token is required when providing device_id.</p>
                                 <div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -5444,8 +5383,6 @@ The parameter device_token is required when providing device_id.</p>
         
     
         
-    
-        
             
                 
             
@@ -5513,8 +5450,6 @@ The parameter device_token is required when providing device_id.</p>
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -5648,8 +5583,6 @@ The parameter device_token is required when providing device_id.</p>
         
     
         
-    
-        
             
                 
             
@@ -5729,8 +5662,6 @@ The parameter device_token is required when providing device_id.</p>
         
     
         
-    
-        
             
                 
             
@@ -5798,8 +5729,6 @@ The parameter device_token is required when providing device_id.</p>
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -5920,8 +5849,6 @@ The parameter device_token is required when providing device_id.</p>
         
     
         
-    
-        
             
                 
             
@@ -5989,8 +5916,6 @@ The parameter device_token is required when providing device_id.</p>
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -6124,8 +6049,6 @@ The parameter device_token is required when providing device_id.</p>
         
     
         
-    
-        
             
                 
             
@@ -6205,8 +6128,6 @@ The parameter device_token is required when providing device_id.</p>
         
     
         
-    
-        
             
                 
             
@@ -6269,8 +6190,6 @@ The parameter device_token is required when providing device_id.</p>
                                 <div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -6379,8 +6298,6 @@ The parameter device_token is required when providing device_id.</p>
                                     </div>
                                     
     <div class="goApiary">
-    
-        
     
         
     
@@ -12215,6 +12132,8 @@ X-Auth-token: token</code></pre>
 	
 
 	
+
+	
 	  	<section>
 			<h1 id="acknowledgements"> Acknowledgements</h1>
 <p>The editors would like to express their gratitude to all the people that have contributed to this specification. </p>
@@ -12234,15 +12153,17 @@ X-Auth-token: token</code></pre>
               
                   <li><a href="https://github.com/ging/fiware-idm">Github source</a></li>
               
-                  <li><a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_(implicit_patents_license))">http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_(implicit_patents_license))</a></li>
+                  <li><a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.Identity_Management_Generic_Enabler">Generic Enabler service</a></li>
+              
+                  <li><a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/UPM">UPM</a></li>
+              
+                  <li><a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29">FIWARE Open Specification License (implicit patent license)</a></li>
               
                   <li><a href="https://github.com/ging/fiware-idm/issues">FIWARE IdM Github Project</a></li>
               
                   <li><a href="http://developer.openstack.org/api-ref-identity-v3.html">OpenStack Identity API v3 specification</a></li>
               
                   <li><a href="http://docs.openstack.org/developer/keystone/api_curl_examples.html">Identity API curl examples</a></li>
-              
-                  <li><a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.Identity_Management_Generic_Enabler)">https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.Identity_Management_Generic_Enabler)</a></li>
               
           </ul>
       </section>
