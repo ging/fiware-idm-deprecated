@@ -55,8 +55,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'KeyRock'
-copyright = u'2015, Universidad Politecnica de Madrid'
-author = u'Enrique Garcia Navalon'
+copyright = u'2016, Universidad Politecnica de Madrid'
+author = u'Universidad Politecnica de Madrid'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
