@@ -13,8 +13,7 @@
     <link href="css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/monokai.css">
+    <link rel="stylesheet" href="css/idea.css">
     <script src="js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="js/jquery.min.js"></script>
@@ -64,23 +63,6 @@
     
     
 
-    
-    
-    <li>
-        
-        <a href="#group_keystone_extensions" title = "Group Keystone extensions" > Group Keystone extensions </a>
-        
-    <ul class="toc">
-    
-   
-
-
-
-
- </ul>
-</li>
-
-
 
 
 
@@ -93,7 +75,7 @@
 
                         <li>
                             
-                                <a href="#default_group" title = "Group default">Default</a>
+                                <a href="#resource_group_keystone-extensions" title = "Group Keystone extensions">Group Keystone extensions</a>
                             
                             <ul class="toc">
                               
@@ -728,29 +710,13 @@
 
 
 
-    
-
-    
-        <h2 id="copyright">Copyright</h2>
-        <p>Copyright &copy; 2015-2016 by <a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/UPM">UPM</a>.</p>
-    
-
-    
-
-    
-
-    
-
-
-
 	
 
 	
-
+		<h2 id="copyright">Copyright</h2>
+		<p>Copyright &copy; 2015-2016 by <a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/UPM">UPM</a>.</p>
 	
-		<h2 id="license">License</h2>
-		<p>This specification is licensed under the
-<a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29">FIWARE Open Specification License (implicit patent license)</a>.</p>
+
 	
 
 	
@@ -764,7 +730,7 @@
 	<h2 id="abstract">Abstract</h2>
 	<p>Identity Manager (IdM) GE API specifications comply with existing standards for authentication and user and provide access information. The following sections provide pointers to those standards and, when applicable, details about how the RESTful binding work. </p>
 
-<p>This specification is intended for Service Consumers (with developement skills) and Cloud Providers. For the former, this document provides a full specification of how to interoperate with the Identity Management Service API. For the latter, this specification indicates the interface to be provided to the client application developers to provide the described functionalities. To use this information, the reader should first have a general understanding of the <a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.Identity_Management_Generic_Enabler">Generic Enabler service</a>.</p>
+<p>This specification is intended for Service Consumers (with developement skills) and Cloud Providers. For the former, this document provides a full specification of how to interoperate with the Identity Management Service API. For the latter, this specification indicates the interface to be provided to the client application developers to provide the described functionalities. To use this information, the reader should first have a general understanding of the <a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.IdentityManagement">Generic Enabler service</a>.</p>
 
 <p>The API user should be familiar with:</p>
 
@@ -820,7 +786,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
 
         <li>
             
-                <a href="#default_group" title = "Default">Default</a>
+                <a href="#resource_group_keystone-extensions" title = "Keystone extensions">Keystone extensions</a>
             
             <ul>
               
@@ -1732,27 +1698,18 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
 		
 	
 		
-	
+			<section>
+				<h2 id="license"> License</h2>
+<p>This specification is licensed under the
+<a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29">FIWARE Open Specification License (implicit patent license)</a>.</p>
+
+
+			</section>
 		
 	
 		
 	
-
-
 		
-            <section>
-			    <h1 id="group_keystone_extensions">Group Keystone extensions</h1>
-			    <p>As Keyrock backend is based on Openstack Keystone, it fully implement its APIs. You can check them in <a href="http://developer.openstack.org/api-ref-identity-v3.html">OpenStack Identity API v3 specification</a>. Openstack also provides some <a href="http://docs.openstack.org/developer/keystone/api_curl_examples.html">Identity API curl examples</a> in order to understand how the API works.</p>
-<p>In order to manage other entities that only Keyrock offers, you have to use the extensions APIs, explained bellow. These APIs are exposed by the back-end NOT the front-end.</p> 
-            </section>
-		
-	
-	
-
-
-
-
-
 	
 
 
@@ -1768,10 +1725,11 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
 
 
         
-            <section id="default_group" class="resourceGroup">
-             <div class= "header" ><h2 id="h-default_group"> Default </h2></div>
+            <section id="resource_group_keystone-extensions" class="resourceGroup">
+            <h2 id="h-resource_group_keystone-extensions">Keystone extensions</h2>
         
-	
+	<p>As Keyrock backend is based on Openstack Keystone, it fully implement its APIs. You can check them in <a href="http://developer.openstack.org/api-ref-identity-v3.html">OpenStack Identity API v3 specification</a>. Openstack also provides some <a href="http://docs.openstack.org/developer/keystone/api_curl_examples.html">Identity API curl examples</a> in order to understand how the API works.</p>
+<p>In order to manage other entities that only Keyrock offers, you have to use the extensions APIs, explained bellow. These APIs are exposed by the back-end NOT the front-end.</p>
         
             <section id="resource_consumers" class="resource">
                  <div class= "header" >
@@ -1863,7 +1821,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/consumers/list-consumers">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/consumers/list-consumers">View in Apiary</a>
             
         
     
@@ -1942,7 +1900,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/consumers/create-a-consumer">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/consumers/create-a-consumer">View in Apiary</a>
             
         
     
@@ -2063,7 +2021,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/consumer/read-consumer-details">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/consumer/read-consumer-details">View in Apiary</a>
             
         
     
@@ -2142,7 +2100,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/consumer/update-a-consumer">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/consumer/update-a-consumer">View in Apiary</a>
             
         
     
@@ -2221,7 +2179,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/consumer/delete-a-consumer">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/consumer/delete-a-consumer">View in Apiary</a>
             
         
     
@@ -2329,7 +2287,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/roles/list-roles">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/roles/list-roles">View in Apiary</a>
             
         
     
@@ -2408,7 +2366,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/roles/create-a-role">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/roles/create-a-role">View in Apiary</a>
             
         
     
@@ -2529,7 +2487,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role/read-role-details">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role/read-role-details">View in Apiary</a>
             
         
     
@@ -2608,7 +2566,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role/update-a-role">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role/update-a-role">View in Apiary</a>
             
         
     
@@ -2687,7 +2645,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role/delete-a-role">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role/delete-a-role">View in Apiary</a>
             
         
     
@@ -2795,7 +2753,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/permissions/list-permissions">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/permissions/list-permissions">View in Apiary</a>
             
         
     
@@ -2874,7 +2832,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/permissions/create-a-permission">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/permissions/create-a-permission">View in Apiary</a>
             
         
     
@@ -2995,7 +2953,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/permission/read-permission-details">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/permission/read-permission-details">View in Apiary</a>
             
         
     
@@ -3074,7 +3032,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/permission/update-a-permission">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/permission/update-a-permission">View in Apiary</a>
             
         
     
@@ -3153,7 +3111,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/permission/delete-a-permission">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/permission/delete-a-permission">View in Apiary</a>
             
         
     
@@ -3274,7 +3232,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---permission-relationships/list-permissions-associated-to-a-role">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---permission-relationships/list-permissions-associated-to-a-role">View in Apiary</a>
             
         
     
@@ -3403,7 +3361,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---permission-relationship/assign-a-permission-to-a-role">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---permission-relationship/assign-a-permission-to-a-role">View in Apiary</a>
             
         
     
@@ -3482,7 +3440,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---permission-relationship/remove-a-permission-from-a-role">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---permission-relationship/remove-a-permission-from-a-role">View in Apiary</a>
             
         
     
@@ -3590,7 +3548,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---user-relationships/list-users-role-assignments">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---user-relationships/list-users-role-assignments">View in Apiary</a>
             
         
     
@@ -3727,7 +3685,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---user-relationship/assign-a-role-to-a-user">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---user-relationship/assign-a-role-to-a-user">View in Apiary</a>
             
         
     
@@ -3801,7 +3759,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---user-relationship/remove-a-role-assignment-from-a-user">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---user-relationship/remove-a-role-assignment-from-a-user">View in Apiary</a>
             
         
     
@@ -3946,7 +3904,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---user-relationship-inside-an-organization/assign-a-role-to-a-user-inside-an-organization">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---user-relationship-inside-an-organization/assign-a-role-to-a-user-inside-an-organization">View in Apiary</a>
             
         
     
@@ -4025,7 +3983,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---user-relationship-inside-an-organization/remove-a-role-assignment-from-a-user-inside-an-organization">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---user-relationship-inside-an-organization/remove-a-role-assignment-from-a-user-inside-an-organization">View in Apiary</a>
             
         
     
@@ -4128,7 +4086,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---organization-relationships/list-organizations-role-assignments">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---organization-relationships/list-organizations-role-assignments">View in Apiary</a>
             
         
     
@@ -4265,7 +4223,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---organization-relationship/assign-a-rol-to-an-organization">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---organization-relationship/assign-a-rol-to-an-organization">View in Apiary</a>
             
         
     
@@ -4344,7 +4302,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/role---organization-relationship/remove-a-role-assignment-from-an-organization">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/role---organization-relationship/remove-a-role-assignment-from-an-organization">View in Apiary</a>
             
         
     
@@ -4489,7 +4447,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/two-factor-authentication/check-if-two-factor-authentication-is-enabled-for-a-certain-user">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/two-factor-authentication/check-if-two-factor-authentication-is-enabled-for-a-certain-user">View in Apiary</a>
             
         
     
@@ -4616,7 +4574,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/two-factor-authentication-keys/enable-two-factor-authentication-/-get-new-key">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/two-factor-authentication-keys/enable-two-factor-authentication-/-get-new-key">View in Apiary</a>
             
         
     
@@ -4695,7 +4653,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/two-factor-authentication-keys/disable-two-factor-authentication">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/two-factor-authentication-keys/disable-two-factor-authentication">View in Apiary</a>
             
         
     
@@ -4816,7 +4774,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/two-factor-authentication-security-questions/retrieve-non-sensitive-data">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/two-factor-authentication-security-questions/retrieve-non-sensitive-data">View in Apiary</a>
             
         
     
@@ -4908,7 +4866,7 @@ Please send your comments to <a href="https://github.com/ging/fiware-idm/issues"
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/two-factor-authentication-security-questions/check-security-question">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/two-factor-authentication-security-questions/check-security-question">View in Apiary</a>
             
         
     
@@ -5062,7 +5020,7 @@ The parameter device_token is required when providing device_id.</p>
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/two-factor-authentication-devices/remember-new-device-or-get-new-token">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/two-factor-authentication-devices/remember-new-device-or-get-new-token">View in Apiary</a>
             
         
     
@@ -5186,7 +5144,7 @@ The parameter device_token is required when providing device_id.</p>
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/two-factor-authentication-devices/check-for-device">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/two-factor-authentication-devices/check-for-device">View in Apiary</a>
             
         
     
@@ -5273,7 +5231,7 @@ The parameter device_token is required when providing device_id.</p>
                 
             
             
-                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/default/two-factor-authentication-devices/forget-all-devices">View in Apiary</a>
+                <a target="_blank" href="http://docs.keyrock.apiary.io/#reference/keystone-extensions/two-factor-authentication-devices/forget-all-devices">View in Apiary</a>
             
         
     
@@ -6348,8 +6306,8 @@ The parameter device_token is required when providing device_id.</p>
                 
             
 
-            <section id="resource_group__example" class="resourceGroupExample">
-                <div class= "header" ><h3 id="h-resource_group__example">Default</h3> </div>
+            <section id="resource_group_keystone-extensions_example" class="resourceGroupExample">
+                <div class= "header" ><h3 id="h-resource_group_keystone-extensions_example">Keystone extensions</h3> </div>
                 
                 
                     <section id="resource_consumers_example" class="resourceExample">
@@ -12153,7 +12111,7 @@ X-Auth-token: token</code></pre>
               
                   <li><a href="https://github.com/ging/fiware-idm">Github source</a></li>
               
-                  <li><a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.Identity_Management_Generic_Enabler">Generic Enabler service</a></li>
+                  <li><a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.ArchitectureDescription.Security.IdentityManagement">Generic Enabler service</a></li>
               
                   <li><a href="https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/UPM">UPM</a></li>
               

@@ -14,8 +14,13 @@ tr{
 h1, h2, h3, h4, h5, h6{
 	page-break-inside:avoid !important;
 	page-break-after: avoid;
+	/**/
 	box-sizing: content-box;
-
+	/*line-height: normal; */
+	/*overflow-x: visible; */
+	/*text-align: auto !important; */
+	/*text-rendering:auto;*/
+	/*padding-bottom: 10px;*/
 }
 
 div.header{
@@ -39,7 +44,8 @@ div.header *{
 }
 
 pre code{
-
+	/*display: inline !important;*/
+	/*line-height: 1.8em !important;*/
 }
 .resourceGroup{
 	page-break-inside: avoid;
