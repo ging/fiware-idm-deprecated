@@ -247,7 +247,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   (master_doc, 'KeyRock.tex', u'KeyRock Documentation',
-   u'Enrique Garcia Navalon', 'manual'),
+   u'Universidad Politecnica de Madrid', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
