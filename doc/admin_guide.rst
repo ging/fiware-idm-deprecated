@@ -70,15 +70,13 @@ different port and/or address you should set this acordingly.
     OPENSTACK_HOST = "Keystone server IP address"
     OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
 
--  Email.
+Email
+'''''
 
-Configure these for your outgoing email host or leave the default
- values for the console email backend. More details on how to
- configure this can be found `in the Django
- docs <https://docs.djangoproject.com/en/1.8/topics/email/>`__ and
- in the :ref:`Production Set up Guide <production-email>`.
+Configure these for your outgoing email host or leave the default values for the console email backend. More details on how to configure this can be found `in the Django docs <https://docs.djangoproject.com/en/1.8/topics/email/>`__ and in the :ref:`Production Set up Guide <production-email>`.
 
--  Keystone Account for the IdM to perform tasks like user registration.
+Keystone Account for the IdM to perform tasks like user registration
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 .. code-block:: python
 
@@ -88,7 +86,8 @@ Configure these for your outgoing email host or leave the default
      'PROJECT': 'the_projectname',
     }
 
--  User Registration settings.
+User Registration settings
+''''''''''''''''''''''''''
 
 This setting enables email domain
 filtering on user registration. Set to 'whitelist', 'blacklist' or
@@ -100,7 +99,8 @@ comment it out for no filtering.
 
 More info :ref:`here <email-lists>`.
 
--  noCAPTCHA reCAPTCHA. 
+noCAPTCHA reCAPTCHA
+'''''''''''''''''''
 
 .. note:: If you want to disable the captcha, set USE_CAPTCHA to False.
 
@@ -108,7 +108,8 @@ More info :ref:`here <email-lists>`.
   :start-after: begin-captcha
   :end-before: end-captcha
 
--  FIWARE Applications and Roles. 
+FIWARE Applications and Roles
+'''''''''''''''''''''''''''''
 
 These settings map applications used
 in the FIWARE-Lab environment and are needed for automated tasks, for
@@ -132,7 +133,8 @@ database yourself.
      'Store',
     ]
 
--  Keystone roles. 
+Keystone roles
+''''''''''''''
 
 These settings map to normal keystone roles that are
 used by the IdM. As with the FIWARE Applications and Roles settings,
@@ -152,7 +154,8 @@ installation scripts, you will have to create them yourself.
     ]
     
 
--  AuthZForce GE Configuration. 
+AuthZForce GE Configuration
+'''''''''''''''''''''''''''
 
 These settings configure the connection to an `Authorization PDP GE <http://catalogue.fiware.org/enablers/authorization-pdp-authzforce/>`__  instance to create permmisions to your applications. If the AZF instance is secured by a `PEP Proxy GE <http://catalogue.fiware.org/enablers/pep-proxy-wilma>`__ you can also set a magic key to bypass the policy enforcement point. 
 
@@ -162,6 +165,29 @@ These settings configure the connection to an `Authorization PDP GE <http://cata
     ACCESS_CONTROL_URL = 'http://azf_host:6019'
     ACCESS_CONTROL_MAGIC_KEY = 'azf_pep_key'
     
+Endpoints Management Dashboard
+''''''''''''''''''''''''''''''
+
+This admin-only dashboard requires some settings before it can be used. The Keystone project to which all services accounts are given admin permissions must be provided in the **SERVICE_PROJECT** setting. The **AVAILABLE_SERVICES** setting contains the set of services whose endpoints can be managed from the Dashboard. Both *type* and *description* are mandatory, while the *extra_roles* setting is optional and has to do with special roles being assigned to the given service account, either in a domain or in a project.
+
+.. code-block:: python
+
+    # ENDPOINTS MANAGEMENT DASHBOARD
+    SERVICE_PROJECT = 'service'
+    AVAILABLE_SERVICES = {
+      'swift': {'type': 'Object storage',
+                'description': 'Stores and retrieves arbitrary unstructured data objects via a RESTful, HTTP based API. \
+                                It is highly fault tolerant with its data replication and scale out architecture. Its \
+                                implementation is not like a file server with mountable directories.'},
+      'nova': {'type': 'Compute',
+               'description': 'Manages the lifecycle of compute instances in an OpenStack environment. Responsibilities \
+                               include spawning, scheduling and decomissioning of machines on demand.'},
+      'cinder': {'type': 'Block storage',
+                 'description': 'Provides persistent block storage to running instances. Its pluggable driver architecture \
+                                 facilitates the creation and management of block storage devices.',
+                 'extra_roles': [{'role': 'cinder-role', 'domain': 'cinder-domain'}]
+                },
+    }
 
 3. Django settings
 ^^^^^^^^^^^^^^^^^^

@@ -22,6 +22,7 @@ This project is part of `FIWARE`_. You will find more information about this FIW
    oauth2
    two_factor
    user_guide
+   endpoints
 
 .. toctree::
    :maxdepth: 1
