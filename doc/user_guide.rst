@@ -33,19 +33,14 @@ Logging in
 Go to "Sign in" if you heave previously created an account, otherwise
 "Sign up" to create a new account:
 
- |image0| |image1|
+.. image:: /resources/KeyRock.png
 
-.. raw:: html
+.. figure:: /resources/KeyRock_signup.png
+   :align: center
 
-   <p align="center">
+   Figure 1: KeyRock Login Page
 
-Figure 1: KeyRock Login Page
-
-.. raw:: html
-
-   </p>
-
-`Figure 2 <#def-fig2>`__ shows the homepage after you log in
+Figure 2 shows the homepage after you log in
 successfully.
 
 There are two main sections, Applications and Organizations. In the
@@ -55,52 +50,33 @@ Applications section you can register new application by clicking on
 Registering an application
 --------------------------
 
- |image2|
+.. figure:: /resources/KeyRock_homepage.png
+   :align: center
 
-.. raw:: html
-
-   <p align="center">
-
-Figure 2: KeyRock Home Page
-
-.. raw:: html
-
-   </p>
+   Figure 2: KeyRock Home Page
 
 In the next step you have to give the application a name, description,
 URL and callback URL - required by the OAuth 2.0 Protocol.
 
-Click on "Next" (`Figure 3 <#def-fig3>`__).
+Click on "Next" (Figure 3).
 
- |image3|
+.. figure:: /resources/KeyRock_register_app.png
+   :align: center
 
-.. raw:: html
-
-   <p align="center">
-
-Figure 3: KeyRock Register Application
-
-.. raw:: html
-
-   </p>
+   Figure 3: KeyRock Register Application
 
 In the second step the application's logo will be loaded by selecting a
 valid file type. You have the option to re-frame the chosen image.
 
 Click on "Crop Image" when you complete this process and then click
-"Next" as shown on `Figure 4 <#def-fig4>`__.
+"Next" as shown on Figure 4.
 
- |image4| |image5|
+.. image:: /resources/KeyRock_upload_logo.png
 
-.. raw:: html
+.. figure:: /resources/KeyRock_reframe_logo.png
+   :align: center
 
-   <p align="center">
-
-Figure 4: KeyRock Edit Application Logo
-
-.. raw:: html
-
-   </p>
+   Figure 4: KeyRock Edit Application Logo
 
 In the third step we set up the roles and permissions of the
 application. You will find the two possible roles: Provider and
@@ -115,27 +91,22 @@ corresponding check box.
 You are also permitted to add up new permissions by clicking on "New
 Permission". Here you need to enter the name of the permission,
 description, HTTP verb (GET, PUT, POST, DELETE) and the Path to that
-permission, `Figure 5 <#def-fig5>`__.
+permission, Figure 5.
 
 Click "Create Permission" and "Finish" to finalize with creating the
 application.
 
- |image6| |image7|
+.. image:: /resources/KeyRock_new_role.png
 
-.. raw:: html
+.. figure:: /resources/KeyRock_new_permission.png
+   :align: center
 
-   <p align="center">
-
-Figure 5: KeyRock New Roles and Permissions
-
-.. raw:: html
-
-   </p>
+   Figure 5: KeyRock New Roles and Permissions
 
 Managing roles
 --------------
 
-Look at the vertical menu on the left (`Figure 6 <#def-fig6>`__). You
+Look at the vertical menu on the left (Figure 6). You
 went from Home to Applications. Here you can see the application you've
 just created.
 
@@ -150,19 +121,14 @@ initial role. Click "Add".
 
 Note that you can assign roles after the users have been added, by
 clicking on the roles drop down menu - below the user's icon, as shown
-on `Figure 6 <#def-fig6>`__.
+on Figure 6.
 
- |image8| |image9|
+.. image:: /resources/KeyRock_application_summary.png
 
-.. raw:: html
+.. figure:: /resources/KeyRock_add_members.png
+   :align: center
 
-   <p align="center">
-
-Figure 6: KeyRock Add Members to Application
-
-.. raw:: html
-
-   </p>
+   Figure 6: KeyRock Add Members to Application
 
 Managing organizations
 ----------------------
@@ -178,20 +144,14 @@ organization. Any new application created now, will belong to the
 organization.
 
 To return to the home of the user go up in the header and click on the
-name of the organization. Select "Switch session", `Figure
-7 <#def-fig7>`__.
+name of the organization. Select "Switch session", Figure 7.
 
- |image10| |image11|
+.. image:: /resources/KeyRock_create_organization.png
 
-.. raw:: html
+.. figure:: /resources/KeyRock_switch_session.png
+   :align: center
 
-   <p align="center">
-
-Figure 7: KeyRock Create Organization
-
-.. raw:: html
-
-   </p>
+   Figure 7: KeyRock Create Organization
 
 Programmer Guide
 ================
@@ -311,30 +271,9 @@ Further information
 
 For further information on KeyRock, please refer to the step-by-step
 video at `Help & Info Portal <http://help.lab.fiware.org/>`__ choosing
-"Account", as `Figure 8 <#def-fig8>`__ shows.
+"Account", as `Figure 8`_ shows.
 
- |image12|
+.. figure:: /resources/KeyRock_screencast.png
+   :align: center
 
-.. raw:: html
-
-   <p align="center">
-
-Figure 8: KeyRock Screencast
-
-.. raw:: html
-
-   </p>
-
-.. |image0| image:: /resources/KeyRock.png
-.. |image1| image:: /resources/KeyRock_signup.png
-.. |image2| image:: /resources/KeyRock_homepage.png
-.. |image3| image:: /resources/KeyRock_register_app.png
-.. |image4| image:: /resources/KeyRock_upload_logo.png
-.. |image5| image:: /resources/KeyRock_reframe_logo.png
-.. |image6| image:: /resources/KeyRock_new_role.png
-.. |image7| image:: /resources/KeyRock_new_permission.png
-.. |image8| image:: /resources/KeyRock_application_summary.png
-.. |image9| image:: /resources/KeyRock_add_members.png
-.. |image10| image:: /resources/KeyRock_create_organization.png
-.. |image11| image:: /resources/KeyRock_switch_session.png
-.. |image12| image:: /resources/KeyRock_screencast.png
+   Figure 8: KeyRock Screencast
