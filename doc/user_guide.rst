@@ -196,7 +196,7 @@ Figure 7: KeyRock Create Organization
 Programmer Guide
 ================
 
-Documentation on KeyRock APIs can be found at :ref:`API Overiview
+Documentation on KeyRock APIs can be found at :ref:`API Overview
 section <api>`
 
 Users
@@ -281,7 +281,7 @@ Example response:
 SCIM 2.0
 ---------
 
-Documentation on KeyRock APIs can be found at :ref:`API Overiview section <api>`. We provide bellow an example of API call, to retrieve the service provider documentation.
+Documentation on KeyRock APIs can be found at :ref:`API Overview section <api>`. We provide bellow an example of API call, to retrieve the service provider documentation.
 
 Get service provider configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
