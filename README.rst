@@ -23,18 +23,18 @@ Identity Manager - Keyrock Overview
 Introduction
 ============
 
-This project is part of `FIWARE <http://fiware.org>`__. You will find
+This project is part of `FIWARE <http://fiware.org>`__. You may find
 more information about this FIWARE GE
 `here <http://catalogue.fiware.org/enablers/identity-management-keyrock>`__.
 
--  You will find the source code of this project in GitHub `here <https://github.com/ging/fiware-idm>`__
--  You will find the documentation of this project in Read the Docs `here <http://fiware-idm.readthedocs.org/>`__
+-  You may find the source code of this project in GitHub `here <https://github.com/ging/fiware-idm>`__
+-  You may find the documentation of this project in Read the Docs `here <http://fiware-idm.readthedocs.org/>`__
 
 Welcome to the main repository for the UPM's implementation of the
 FIWARE Identity Manager Generic Enabler. This repository acts as an
 entry point and holds the documentation and some automated tools for
 installation and management. The IdM is composed of two independent
-components, a RESTful back-end and web front-end.
+components: a RESTful back-end and web front-end.
 
 If you want to see the
 code for each of the components of the IdM and more specific
@@ -65,7 +65,7 @@ two machines must be able to communicate to each other through the network.
 How to Build & Install
 ======================
 
-The IdM is made out of two components, the web-based front-end and the
+The IdM is made up of two components: the web-based front-end and the
 restful back-end. You can check specific documentation in their respective repositories.
 
 
@@ -74,117 +74,101 @@ Installing the back-end
 
 .. begin-keystone-installation
 
-Install the dependencies
+1. Install the Ubuntu dependencies
+  ::
 
-::
+      $ sudo apt-get install python python-dev python-virtualenv libxml2-dev libxslt1-dev libsasl2-dev libssl-dev libldap2-dev libffi-dev libsqlite3-dev libmysqlclient-dev python-mysqldb
 
-    $ sudo apt-get install python python-dev python-virtualenv libxml2-dev libxslt1-dev libsasl2-dev libssl-dev libldap2-dev libffi-dev libsqlite3-dev libmysqlclient-dev python-mysqldb
+2. Get the code from our `GitHub repository <https://github.com/ging/keystone>`__
+  :: 
 
+      $ git clone https://github.com/ging/keystone && cd keystone
 
-Get the code
+3. Install the python dependencies
+  ::
 
-:: 
-
-    $ git clone https://github.com/ging/keystone && cd keystone
-  
-
-Install the python dependencies
-
-::
-
-  $ sudo python tools/install_venv.py
+    $ sudo python tools/install_venv.py
 
 
-Create a configuration file
+4. Create a configuration file
+  ::
 
-::
+    $ cp etc/keystone.conf.sample etc/keystone.conf
 
-  $ cp etc/keystone.conf.sample etc/keystone.conf
+5. Create the tables and populate the database
 
-Create the tables and populate the database
+  .. begin-database
 
-.. begin-database
+  ::
+      
+      $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync
+      $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=oauth2
+      $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=roles
+      $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=user_registration
+      $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=two_factor_auth
+      $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=endpoint_filter
+      $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --populate
 
-::
-    
-    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync
-    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=oauth2
-    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=roles
-    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=user_registration
-    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=two_factor_auth
-    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --extension=endpoint_filter
-    $ sudo tools/with_venv.sh bin/keystone-manage -v db_sync --populate
+  .. end-database
 
-.. end-database
+6. Finally, you can run keystone from the console
+  ::
 
-You can run keystone in the console
+    $ sudo tools/with_venv.sh bin/keystone-all -v
 
-::
+You may now log into the web (if you have Horizon installed) using the administrative account (by
+default, user is `idm` and the password is the one you entered during the populate step).
 
-  $ sudo tools/with_venv.sh bin/keystone-all -v
-
-
-You can now log into the web (if you have horizon installed) using the administrative account (by
-default user idm and the password you entered during the populate step).
-
-Finally, if you want to run the keystone backend in the backgroud you
-can :ref:`install it as a service <keystone-as-service>`.
+.. note:: 
+  If you want to run the Keystone backend in the backgroud you
+  can :ref:`install it as a service <keystone-as-service>`.
 
 .. end-keystone-installation
 
-Now, head to the :ref:`configuration instructions <keystone-configuration>`.
+Now, head on to the :ref:`configuration instructions <keystone-configuration>`.
 
-(You can read more in depth documentation at the `Installation & Administration Guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide.html>`__)
+(You can read more in-depth documentation at the `Installation & Administration Guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide.html>`__)
 
 Installing the front-end
 ------------------------
 
 .. begin-horizon-installation
 
-Install the dependencies
+1. Install the Ubuntu dependencies
+  ::
 
-::
+      $ sudo apt-get install python python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev
 
-    $ sudo apt-get install python python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev
+2. Get the code from our `GitHub repository <https://github.com/ging/horizon>`__
+  :: 
 
+      $ git clone https://github.com/ging/horizon && cd horizon
 
-Get the code
+3. Create a configuration file
+  ::
 
-:: 
+    $ cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py
 
-    $ git clone https://github.com/ging/horizon && cd horizon
+4. Install the python dependencies
+  ::
 
+    $ sudo python tools/install_venv.py
 
-Create a configuration file
-
-::
-
-  $ cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py
-
-
-Install the python dependencies
-
-::
-
-  $ sudo python tools/install_venv.py
-  
-
-You can check everything went OK running the development server, but you
+You can now check that everything went OK by running the development server, but you
 won't be able to log in until you install the backend.
-
 ::
 
     $ sudo tools/with_venv.sh python manage.py runserver localhost:8000
 
-
-Finally, if you want to run the horizon frontend in the backgroud you
-can install it as a service or, for a production environment, run it under Apache.
+.. note ::
+  If you want to run the Horizon frontend in the backgroud you
+  can install it as a service or, for a production environment, run it under Apache.
 
 .. end-horizon-installation
 
 Now, head to the :ref:`configuration instructions <horizon-configuration>`.
 
-(You can read more in depth documentation at the `Installation & Administration Guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide.html>`__)
+(You can read more in-depth documentation at the `Installation & Administration Guide <http://fiware-idm.readthedocs.org/en/latest/admin_guide.html>`__)
 
 .. _extras:
 

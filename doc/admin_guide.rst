@@ -57,13 +57,13 @@ Installing Horizon
 ^^^^^^^^^^^^^^^^
 
 To configure Horizon, the configuration file can be found in
-**openstack_dashboard/local/local_settings.py**. This file holds
+``openstack_dashboard/local/local_settings.py``. This file holds
 sensible defaults for a common installation but you might need to tweek
 them to fit your use case.
 
 If you are running Keystone on your own machine the address will be
-'http://localhost:5000/v3'. If Keystone is configured to run on a
-different port and/or address you should set this acordingly.
+``http://localhost:5000/v3``. If Keystone is configured to run on a
+different port and/or address you should set this accordingly.
 
 .. code-block:: python
 
@@ -73,7 +73,7 @@ different port and/or address you should set this acordingly.
 Email
 '''''
 
-Configure these for your outgoing email host or leave the default values for the console email backend. More details on how to configure this can be found `in the Django docs <https://docs.djangoproject.com/en/1.8/topics/email/>`__ and in the :ref:`Production Set up Guide <production-email>`.
+Configure this for your outgoing email host or leave the default values for the console email backend. More details on how to configure this can be found `in the Django docs <https://docs.djangoproject.com/en/1.8/topics/email/>`__ and in the :ref:`Production Set up Guide <production-email>`.
 
 Keystone Account for the IdM to perform tasks like user registration
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -102,7 +102,7 @@ More info :ref:`here <email-lists>`.
 noCAPTCHA reCAPTCHA
 '''''''''''''''''''
 
-.. note:: If you want to disable the captcha, set USE_CAPTCHA to False.
+.. note:: If you want to disable the captcha, set ``USE_CAPTCHA`` to ``False``.
 
 .. include:: setup.rst
   :start-after: begin-captcha
@@ -136,7 +136,7 @@ database yourself.
 Keystone roles
 ''''''''''''''
 
-These settings map to normal keystone roles that are
+These settings map to normal Keystone roles that are
 used by the IdM. As with the FIWARE Applications and Roles settings,
 they depend on your use case and , if you are not using the
 installation scripts, you will have to create them yourself.
@@ -168,7 +168,7 @@ These settings configure the connection to an `Authorization PDP GE <http://cata
 Endpoints Management Dashboard
 ''''''''''''''''''''''''''''''
 
-This admin-only dashboard requires some settings before it can be used. The Keystone project to which all services accounts are given admin permissions must be provided in the **SERVICE_PROJECT** setting. The **AVAILABLE_SERVICES** setting contains the set of services whose endpoints can be managed from the Dashboard. Both *type* and *description* are mandatory, while the *extra_roles* setting is optional and has to do with special roles being assigned to the given service account, either in a domain or in a project.
+This admin-only dashboard requires some settings before it can be used. The Keystone project to which all services accounts are given admin permissions must be provided in the ``SERVICE_PROJECT`` setting. The ``AVAILABLE_SERVICES`` setting contains the set of services whose endpoints can be managed from the Dashboard. Both ``type`` and ``description`` are mandatory, while the ``extra_roles`` setting is optional and has to do with special roles being assigned to the given service account, either in a domain or in a project.
 
 .. code-block:: python
 
@@ -193,7 +193,7 @@ This admin-only dashboard requires some settings before it can be used. The Keys
 ^^^^^^^^^^^^^^^^^^
 
 The settings for all the Django configuration are located at
-**horizon/openstack_dashboard/settings.py**
+``horizon/openstack_dashboard/settings.py``
 
 Here we added some django apps, middleware, etc. You can check the file
 for reference but there is no extra configuration needed here.
@@ -203,7 +203,7 @@ for reference but there is no extra configuration needed here.
 
 To run a simple server to try out and check the IdM installation or for
 developping purpuses you can use Django's development server that comes
-with the IdM installation, which will automatically run in port 8000:::
+with the IdM installation, which will automatically run in port 8000:
 
   $ sudo tools/with_venv.sh python manage.py runserver
 
@@ -211,7 +211,7 @@ You can also explicitly run:::
 
   $ sudo tools/with_venv.sh python manage.py runserver IP:PORT
 
-For more documentation about this server, head to `django
+For more documentation about this server, head on to `django
 docs <https://docs.djangoproject.com/en/1.7/ref/django-admin/#django-admin-runserver>`__
 
 .. warning:: 
@@ -259,12 +259,14 @@ the following command::
 4. Configuring Keystone as a service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to ad the keystone to init.d to run it as a service there
+If you want to ad the Keystone to init.d to run it as a service there
 are serveral possibilities. You can try to reuse the scripts provided
-with keystone or you can add a .conf file to **etc/init**. Here is a
+with Keystone or you can add a *.conf* file to ``etc/init``. Here is a
 basic example:
 
-Create the following file at: **/etc/init/keystone_idm.conf**::
+Create the following file at: ``/etc/init/keystone_idm.conf``
+
+.. code-block:: bash
 
     # keystone_idm - keystone_idm job file
      description "Service conf file for the IdM backend based in Keystone"
@@ -282,14 +284,14 @@ Create the following file at: **/etc/init/keystone_idm.conf**::
     bin/keystone-all
     end script
 
-To run keystone, you can now run it with the following command::
+To run Keystone, you can now run it with the following command::
 
   $ sudo service keystone_idm start
 
 5. Running tests
 ^^^^^^^^^^^^^^^^
 
-In order to test, we use the keystone built in system: **tox** and
+In order to test, we use the Keystone built in system: **tox** and
 **testr**.
 
 To execute all tests::
@@ -297,11 +299,11 @@ To execute all tests::
   $ sudo tox
 
 To Execute the extension tests (in this case for oauth2)::
+
   $ sudo tox -e py27 -- keystone.tests.test_v3_oauth2
 
 .. note::
-  To debug during test, add the following parameter to the command:
-    -e debug
+  To debug during test, add the following parameter to the command: ``-e debug``
 
 System Administration
 =====================
@@ -322,7 +324,7 @@ To install them
   $ sudo python setup.py install
 
 
-Usage
+Get to know how to use them and the available commands by using the following
 
 ::
   
@@ -338,18 +340,12 @@ As administrator of IdM KeyRock you can manage white and black lists in
 order to allow and deny access to users by their email domains.
 
 There is a file for each of the list which you can find at
-**/horizon/openstack_dashboard/fiware_auth/blacklist.txt** or
-**whitelist.txt**.
+``/horizon/openstack_dashboard/fiware_auth/blacklist.txt`` or
+``whitelist.txt``.
 
--  Whitelist
+-  `Whitelist`: add a line for each of the domains that are allowed. No other domain will be allowed to register users.
 
-Add a line for each of the domains that are allowed. No other domain
-will be allowed to register users.
-
--  Blacklist
-
-Add a line for each of the domains that are not allowed. If a user has
-an email from this domain, they will not be able to register.
+-  `Blacklist`: add a line for each of the domains that are not allowed. If a user has an email from this domain, they will not be able to register.
 
 Sanity Check Procedures
 =======================

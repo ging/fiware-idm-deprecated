@@ -107,7 +107,7 @@ for a starting point. Make sure that the following elements are present:
 (take special care with the
 `venv <https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/modwsgi/#using-a-virtualenv>`__)
 
-::
+.. code-block:: apacheconf
 
     WSGIPassAuthorization On  
     WSGIScriptAlias / [PATH_TO_HORIZON]/horizon/openstack_dashboard/wsgi/django.wsgi
@@ -116,7 +116,7 @@ for a starting point. Make sure that the following elements are present:
 If you want to serve your static and media files from Apache itself,
 also make sure to create the Alias
 
-::
+.. code-block:: apacheconf
 
     Alias /media/ /root/horizon/media/
     Alias /static/ /root/horizon/static/
@@ -130,7 +130,7 @@ also make sure to create the Alias
 
 As reference, here you can see a full Apache configuration file using HTTPS
 
-::
+.. code-block:: apacheconf
 
     <IfModule mod_ssl.c>
     <VirtualHost *:443>
@@ -208,7 +208,7 @@ Now, go to the folder you have installed Horizon and run
     sudo tools/with_venv.sh python manage.py collectstatic
     sudo tools/with_venv.sh python manage.py compress --force
 
-Edit the local_settings.py file and set
+Edit the ``local_settings.py`` file and set
 
 ::
 
@@ -219,7 +219,7 @@ Edit the local_settings.py file and set
     ]
     SECRET_KEY = 'arandomstringhere' # DON'T LEAVE THIS SAMPLE STRING
 
-.. warning:: Please set your SECRET_KEY. A known SECRET_KEY is a huge security vulnerability.
+.. warning:: Please set your ``SECRET_KEY``. A known SECRET_KEY is a huge security vulnerability.
 More information `here <https://docs.djangoproject.com/en/1.9/ref/settings/#std:setting-SECRET_KEY>`__
 
 NO CAPTCHA reCAPTCHA
@@ -281,4 +281,4 @@ following settings
     EMAIL_HOST_PASSWORD = 'top-secret!'
     EMAIL_URL = 'your-webstie-domain.com'
     DEFAULT_FROM_EMAIL = 'your-no-reply-address'
-
+    EMAIL_SUBJECT_PREFIX = '[Prefix for emails subject]'
