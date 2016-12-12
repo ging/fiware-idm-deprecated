@@ -21,7 +21,7 @@ RUN git clone https://github.com/ging/keystone && \
     
 RUN git clone https://github.com/ging/horizon && \
     cd horizon && \
-    git checkout tags/keyrock-5.4.0
+    git checkout tags/keyrock-5.4.1
 
 # Configuring settings files
 RUN cp keystone/etc/keystone.conf.sample keystone/etc/keystone.conf && \
