@@ -128,7 +128,7 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
               }
             }
 
-+ Response 200 (application/json)
++ Response 201 (application/json)
 
     + Body
             
@@ -279,7 +279,7 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
               }
             }
 
-+ Response 200 (application/json)
++ Response 201 (application/json)
 
     + Body
 
@@ -404,7 +404,7 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
               }
             }
 
-+ Response 200 (application/json)
++ Response 201 (application/json)
 
     + Body
     
@@ -520,7 +520,7 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
     + Headers
         
             X-Auth-token: token
-+ Response 200 (application/json)
++ Response 204
 
 ### Remove a permission from a role [DELETE]
 + Request
@@ -567,11 +567,11 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
     + Headers
         
             X-Auth-token: token
-+ Response 200 (application/json)
++ Response 204
         
 ### Remove a role assignment from a user [DELETE]
 
-+ Response 204 (application/json)
++ Response 204
 
 ## Role - User Relationship inside an organization [/v3/OS-ROLES/users/{user_id}/organizations/{organization_id}/applications/{application_id}/roles/{role_id}]
 
@@ -586,14 +586,14 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
     + Headers
         
             X-Auth-token: token
-+ Response 200 (application/json)
++ Response 204
         
 ### Remove a role assignment from a user inside an organization [DELETE]
 + Request
     + Headers
         
             X-Auth-token: token
-+ Response 204 (application/json)
++ Response 204
 
 ## Role - Organization Relationships [/v3/OS-ROLES/organizations/role_assignments]
 
@@ -608,12 +608,12 @@ Consumers are the Applications registered in Keyrock to consume OAuth2 resources
     + application_id - Id of the application.
     + role_id - Id of the role.
 
-### Assign a rol to an organization [PUT]
+### Assign a role to an organization [PUT]
 + Request
     + Headers
         
             X-Auth-token: token
-+ Response 200 (application/json)
++ Response 204
 
 ### Remove a role assignment from an organization [DELETE]
 + Request
@@ -736,7 +736,7 @@ Either user_id or user_name (along with domain_id or domain_name) must be provid
 ### Check security question [HEAD /v3/users/{user_id}/OS-TWO-FACTOR/sec_question?security_answer={security_answer}]
 
 + Parameters
-    + security_answer - Answer to be checked.
+    + sec_answer - Answer to be checked.
 
 + Request (application/json)
     + Headers
@@ -746,6 +746,8 @@ Either user_id or user_name (along with domain_id or domain_name) must be provid
 + Response 204
 
 + Response 401
+
++ Response 404
 
 ## Two Factor Authentication Devices [/v3/OS-TWO-FACTOR/devices]
 
@@ -860,7 +862,30 @@ Just like Keystone extensions, these APIs are exposed by the back-end NOT the fr
               ]
             }
 
-+ Response 200 (application/json)
++ Response 201 (application/json)
+
+        {
+            "userName": "alice",
+            "displayName": "Alice",
+            "emails": [
+                {
+                    "value": "alice@mailhost.com"
+                }
+            ],
+            "urn:scim:schemas:extension:keystone:2.0": {
+                "domain_id": "default",
+                "default_project_id": "de3512b306df4e7e849becd78db255a9"
+            },
+            "meta": {
+                "location": "http://keyrock/v3/users/alice"
+            },
+            "active": true,
+            "id": "alice",
+            "schemas": [
+                "urn:scim:schemas:core:2.0",
+                "urn:scim:schemas:extension:keystone:2.0"
+            ]
+        }
 
 ## User [/v3/OS-SCIM/v2/Users/{user_id}]
 
@@ -954,7 +979,24 @@ Just like Keystone extensions, these APIs are exposed by the back-end NOT the fr
               "id": "ID"
             }
 
-+ Response 200 (application/json)
++ Response 201 (application/json)
+
+        {
+          "name": "MyOrg",
+          "is_default": true,
+          "urn:scim:schemas:extension:keystone:2.0": {
+            "domain_id": "default"
+          },
+          "meta": {
+            "location": "http://localhost:5000/v3/projects/e3fd1defdda74d8786ba526969050bb8"
+          },
+          "active": true,
+          "id": "e3fd1defdda74d8786ba526969050bb8",
+          "schemas": [
+            "urn:scim:schemas:core:2.0",
+            "urn:scim:schemas:extension:keystone:2.0"
+          ]
+        }
 
 ## Organization [/v3/OS-SCIM/v2/Organizations/{organization_id}]
 
