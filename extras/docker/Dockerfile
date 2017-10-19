@@ -24,6 +24,7 @@ RUN git clone https://github.com/ging/horizon && \
     git checkout tags/keyrock-5.4.1
 
 # Configuring settings files
+COPY ./build/requirements.txt /keystone/requirements.txt
 RUN cp keystone/etc/keystone.conf.sample keystone/etc/keystone.conf && \
     cp horizon/openstack_dashboard/local/local_settings.py.example horizon/openstack_dashboard/local/local_settings.py && \
     sed -i s/\$\$IDM_PASS/${IDM_PASS}/g horizon/openstack_dashboard/local/local_settings.py
