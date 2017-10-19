@@ -12,7 +12,7 @@ RUN sudo apt-get update && \
     sudo python get-pip.py
 
 # Install Ubuntu project dependencies
-RUN sudo apt-get install -y python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev libxml2-dev libxslt1-dev libsasl2-dev libssl-dev libldap2-dev libffi-dev libsqlite3-dev libmysqlclient-dev python-mysqldb
+RUN sudo apt-get install -y python-dev python-virtualenv libssl-dev libffi-dev libjpeg8-dev libxml2-dev libxslt1-dev libsasl2-dev libssl-dev libldap2-dev libffi-dev libsqlite3-dev libmysqlclient-dev python-mysqldb python-psycopg2
 
 # Download latest version of the code 
 RUN git clone https://github.com/ging/keystone && \
