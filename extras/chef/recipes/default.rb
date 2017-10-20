@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe 'keyrock::5.4.0_install'
+include_recipe 'keyrock::6.0.0_install'
