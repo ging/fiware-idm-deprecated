@@ -1,4 +1,9 @@
 ***********************************
+Important information
+***********************************
+This is an archive of the code repository for the previous  Horizion + Keystone-based version of  the FIWARE Identity Manager project. The current code repositiory for this project can be found at: https://github.com/ging/fiware-idm
+
+***********************************
 Identity Manager - Keyrock Overview
 ***********************************
 
